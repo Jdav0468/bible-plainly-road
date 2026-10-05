@@ -292,7 +292,7 @@
         <p class="kicker">The Bible, Plainly</p>
         <h1>How well do you know the <em>Bible</em>?</h1>
       </div>
-      <button class="sound" id="sound" type="button" aria-pressed="false">Sound off</button>
+      <button class="sound" id="sound" type="button" aria-pressed="true">Sound on</button>
     </div>
     <p class="lede">Sixty-six books. It is worth studying because the claims sit on the page. A church can help, and a preacher can explain, but you still need to know where a line sits and be able to open it yourself.</p>
 
@@ -544,7 +544,7 @@ const REST = {
 const KEY = "biblePlainlyRoadV3";
 const $ = id => document.getElementById(id);
 let save = load();
-let walk = null, mode = "mile", camp = "Law", soundOn = false, audioCtx = null;
+let walk = null, mode = "mile", camp = "Law", soundOn = true, audioCtx = null;
 
 function load(){ try { return Object.assign({known:[], opened:[], notes:{}, used:[]}, JSON.parse(localStorage.getItem(KEY)||"{}")); } catch(e){ return {known:[], opened:[], notes:{}, used:[]}; } }
 function persist(){ try { localStorage.setItem(KEY, JSON.stringify(save)); } catch(e){} }
@@ -562,6 +562,24 @@ function tone(ok){
     g.gain.exponentialRampToValueAtTime(0.04, audioCtx.currentTime+0.02);
     g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime+0.28);
     o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.3);
+  } catch(e){}
+}
+function pageSound(){
+  if(!soundOn) return;
+  try {
+    audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==="suspended") audioCtx.resume();
+    const now = audioCtx.currentTime;
+    [220, 330].forEach((freq, i) => {
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.type = "triangle";
+      o.frequency.value = freq;
+      g.gain.setValueAtTime(0.0001, now);
+      g.gain.exponentialRampToValueAtTime(0.05, now+0.02+i*0.05);
+      g.gain.exponentialRampToValueAtTime(0.0001, now+0.18+i*0.06);
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start(now+i*0.05); o.stop(now+0.22+i*0.06);
+    });
   } catch(e){}
 }
 function spineClass(book){
@@ -597,12 +615,14 @@ function renderAtlas(){
   $("atlasLine").textContent = (k||o) ? k+" from the page. "+o+" opened after a miss. Tap a spine." : "Tap any book. It does not have to be next.";
 }
 function openBook(book){
+  pageSound();
   mode = "book";
   walk = {mode, books:[book], queue:build([book]), i:0, knownNow:[], missedNow:[], looked:false, locked:false};
   show("play");
   renderStep();
 }
 function jumpTo(book){
+  pageSound();
   if(!walk || !walk.queue){ openBook(book); return; }
   const i = walk.queue.findIndex(x => x.kind==="q" && x.book===book);
   if(i<0){ openBook(book); return; }
@@ -665,6 +685,7 @@ function build(books){
   return queue;
 }
 function start(){
+  pageSound();
   const books = mode==="mile" ? MILE.slice() : mode==="day" ? CAMPS.find(c => c.id===camp).books.slice() : ORDER.slice();
   walk = {mode, books, queue:build(books), i:0, knownNow:[], missedNow:[], looked:false, locked:false};
   show("play");
