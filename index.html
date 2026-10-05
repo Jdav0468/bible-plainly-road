@@ -5,7 +5,12 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta property="og:title" content="How well do you know the Bible?" />
-<meta property="og:description" content="The truth is in the Bible. Open any book, use a hint if you need one, and see how many you can place." />
+<meta property="og:description" content="Today's question is on the page. Open a book and see how many of the sixty-six you can place." />
+<meta property="og:image:alt" content="An open Bible." />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="How well do you know the Bible?" />
+<meta name="twitter:description" content="Today's question is on the page. Open a book and see how many of the sixty-six you can place." />
+<meta name="twitter:image" content="https://jdav0468.github.io/bible-plainly-road/art/hero.jpg" />
 <meta property="og:image" content="https://jdav0468.github.io/bible-plainly-road/art/hero.jpg" />
 <meta property="og:url" content="https://jdav0468.github.io/bible-plainly-road/" />
 <meta property="og:type" content="website" />
@@ -352,7 +357,7 @@
       <button class="sound" id="sound" type="button" aria-pressed="true">Sound on</button>
     </div>
     <p class="lede">Sixty-six books. It is worth studying because the truth is in the Bible. A church can help, and a preacher can explain, but you still need to open it yourself. A hint can point you to the part. The line is still yours to place.</p>
-    <div class="row" id="todayRow"><button class="go" id="today" type="button">Today's question</button></div>
+    <div class="row" id="todayRow"><button class="go" id="today" type="button">Today's question</button><button class="ghost" id="sendResult" type="button">Send my result</button></div>
     <p class="hint" id="dayCount"></p>
 
     
@@ -370,7 +375,6 @@
     <section id="home">
       <div class="panel"><h2>Learn the book</h2><p class="hint">A short guide to the story, the people, the events, and God. Then open that part.</p><div class="walks" id="learn"></div></div>
 
-      <div class="walks" id="walks"></div>
       <div class="gallery" id="gallery" aria-label="Open a part of the book">
         <button type="button" data-camp="Law"><img src="art/law.jpg?v=6" alt=""><span>The Law</span></button>
         <button type="button" data-camp="History"><img src="art/history.jpg?v=6" alt=""><span>The Histories</span></button>
@@ -381,6 +385,8 @@
         <button type="button" data-camp="Revelation"><img src="art/revelation.jpg?v=6" alt=""><span>The last book</span></button>
       </div>
 
+      
+      <div class="walks" id="walks"></div>
       <div class="panel" id="campPanel">
         <h2>Choose a camp</h2>
         <p class="hint">You stop at every book in it, in the order the book is printed.</p>
@@ -458,6 +464,7 @@
         <div class="spines" id="finalBooks"></div>
         <div class="row">
           <button class="go" id="again" type="button">Another walk</button>
+          <button class="ghost" id="sendDone" type="button">Send my result</button>
           <button class="ghost" id="inviteDone" type="button">Invite someone</button>
           <button class="ghost" id="review" type="button">Pages you missed</button>
         </div>
@@ -2350,14 +2357,18 @@ function openSlip(book){
 
 const SHARE_URL = "https://jdav0468.github.io/bible-plainly-road/";
 const SHARE_TEXT = "How well do you know the Bible? Open any book and see how many of the sixty-six you can place.";
-async function invite(noteId){
+function resultText(){
+  const stamp = dayStamp();
+  return "I can place "+save.known.length+" of 66. Today's question is "+stamp+". "+SHARE_URL+"?day="+stamp;
+}
+async function invite(noteId, text){
   const note = $(noteId);
-  const payload = { title: "How well do you know the Bible?", text: SHARE_TEXT, url: SHARE_URL };
+  const payload = { title: "How well do you know the Bible?", text: text || SHARE_TEXT, url: SHARE_URL };
   try {
     if(navigator.share){ await navigator.share(payload); if(note) note.textContent = "Sent."; return; }
   } catch(e) { if(e && e.name==="AbortError") return; }
   try {
-    await navigator.clipboard.writeText(SHARE_TEXT+" "+SHARE_URL);
+    await navigator.clipboard.writeText((text || SHARE_TEXT)+" "+SHARE_URL);
     if(note) note.textContent = "Link copied. Paste it in a message.";
   } catch(e) {
     if(note) note.textContent = SHARE_URL;
@@ -2689,6 +2700,8 @@ $("guidePlay").onclick = () => { const g = GUIDE[guideKey]; if(!g.play){ show("h
 $("invite").onclick = () => invite("inviteNote");
 $("clearHistory").onclick = clearHistory;
 $("inviteDone").onclick = () => invite("inviteDoneNote");
+$("sendResult").onclick = () => invite("dayCount", resultText());
+$("sendDone").onclick = () => invite("inviteDoneNote", resultText());
 $("next").onclick = next;
 function hintFor(item){
   const part = campLabel(item.section);
