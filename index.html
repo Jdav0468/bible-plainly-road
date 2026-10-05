@@ -158,6 +158,25 @@
   .ktrack span { display: block; height: 100%; background: #241c14; }
   .knowline { font-family: var(--serif); font-size: 22px; margin: 0 0 8px; }
   button.stone { cursor: pointer; font-family: inherit; }
+
+  :root { --bg:#0f1412; --paper:#f7f4ee; --ink:#1a1916; --gold:#c6a15a; --sans: "Segoe UI", system-ui, sans-serif; --serif: Georgia, "Iowan Old Style", Palatino, serif; }
+  body { background: radial-gradient(900px 420px at 80% -10%, rgba(198,161,90,.18), transparent 50%), #0f1412; }
+  .wrap { width: min(920px, calc(100% - 32px)); }
+  h1 { font-size: clamp(40px, 7vw, 72px); letter-spacing: -0.03em; }
+  .lede { font-size: 18px; color: #d9d3c7; }
+  .hero, .panel, .walk, .book, .roadwrap { border-radius: 18px; }
+  .walk { transition: transform .16s ease, box-shadow .16s ease; }
+  .walk:hover { transform: translateY(-3px); }
+  .go { border-radius: 999px; padding: 14px 22px; font-weight: 650; letter-spacing: .01em; background: #1a1916; }
+  .ghost, .camps button, .sound { border-radius: 999px; }
+  .knowline { font-size: clamp(28px, 4vw, 40px); letter-spacing: -0.03em; }
+  .ktrack { height: 10px; background: #ece4d6; }
+  .ktrack span { background: linear-gradient(90deg, #1a1916, #c6a15a); }
+  .stone { border-radius: 14px; min-width: 76px; }
+  .choice { border-radius: 14px; padding: 14px; transition: transform .12s ease, border-color .12s ease; }
+  .choice:hover:not(:disabled) { transform: translateY(-1px); }
+  .verdict { border-radius: 14px; }
+  .book { box-shadow: 0 24px 60px rgba(0,0,0,.35); }
 </style>
 </head>
 <body>
@@ -165,11 +184,11 @@
     <div class="top">
       <div>
         <p class="kicker">The Bible, Plainly</p>
-        <h1>The <em>road</em>.</h1>
+        <h1>How well do you <em>know</em> it?</h1>
       </div>
       <button class="sound" id="sound" type="button" aria-pressed="false">Sound off</button>
     </div>
-    <p class="lede">A walk through the whole book. Sixty-six stones. The count is how many books you can place from the page.</p>
+    <p class="lede">Sixty-six books. Answer from the page. Watch how many you can place.</p>
 
     <section id="home">
       <figure class="hero">
@@ -189,7 +208,7 @@
       </div>
       <div class="panel">
         <div class="row" style="margin-top:0">
-          <button class="go" id="begin" type="button">Open the book</button>
+          <button class="go" id="begin" type="button">Start/button>
         </div>
       </div>
       <div class="panel">
@@ -463,9 +482,9 @@ function openSlip(book){
 }
 function setupHome(){
   const walks = [
-    {id:"mile", name:"A mile", text:"Twelve stones, from the first page to the last.", w:"34%"},
-    {id:"day", name:"A day’s walk", text:"One camp. Every book in it.", w:"66%"},
-    {id:"road", name:"The whole road", text:"All sixty-six, with a rest between camps.", w:"100%"}
+    {id:"mile", name:"A short walk", text:"Twelve questions. About five minutes.", w:"34%"},
+    {id:"day", name:"One part", text:"Law, Histories, Wisdom, Prophets, Gospels, or Letters.", w:"66%"},
+    {id:"road", name:"The whole book", text:"All sixty-six, in order.", w:"100%"}
   ];
   $("walks").innerHTML = walks.map(w => '<button class="walk" type="button" data-id="'+w.id+'" aria-pressed="'+(w.id===mode)+'"><b>'+w.name+'</b><span>'+w.text+'</span><i style="width:'+w.w+'"></i></button>').join("");
   $("walks").querySelectorAll("button").forEach(b => b.onclick = () => { mode = b.dataset.id; setupHome(); });
