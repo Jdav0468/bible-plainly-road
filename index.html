@@ -373,11 +373,11 @@
           <div class="page" id="page">
             <div class="ref" id="ref"></div>
             <p id="plain"></p>
-            <p class="looked hidden" id="looked">You looked first. It still counts. The page is the point.</p>
+            <p class="looked hidden" id="looked">You used a hint. It still counts. Answer from the page.</p>
             <div class="row"><button class="go" id="next" type="button">Next/button></div>
           </div>
           <div class="row" id="tools">
-            <button class="ghost" id="hint" type="button">Show the reference</button>
+            <button class="ghost" id="hint" type="button">Hint</button>
             <button class="ghost" id="quit" type="button">Main page</button>
           </div>
         </div>
@@ -876,12 +876,18 @@ function review(){
 }
 $("begin").onclick = start;
 $("next").onclick = next;
+function hintFor(item){
+  const part = campLabel(item.section);
+  if(item.place) return {title: part, text: "The line sits in "+part+". The book is still yours to name."};
+  return {title: item.book, text: "Look in "+item.book+", in "+part+". The line is already in the question."};
+}
 $("hint").onclick = () => {
   const item = walk.queue[walk.i];
   if(!item || item.kind!=="q" || walk.locked) return;
   walk.looked = true;
-  $("ref").textContent = item.place ? "The book is still yours to name" : item.ref;
-  $("plain").textContent = item.place ? "The line is the clue. Name the book." : "The reference is open. Answer from the page.";
+  const h = hintFor(item);
+  $("ref").textContent = h.title;
+  $("plain").textContent = h.text;
   $("looked").classList.remove("hidden");
   $("page").classList.add("show");
 };
