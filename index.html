@@ -305,6 +305,14 @@
   #nextRow { display: none; margin-top: 14px; }
   #nextRow.show { display: flex; }
   #next { min-height: 48px; width: 100%; }
+
+  .qhead { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+  #clock {
+    margin-left:auto; min-width:76px; text-align:center; font-size:24px !important; font-weight:700;
+    color:#1c1916 !important; background:#fff !important; border:2px solid #1c1916;
+    border-radius:8px; padding:6px 10px; line-height:1.1;
+  }
+  .choice.right { outline:3px solid #1f7a4d; }
 </style>
 </head>
 <body>
@@ -362,8 +370,7 @@
       <div class="playtop">
         <button class="ghost" id="back" type="button">Main page</button>
         <div class="meta" id="progressLabel">1 of 12</div>
-        <div class="meta" id="clock">0:30</div>
-      </div>
+        </div>
       <div class="bar"><span id="bar"></span></div>
       <div class="roadwrap"><div class="road" id="road"></div></div><p class="hint">Or open any book.</p><div class="spines" id="anybook"></div>
       <div class="book" id="book">
@@ -376,7 +383,10 @@
           <p class="aside" id="sideNote">Answer from the page.</p>
         </div>
         <div class="leaf right">
-          <p class="qbook" id="qbook"></p>
+          <div class="qhead">
+            <p class="qbook" id="qbook"></p>
+            <div id="clock">0:30</div>
+          </div>
           <h2 class="prompt" id="prompt"></h2>
           <div class="verdict" id="verdict"></div>
           <div id="answers"></div>
@@ -608,8 +618,9 @@ function timeUp(){
   tone(false);
   $("sideMark").textContent = SHORT[item.book];
   $("sideNote").textContent = "Time. Found in "+item.ref;
-  $("verdict").className = "verdict wrong";
-  $("verdict").textContent = "Time. Found in "+item.ref;
+  const right = walk.opts.find(o => o.ok);
+  $("verdict").className = "verdict show wrong";
+  $("verdict").textContent = "Time. The answer is "+(right?right.t:"")+". Found in "+item.ref;
   $("tools").classList.add("hidden");
   $("nextRow").classList.add("show");
   renderRoad();
