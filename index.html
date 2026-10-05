@@ -367,7 +367,9 @@
       <div class="panel">
         <div class="row" style="margin-top:0">
           <button class="go" id="begin" type="button">Start</button>
+          <button class="ghost" id="invite" type="button">Invite someone</button>
         </div>
+        <p class="hint" id="inviteNote"></p>
       </div>
       <div class="panel">
         <h2>Choose a book</h2>
@@ -427,8 +429,10 @@
         <div class="spines" id="finalBooks"></div>
         <div class="row">
           <button class="go" id="again" type="button">Another walk</button>
+          <button class="ghost" id="inviteDone" type="button">Invite someone</button>
           <button class="ghost" id="review" type="button">Pages you missed</button>
         </div>
+        <p class="hint" id="inviteDoneNote"></p>
         <div id="reviewList"></div>
       </div>
     </section>
@@ -2314,6 +2318,22 @@ function openSlip(book){
   $("slip").innerHTML = (note ? "<b>"+esc(book)+" · "+esc(note.ref)+"</b><p>"+esc(note.plain)+"</p>" : "<b>"+esc(book)+"</b><p>Not opened on this road yet.</p>") + '<button class="go" type="button" id="openThis">Open this book</button>';
   $("openThis").onclick = () => openBook(book);
 }
+
+const SHARE_URL = "https://jdav0468.github.io/bible-plainly-road/";
+const SHARE_TEXT = "How well do you know the Bible? Open any book and see how many of the sixty-six you can place.";
+async function invite(noteId){
+  const note = $(noteId);
+  const payload = { title: "How well do you know the Bible?", text: SHARE_TEXT, url: SHARE_URL };
+  try {
+    if(navigator.share){ await navigator.share(payload); if(note) note.textContent = "Sent."; return; }
+  } catch(e) { if(e && e.name==="AbortError") return; }
+  try {
+    await navigator.clipboard.writeText(SHARE_TEXT+" "+SHARE_URL);
+    if(note) note.textContent = "Link copied. Paste it in a message.";
+  } catch(e) {
+    if(note) note.textContent = SHARE_URL;
+  }
+}
 function setupHome(){
   const walks = [
     {id:"mile", name:"A short walk", text:"Tap to open. Twelve questions.", w:"34%"},
@@ -2490,6 +2510,8 @@ function review(){
   box.innerHTML = walk.missedNow.length ? walk.missedNow.map(m => '<div class="slip show"><b>'+esc(m.book)+" · "+esc(m.ref)+'</b><p>'+esc(m.plain)+'</p></div>').join("") : '<p class="hint">No misses on this walk.</p>';
 }
 $("begin").onclick = start;
+$("invite").onclick = () => invite("inviteNote");
+$("inviteDone").onclick = () => invite("inviteDoneNote");
 $("next").onclick = next;
 function hintFor(item){
   const part = campLabel(item.section);
