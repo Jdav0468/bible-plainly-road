@@ -2535,7 +2535,7 @@ function questionForDay(stamp){
   for(let i=0;i<stamp.length;i++) n = (n*33 + stamp.charCodeAt(i)) % BANK.length;
   return BANK[n];
 }
-function whyOthers(){ return " Not the others."; }
+function whyOthers(){ return ""; }
 function dayKey(stamp){ return "bibleplainly-"+stamp; }
 async function dayCount(stamp, hit){
   const key = dayKey(stamp);
