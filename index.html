@@ -261,6 +261,21 @@
     object-fit: cover !important; background:#ddd8d0 !important; height: 168px !important;
   }
   .hero img { height: 340px !important; }
+
+  @media (max-width: 700px) {
+    .wrap { width: calc(100% - 16px) !important; padding: 16px 0 48px !important; }
+    h1 { font-size: 36px !important; }
+    .top { align-items: flex-start; }
+    .walks, .gallery, .camps, .book { grid-template-columns: 1fr !important; }
+    .hero img { height: 200px !important; }
+    .gallery img, .walk img, .scene img, .camps button img { height: 140px !important; }
+    .choice, .go, .ghost, .camps button, .walk { min-height: 48px; }
+    .go, .ghost { width: 100%; }
+    .krow { grid-template-columns: 1fr !important; gap: 4px !important; }
+    .prompt { font-size: 24px !important; }
+    .stone { min-width: 68px; }
+    .leaf { padding: 16px !important; }
+  }
 </style>
 </head>
 <body>
@@ -345,7 +360,7 @@
           </div>
           <div class="row" id="tools">
             <button class="ghost" id="hint" type="button">Show the reference</button>
-            <button class="ghost" id="quit" type="button">Leave/button>
+            <button class="ghost" id="quit" type="button">Quit</button>
           </div>
         </div>
       </div>
