@@ -401,7 +401,7 @@
       </div>
       <div class="panel">
         <h2>How well you know the book</h2>
-        <p class="knowline" id="knowLine">0 of 66 books you can place.</p>
+        <p class="knowline" id="knowLine">0 of 66 books you know.</p>
         <p class="hint">A book counts when you answer it from the page. A miss opens it, and does not count yet.</p>
         <div class="know" id="know"></div>
       </div>
@@ -420,7 +420,7 @@
         <div class="slip" id="slip"></div>
       </div>
       <div class="about">
-        <p>A church can help. A preacher can explain a hard page. The count is not a prize. It is how many books you can place, and a reason to go read the rest.</p>
+        <p>A church can help. A preacher can explain a hard page. The count is not a prize. It is how many books you know, and a reason to go read the rest.</p>
         <p>The questions use the sixty-six books most English Bibles print. Wording is plain English, not a copyrighted translation. The reference is the place to open.</p>
       </div>
     </section>
@@ -481,10 +481,10 @@
     </section>
     <section class="panel" id="tallyPanel">
       <h2>Your progress</h2>
-      <p class="knowline" id="tallyLine">0 of 66 books you can place.</p>
+      <p class="knowline" id="tallyLine">0 of 66 books you know.</p>
       <div class="tally" id="tally"></div>
     </section>
-    <p class="foot">The count is how many books you can place.</p>
+    <p class="foot">The count is how many books you know.</p>
   </div>
 <script>
 const BANK = [
@@ -2356,18 +2356,18 @@ function setScene(section){
 function renderTally(){
   const el = $("tally");
   if(!el) return;
-  if($("tallyLine")) $("tallyLine").textContent = save.known.length+" of 66 books you can place.";
+  if($("tallyLine")) $("tallyLine").textContent = save.known.length+" of 66 books you know.";
   el.innerHTML = ORDER.map(b => {
     const known = save.known.includes(b);
     const opened = save.opened.includes(b);
     const state = known ? "known" : opened ? "opened" : "";
-    const word = known ? "placed" : opened ? "opened" : "not yet";
+    const word = known ? "known" : opened ? "opened" : "not yet";
     return '<div class="trow"><span>'+SHORT[b]+'</span><div class="tbar '+state+'"><span></span></div><small>'+word+'</small></div>';
   }).join("");
 }
 function renderKnow(){
   renderTally();
-  const line = save.known.length+" of 66 books you can place.";
+  const line = save.known.length+" of 66 books you know.";
   if($("knowLine")) $("knowLine").textContent = line;
   if($("know")) $("know").innerHTML = knowHtml();
   if($("knowPlay")) $("knowPlay").textContent = save.known.length+" of 66";
@@ -2407,7 +2407,7 @@ const SHARE_URL = "https://jdav0468.github.io/bible-plainly-road/";
 const SHARE_TEXT = "How well do you know the Bible? Open any book and see how many of the sixty-six you can place.";
 function resultText(){
   const stamp = dayStamp();
-  return "I can place "+save.known.length+" of 66. Today's question is "+stamp+". "+SHARE_URL+"?day="+stamp;
+  return "I know "+save.known.length+" of 66. Today's question is "+stamp+". "+SHARE_URL+"?day="+stamp;
 }
 async function invite(noteId, text){
   const note = $(noteId);
@@ -2424,7 +2424,7 @@ async function invite(noteId, text){
 }
 
 function clearHistory(){
-  if(!confirm("Clear this game and start over? The books you have placed will be forgotten on this device.")) return;
+  if(!confirm("Clear this game and start over? The books you know will be forgotten on this device.")) return;
   save = {known:[], opened:[], notes:{}, used:[]};
   persist();
   walk = null;
@@ -2578,7 +2578,7 @@ async function showDayCount(stamp){
   if(!el) return;
   const n = await dayCount(stamp, false);
   const mine = localStorage.getItem("placed-"+stamp)==="1";
-  el.textContent = n==null ? "The day's count is not available right now." : n+" placed today's question."+(mine?" You are in that count.":"");
+  el.textContent = n==null ? "The day's count is not available right now." : n+" got today's question."+(mine?" You are in that count.":"");
 }
 async function markPlaced(stamp){
   if(localStorage.getItem("placed-"+stamp)==="1"){ showDayCount(stamp); return; }
@@ -2618,7 +2618,7 @@ function renderRoad(){
     const known = walk.knownNow.includes(b) || save.known.includes(b);
     const opened = walk.missedNow.some(m => m.book===b) || save.opened.includes(b);
     const now = cur && cur.book===b;
-    return '<button type="button" class="stone'+(known?" known":opened?" opened":"")+(now?" now":"")+'" data-book="'+b+'"><b>'+SHORT[b]+'</b><small>'+(known?"placed":opened?"opened":now?"now":"ahead")+'</small></button>';
+    return '<button type="button" class="stone'+(known?" known":opened?" opened":"")+(now?" now":"")+'" data-book="'+b+'"><b>'+SHORT[b]+'</b><small>'+(known?"known":opened?"opened":now?"now":"ahead")+'</small></button>';
   }).join("");
   $("road").querySelectorAll("button").forEach(el => el.onclick = () => jumpTo(el.dataset.book));
   const any = $("anybook");
@@ -2700,7 +2700,7 @@ function answer(n){
   const campBooks = CAMPS.find(c => c.books.includes(item.book));
   const placed = campBooks ? campBooks.books.filter(b => save.known.includes(b)).length : 0;
   const campBit = campBooks ? " "+campBooks.label+": "+placed+" of "+campBooks.books.length+"." : "";
-  $("verdict").innerHTML = "Found in "+esc(item.ref)+". "+(ok?"You can place "+esc(item.book)+".":"Opened, not placed yet.")+"<span>"+esc(item.plain)+whyOthers()+campBit+" You can place "+save.known.length+" of 66.</span>";
+  $("verdict").innerHTML = "Found in "+esc(item.ref)+". "+(ok?"You know "+esc(item.book)+".":"Opened, not placed yet.")+"<span>"+esc(item.plain)+whyOthers()+campBit+" You know "+save.known.length+" of 66.</span>";
   renderKnow();
   $("page").classList.remove("show");
   $("ref").textContent = "";
@@ -2721,7 +2721,7 @@ function next(){
 function finish(){
   clearClock();
   show("done");
-  $("finalScore").textContent = save.known.length+" of 66 books you can place.";
+  $("finalScore").textContent = save.known.length+" of 66 books you know.";
   $("finalPlain").textContent = "This walk: "+walk.knownNow.length+" of "+steps().length+" from the page. The bars show the whole book.";
   $("finalBooks").innerHTML = walk.books.map(b => '<button type="button" class="'+spineClass(b)+'">'+SHORT[b]+'</button>').join("");
   $("reviewList").innerHTML = "";
