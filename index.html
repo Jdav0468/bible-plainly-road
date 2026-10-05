@@ -248,6 +248,19 @@
     object-fit:contain !important; background:#f4fbf9 !important; visibility:visible !important;
   }
   .hero img { height:320px !important; }
+
+  body { background:#f3f1ec !important; color:#1c1916 !important; }
+  h1, .panel h2, .prompt, .knowline, .scoreline, .mark { font-family: Georgia, Palatino, serif !important; font-weight: 400 !important; color:#1c1916 !important; }
+  .panel, .walk, .book, .roadwrap, .gallery figure { border-radius: 8px !important; box-shadow: none !important; border: 1px solid #e4dfd6 !important; }
+  .go, .walk[aria-pressed="true"], .walk[aria-pressed="true"] b, .walk[aria-pressed="true"] span,
+  .camps button[aria-pressed="true"], .stone.known, .stone.known b, .stone.known small, .spines button.known {
+    background:#2c2824 !important; color:#f7f4ee !important;
+  }
+  .kicker, .qbook, .ref, h1 em { color:#6b5e4e !important; }
+  .hero img, .gallery img, .scene img, .walk img, .camps button img {
+    object-fit: cover !important; background:#ddd8d0 !important; height: 168px !important;
+  }
+  .hero img { height: 340px !important; }
 </style>
 </head>
 <body>
@@ -263,17 +276,17 @@
 
     <section id="home">
             <figure class="hero">
-        <img src="art/hero.jpg?v=3" alt="An open book with a path of stones leading to it." />
+        <img src="art/hero.jpg?v=4" alt="An open book with a path of stones leading to it." />
       </figure>
       <div class="walks" id="walks"></div>
       <div class="gallery" aria-label="Parts of the book">
-        <figure><img src="art/law.jpg?v=3" alt="A mountain and a path." /><figcaption>The Law</figcaption></figure>
-        <figure><img src="art/history.jpg?v=3" alt="A city on a hill." /><figcaption>The Histories</figcaption></figure>
-        <figure><img src="art/wisdom.jpg?v=3" alt="A tree by the water." /><figcaption>Wisdom</figcaption></figure>
-        <figure><img src="art/prophets.jpg?v=3" alt="A person looking toward a city." /><figcaption>The Prophets</figcaption></figure>
-        <figure><img src="art/gospels.jpg?v=3" alt="People seated on a hillside." /><figcaption>The Gospels</figcaption></figure>
-        <figure><img src="art/letters.jpg?v=3" alt="Letters on a table." /><figcaption>The Letters</figcaption></figure>
-        <figure><img src="art/revelation.jpg?v=3" alt="A city of light by the water." /><figcaption>The last book</figcaption></figure>
+        <figure><img src="art/law.jpg?v=4" alt="A mountain and a path." /><figcaption>The Law</figcaption></figure>
+        <figure><img src="art/history.jpg?v=4" alt="A city on a hill." /><figcaption>The Histories</figcaption></figure>
+        <figure><img src="art/wisdom.jpg?v=4" alt="A tree by the water." /><figcaption>Wisdom</figcaption></figure>
+        <figure><img src="art/prophets.jpg?v=4" alt="A person looking toward a city." /><figcaption>The Prophets</figcaption></figure>
+        <figure><img src="art/gospels.jpg?v=4" alt="People seated on a hillside." /><figcaption>The Gospels</figcaption></figure>
+        <figure><img src="art/letters.jpg?v=4" alt="Letters on a table." /><figcaption>The Letters</figcaption></figure>
+        <figure><img src="art/revelation.jpg?v=4" alt="A city of light by the water." /><figcaption>The last book</figcaption></figure>
       </div>
 
       <div class="panel" id="campPanel">
@@ -312,7 +325,7 @@
       <div class="roadwrap"><div class="road" id="road"></div></div>
       <div class="book" id="book">
         <div class="leaf left">
-                    <figure class="scene"><img id="scene" src="art/hero.jpg?v=3" alt="" /></figure>
+                    <figure class="scene"><img id="scene" src="art/hero.jpg?v=4" alt="" /></figure>
           <p class="qbook">How well you know it</p>
           <p class="knowline" id="knowPlay">0 of 66</p>
           <div class="know" id="knowSide"></div>
@@ -545,11 +558,11 @@ function knowHtml(){
   }).join("");
 }
 
-const ART = {Law:"art/law.jpg?v=3", History:"art/history.jpg?v=3", Wisdom:"art/wisdom.jpg?v=3", Prophets:"art/prophets.jpg?v=3", Gospels:"art/gospels.jpg?v=3", Acts:"art/gospels.jpg?v=3", Letters:"art/letters.jpg?v=3", Revelation:"art/revelation.jpg?v=3"};
+const ART = {Law:"art/law.jpg?v=4", History:"art/history.jpg?v=4", Wisdom:"art/wisdom.jpg?v=4", Prophets:"art/prophets.jpg?v=4", Gospels:"art/gospels.jpg?v=4", Acts:"art/gospels.jpg?v=4", Letters:"art/letters.jpg?v=4", Revelation:"art/revelation.jpg?v=4"};
 function setScene(section){
   const img = $("scene");
   if(!img) return;
-  img.src = (ART[section] || "art/hero.jpg") + "?v=3";
+  img.src = (ART[section] || "art/hero.jpg") + "?v=4";
 }
 function renderKnow(){
   const line = save.known.length+" of 66 books you can place.";
@@ -575,12 +588,12 @@ function setupHome(){
     {id:"day", name:"One part", text:"Law, Histories, Wisdom, Prophets, Gospels, or Letters.", w:"66%"},
     {id:"road", name:"The whole book", text:"All sixty-six, in order.", w:"100%"}
   ];
-  const pics = {mile:"art/hero.jpg?v=3", day:"art/gospels.jpg?v=3", road:"art/revelation.jpg?v=3"};
+  const pics = {mile:"art/hero.jpg?v=4", day:"art/gospels.jpg?v=4", road:"art/revelation.jpg?v=4"};
   $("walks").innerHTML = walks.map(w => '<button class="walk" type="button" data-id="'+w.id+'" aria-pressed="'+(w.id===mode)+'"><img src="'+pics[w.id]+'" alt=""><b>'+w.name+'</b><span>'+w.text+'</span><i style="width:'+w.w+'"></i></button>').join("");
   $("walks").querySelectorAll("button").forEach(b => b.onclick = () => { mode = b.dataset.id; setupHome(); });
   $("campPanel").classList.toggle("hidden", mode!=="day");
-  const campArt = {Law:"art/law.jpg?v=3", History:"art/history.jpg?v=3", Wisdom:"art/wisdom.jpg?v=3", Prophets:"art/prophets.jpg?v=3", Gospels:"art/gospels.jpg?v=3", Letters:"art/letters.jpg?v=3", Revelation:"art/revelation.jpg?v=3"};
-  $("camps").innerHTML = CAMPS.map(c => '<button type="button" data-id="'+c.id+'" aria-pressed="'+(c.id===camp)+'"><img src="'+(campArt[c.id]||"art/hero.jpg?v=3")+'" alt=""><span>'+c.label+'</span></button>').join("");
+  const campArt = {Law:"art/law.jpg?v=4", History:"art/history.jpg?v=4", Wisdom:"art/wisdom.jpg?v=4", Prophets:"art/prophets.jpg?v=4", Gospels:"art/gospels.jpg?v=4", Letters:"art/letters.jpg?v=4", Revelation:"art/revelation.jpg?v=4"};
+  $("camps").innerHTML = CAMPS.map(c => '<button type="button" data-id="'+c.id+'" aria-pressed="'+(c.id===camp)+'"><img src="'+(campArt[c.id]||"art/hero.jpg?v=4")+'" alt=""><span>'+c.label+'</span></button>').join("");
   $("camps").querySelectorAll("button").forEach(b => b.onclick = () => { camp = b.dataset.id; setupHome(); });
   renderAtlas();
   renderKnow();
