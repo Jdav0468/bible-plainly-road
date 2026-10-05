@@ -58,7 +58,7 @@
   .panel { background: var(--paper); color: var(--ink); border-radius: 12px; padding: 18px; margin-top: 14px; }
   .panel h2, .book h2 { font-family: var(--serif); font-weight: 400; margin: 0 0 6px; }
   .hint { color: var(--soft); margin: 0 0 12px; font-size: 15.5px; line-height: 1.45; }
-  .camps { display: flex; flex-wrap: wrap; gap: 8px; }
+  .camps { display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; } .camps button { padding:0 0 8px; overflow:hidden; text-align:left; background:#fff; } .camps button img { display:block; width:100%; height:84px; object-fit:cover; } .camps button span { display:block; padding:8px 10px 2px; } @media (max-width:800px){ .camps { grid-template-columns: repeat(2, 1fr); } }
   .camps button, .go, .ghost { cursor: pointer; border-radius: 6px; }
   .camps button { border: 1px solid #d9cbb6; background: #fbf7f1; color: var(--ink); padding: 8px 12px; }
   .camps button[aria-pressed="true"] { background: #241c14; color: var(--paper); border-color: #241c14; }
@@ -232,7 +232,7 @@
   .verdict.right, .verdict.wrong { color: #14211c; }
 
   .hero { margin: 18px 0 0; border-radius: 18px; overflow: hidden; background: #fff; }
-  .hero img, .scene img, .gallery img { display: block; width: 100%; height: 220px; object-fit: cover; }
+  .hero img { display:block; width:100%; height: min(46vw, 360px); object-fit: cover; } .scene img, .gallery img { display:block; width:100%; height:180px; object-fit:cover; } .walk img { display:block; width:100%; height:120px; object-fit:cover; border-radius:12px; margin:0 0 10px; }
   .gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 14px; }
   .gallery figure { margin: 0; background: #fff; border-radius: 14px; overflow: hidden; }
   .gallery figcaption { padding: 8px 10px 10px; font-size: 13px; color: #14211c; }
@@ -566,10 +566,12 @@ function setupHome(){
     {id:"day", name:"One part", text:"Law, Histories, Wisdom, Prophets, Gospels, or Letters.", w:"66%"},
     {id:"road", name:"The whole book", text:"All sixty-six, in order.", w:"100%"}
   ];
-  $("walks").innerHTML = walks.map(w => '<button class="walk" type="button" data-id="'+w.id+'" aria-pressed="'+(w.id===mode)+'"><b>'+w.name+'</b><span>'+w.text+'</span><i style="width:'+w.w+'"></i></button>').join("");
+  const pics = {mile:"art/hero.jpg", day:"art/gospels.jpg", road:"art/revelation.jpg"};
+  $("walks").innerHTML = walks.map(w => '<button class="walk" type="button" data-id="'+w.id+'" aria-pressed="'+(w.id===mode)+'"><img src="'+pics[w.id]+'" alt=""><b>'+w.name+'</b><span>'+w.text+'</span><i style="width:'+w.w+'"></i></button>').join("");
   $("walks").querySelectorAll("button").forEach(b => b.onclick = () => { mode = b.dataset.id; setupHome(); });
   $("campPanel").classList.toggle("hidden", mode!=="day");
-  $("camps").innerHTML = CAMPS.map(c => '<button type="button" data-id="'+c.id+'" aria-pressed="'+(c.id===camp)+'">'+c.label+'</button>').join("");
+  const campArt = {Law:"art/law.jpg", History:"art/history.jpg", Wisdom:"art/wisdom.jpg", Prophets:"art/prophets.jpg", Gospels:"art/gospels.jpg", Letters:"art/letters.jpg", Revelation:"art/revelation.jpg"};
+  $("camps").innerHTML = CAMPS.map(c => '<button type="button" data-id="'+c.id+'" aria-pressed="'+(c.id===camp)+'"><img src="'+(campArt[c.id]||"art/hero.jpg")+'" alt=""><span>'+c.label+'</span></button>').join("");
   $("camps").querySelectorAll("button").forEach(b => b.onclick = () => { camp = b.dataset.id; setupHome(); });
   renderAtlas();
   renderKnow();
