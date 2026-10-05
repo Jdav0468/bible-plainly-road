@@ -2378,19 +2378,19 @@ const dayLink = new URLSearchParams(location.search).get("day"); if(dayLink) sta
 }
 
 const GUIDE = {
-  god: {title:"God", play:null, kicker:"Before the stories", body:[
+  god: {title:"God", play:null, kicker:"Who the book says God is", body:[
     "The book opens with God. He speaks, and the heavens and the earth are there. He is not introduced. He is already the one who makes.",
     "He calls a people. He tells Abram to go. He hears Israel in Egypt and sends Moses. He gives the Law at the mountain. The later books say he keeps his word when the people do not.",
     "The prophets speak for him. The Gospels say Jesus is the one sent, and that the Word became flesh. The letters say God is light, and God is love, and that he raised Jesus from the dead.",
     "The last book shows him on the throne, and a city where he will dwell with his people. The claim sits on the page. Read it there."
   ]},
-  people: {title:"The people", play:null, kicker:"Who the book follows", body:[
+  people: {title:"The people", play:null, kicker:"The people the book follows", body:[
     "Adam and Eve are the first man and woman. Noah is the man kept through the flood. Abram, later Abraham, is the man called to leave his country. The promise was a people, a land, and a blessing.",
     "Moses leads Israel out of Egypt. Joshua takes them into the land. The judges are the years when there was no king. Ruth is a short story inside those years. Samuel anoints Saul, then David.",
     "David is the king the later books keep naming. The prophets speak to kings and to exiles. Esther is in the Persian court. Ezra and Nehemiah come back to Jerusalem.",
     "The Gospels follow Jesus, and the people around him: Mary, the twelve, the crowds. Acts follows the apostles, especially Peter and Paul. The letters are written to churches and to a few named people."
   ]},
-  events: {title:"The events", play:null, kicker:"What happens, in order", body:[
+  events: {title:"The events", play:null, kicker:"The story, from the first page to the last", body:[
     "Creation. The fall. The flood. The call of Abram. Joseph in Egypt, then a family that becomes a people in slavery.",
     "The exodus. The sea. The Law at Sinai. The wilderness. The land under Joshua. The judges. The kingdom under Saul, David, and Solomon. The kingdom splits.",
     "Assyria takes the north. Babylon takes Judah. The exile. A return. The temple is rebuilt. Then a long quiet, and the Gospels open.",
@@ -2440,7 +2440,7 @@ function setupLearn(){
   const keys = ["god","people","events","Law","History","Wisdom","Prophets","Gospels","Letters","Revelation"];
   $("learn").innerHTML = keys.map(k => {
     const read = !GUIDE[k].play;
-    return '<button class="walk'+(read?" read":"")+'" type="button" data-key="'+k+'"><b>'+(read?"Read: ":"")+GUIDE[k].title+'</b><span>'+(read?"A page to read. Not a game.":GUIDE[k].kicker)+'</span></button>';
+    return '<button class="walk'+(read?" read":"")+'" type="button" data-key="'+k+'"><b>'+GUIDE[k].title+'</b><span>'+GUIDE[k].kicker+'</span></button>';
   }).join("");
   $("learn").querySelectorAll("button").forEach(b => b.onclick = () => openGuide(b.dataset.key));
 }
