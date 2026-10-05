@@ -150,6 +150,14 @@
   @media (prefers-reduced-motion: reduce) {
     .book { animation: none; }
   }
+
+  .know { display: grid; gap: 8px; margin-top: 8px; }
+  .krow { display: grid; grid-template-columns: 132px 1fr 52px; gap: 8px; align-items: center; font-size: 13px; }
+  .krow b { font-weight: 600; }
+  .ktrack { height: 8px; background: #e4d9c8; border-radius: 99px; overflow: hidden; }
+  .ktrack span { display: block; height: 100%; background: #241c14; }
+  .knowline { font-family: var(--serif); font-size: 22px; margin: 0 0 8px; }
+  button.stone { cursor: pointer; font-family: inherit; }
 </style>
 </head>
 <body>
@@ -161,7 +169,7 @@
       </div>
       <button class="sound" id="sound" type="button" aria-pressed="false">Sound off</button>
     </div>
-    <p class="lede">A walk through the whole book. Sixty-six stones. One question at each. A right answer lights the stone. A miss still opens the page.</p>
+    <p class="lede">A walk through the whole book. Sixty-six stones. The count is how many books you can place from the page.</p>
 
     <section id="home">
       <figure class="hero">
@@ -172,6 +180,12 @@
         <h2>Choose a camp</h2>
         <p class="hint">You stop at every book in it, in the order the book is printed.</p>
         <div class="camps" id="camps"></div>
+      </div>
+      <div class="panel">
+        <h2>How well you know the book</h2>
+        <p class="knowline" id="knowLine">0 of 66 books you can place.</p>
+        <p class="hint">A book counts when you answer it from the page. A miss opens it, and does not count yet.</p>
+        <div class="know" id="know"></div>
       </div>
       <div class="panel">
         <div class="row" style="margin-top:0">
@@ -185,7 +199,7 @@
         <div class="slip" id="slip"></div>
       </div>
       <div class="about">
-        <p>A church can help. A preacher can explain a hard page. <strong>The score here is not the point.</strong> The point is to know where a line sits, and to go read it.</p>
+        <p>A church can help. A preacher can explain a hard page. The count is not a prize. It is how many books you can place, and a reason to go read the rest.</p>
         <p>The questions use the sixty-six books most English Bibles print. Wording is plain English, not a copyrighted translation. The reference is the place to open.</p>
       </div>
     </section>
@@ -198,7 +212,9 @@
       <div class="roadwrap"><div class="road" id="road"></div></div>
       <div class="book" id="book">
         <div class="leaf left">
-          <p class="qbook" id="sideKicker">The road</p>
+          <p class="qbook">How well you know it</p>
+          <p class="knowline" id="knowPlay">0 of 66</p>
+          <div class="know" id="knowSide"></div>
           <p class="mark" id="sideMark">Gen</p>
           <p class="aside" id="sideNote">Answer from the page.</p>
         </div>
@@ -234,7 +250,7 @@
         <div id="reviewList"></div>
       </div>
     </section>
-    <p class="foot">Get it from the page, not from a score.<br>Keys: 1–4 to answer, H for the reference, Enter to turn the page.</p>
+    <p class="foot">The count is how many books you can place. Tap a stone to see what you know.<br>Keys: 1–4 to answer, H for the reference, Enter to turn the page.</p>
   </div>
 <script>
 const BANK = [
@@ -419,6 +435,21 @@ function spineClass(book){
   const sec = sectionOf(book).toLowerCase();
   return sec + (save.known.includes(book)?" known":"") + (save.opened.includes(book)&&!save.known.includes(book)?" opened":"");
 }
+
+function knowHtml(){
+  return CAMPS.map(c => {
+    const n = c.books.filter(b => save.known.includes(b)).length;
+    const pct = Math.round(100 * n / c.books.length);
+    return '<div class="krow"><b>'+c.label+'</b><div class="ktrack"><span style="width:'+pct+'%"></span></div><span>'+n+'/'+c.books.length+'</span></div>';
+  }).join("");
+}
+function renderKnow(){
+  const line = save.known.length+" of 66 books you can place.";
+  if($("knowLine")) $("knowLine").textContent = line;
+  if($("know")) $("know").innerHTML = knowHtml();
+  if($("knowPlay")) $("knowPlay").textContent = save.known.length+" of 66";
+  if($("knowSide")) $("knowSide").innerHTML = knowHtml();
+}
 function renderAtlas(){
   $("atlas").innerHTML = ORDER.map(b => '<button type="button" class="'+spineClass(b)+'" data-book="'+b+'">'+SHORT[b]+'</button>').join("");
   $("atlas").querySelectorAll("button").forEach(b => b.onclick = () => openSlip(b.dataset.book));
@@ -442,6 +473,7 @@ function setupHome(){
   $("camps").innerHTML = CAMPS.map(c => '<button type="button" data-id="'+c.id+'" aria-pressed="'+(c.id===camp)+'">'+c.label+'</button>').join("");
   $("camps").querySelectorAll("button").forEach(b => b.onclick = () => { camp = b.dataset.id; setupHome(); });
   renderAtlas();
+  renderKnow();
 }
 function others(book){
   const pool = ORDER.filter(b => b!==book);
@@ -484,8 +516,12 @@ function renderRoad(){
     const known = walk.knownNow.includes(b) || save.known.includes(b);
     const opened = walk.missedNow.some(m => m.book===b) || save.opened.includes(b);
     const now = cur && cur.book===b;
-    return '<div class="stone'+(known?" known":opened?" opened":"")+(now?" now":"")+'"><b>'+SHORT[b]+'</b><small>'+(known?"from the page":opened?"opened":now?"now":"ahead")+'</small></div>';
+    return '<button type="button" class="stone'+(known?" known":opened?" opened":"")+(now?" now":"")+'" data-book="'+b+'"><b>'+SHORT[b]+'</b><small>'+(known?"placed":opened?"opened":now?"now":"ahead")+'</small></button>';
   }).join("");
+  $("road").querySelectorAll("button").forEach(el => el.onclick = () => {
+    const note = save.notes[el.dataset.book];
+    $("sideNote").textContent = note ? el.dataset.book+": "+note.plain : el.dataset.book+" is not placed yet.";
+  });
   const node = $("road").querySelector(".now");
   if(node && node.scrollIntoView) node.scrollIntoView({inline:"center", block:"nearest"});
 }
@@ -499,11 +535,11 @@ function renderStep(){
   $("looked").classList.add("hidden");
   $("tools").classList.remove("hidden");
   renderRoad();
+  renderKnow();
   $("bar").style.width = Math.round((stepIndex()/steps().length)*100)+"%";
   const book = $("book"); book.style.animation = "none"; void book.offsetWidth; book.style.animation = "";
   if(item.kind==="rest"){
     $("progressLabel").textContent = "A rest";
-    $("sideKicker").textContent = "Between camps";
     $("sideMark").textContent = campLabel(item.to);
     $("sideNote").textContent = "Nothing to answer. The road changes here.";
     $("qbook").textContent = campLabel(item.to);
@@ -517,7 +553,6 @@ function renderStep(){
     return;
   }
   $("progressLabel").textContent = (stepIndex()+1)+" of "+steps().length;
-  $("sideKicker").textContent = item.place ? "Find the page" : campLabel(item.section);
   $("sideMark").textContent = item.place ? "?" : SHORT[item.book];
   $("sideNote").textContent = item.place ? "The line is on the right. Name the book it sits in." : item.book+". Answer from what the page says.";
   $("qbook").textContent = (item.place ? "Which book" : item.book)+" · "+campLabel(item.section);
@@ -558,7 +593,11 @@ function answer(n){
   $("sideMark").textContent = SHORT[item.book];
   $("sideNote").textContent = ok ? "Right. "+item.ref : "Not that one. "+item.ref;
   $("verdict").className = "verdict show "+(ok?"right":"wrong");
-  $("verdict").innerHTML = (ok?"Right.":"Not that one.")+"<span>"+esc(item.ref)+". "+esc(item.plain)+"</span>";
+  const campBooks = CAMPS.find(c => c.books.includes(item.book));
+  const placed = campBooks ? campBooks.books.filter(b => save.known.includes(b)).length : 0;
+  const campBit = campBooks ? " "+campBooks.label+": "+placed+" of "+campBooks.books.length+"." : "";
+  $("verdict").innerHTML = (ok?"You can place "+esc(item.book)+".":"Opened, not placed yet.")+"<span>"+esc(item.ref)+". "+esc(item.plain)+campBit+" You can place "+save.known.length+" of 66.</span>";
+  renderKnow();
   $("ref").textContent = item.ref;
   $("plain").textContent = item.plain;
   $("looked").classList.toggle("hidden", !walk.looked);
@@ -575,8 +614,8 @@ function next(){
 }
 function finish(){
   show("done");
-  $("finalScore").textContent = walk.knownNow.length+" of "+steps().length+" from the page.";
-  $("finalPlain").textContent = walk.mode==="road" ? "You have walked the sixty-six. Open any page you missed." : "A short walk. The rest of the road is still there.";
+  $("finalScore").textContent = save.known.length+" of 66 books you can place.";
+  $("finalPlain").textContent = "This walk: "+walk.knownNow.length+" of "+steps().length+" from the page. The bars show the whole book.";
   $("finalBooks").innerHTML = walk.books.map(b => '<button type="button" class="'+spineClass(b)+'">'+SHORT[b]+'</button>').join("");
   $("reviewList").innerHTML = "";
   $("bar").style.width = "100%";
