@@ -334,6 +334,9 @@
 
   #todayRow { margin: 14px 0 18px; }
   #today { min-height: 48px; }
+
+  #guideBody p { font-size: 18px; line-height: 1.5; margin: 0 0 12px; }
+  #learn button { text-align: left; }
 </style>
 </head>
 <body>
@@ -349,7 +352,21 @@
     <div class="row" id="todayRow"><button class="go" id="today" type="button">Today's question</button></div>
     <p class="hint" id="dayCount"></p>
 
+    
+    <section id="guide" class="hidden">
+      <div class="panel">
+        <p class="qbook" id="guideKicker">The book</p>
+        <h2 id="guideTitle">Read this first</h2>
+        <div id="guideBody"></div>
+        <div class="row">
+          <button class="go" id="guidePlay" type="button">Open this part</button>
+          <button class="ghost" id="guideHome" type="button">Main page</button>
+        </div>
+      </div>
+    </section>
     <section id="home">
+      <div class="panel"><h2>Learn the book</h2><p class="hint">A short guide to the story, the people, the events, and God. Then open that part.</p><div class="walks" id="learn"></div></div>
+
       <div class="walks" id="walks"></div>
       <div class="gallery" id="gallery" aria-label="Open a part of the book">
         <button type="button" data-camp="Law"><img src="art/law.jpg?v=6" alt=""><span>The Law</span></button>
@@ -2241,7 +2258,7 @@ function persist(){ try { localStorage.setItem(KEY, JSON.stringify(save)); } cat
 function esc(s){ return String(s).replace(/[&<>]/g, c => ({"&":"&","<":"<",">":">"}[c])); }
 function sectionOf(book){ const q = BANK.find(x => x.book===book); return q ? q.section : ""; }
 function campLabel(section){ if(section==="Gospels"||section==="Acts") return "Gospels and Acts"; const c = CAMPS.find(x => x.id===section); return c ? c.label : section; }
-function show(id){ ["home","play","done"].forEach(s => $(s).classList.toggle("hidden", s!==id)); }
+function show(id){ ["home","play","done","guide"].forEach(s => $(s).classList.toggle("hidden", s!==id)); }
 function tone(ok){
   if(!soundOn) return;
   try {
@@ -2356,7 +2373,73 @@ const dayLink = new URLSearchParams(location.search).get("day"); if(dayLink) sta
   const note = $("inviteNote");
   if(note) note.textContent = "Cleared. You can start over.";
 }
+
+const GUIDE = {
+  god: {title:"God", play:null, kicker:"Before the stories", body:[
+    "The book opens with God. He speaks, and the heavens and the earth are there. He is not introduced. He is already the one who makes.",
+    "He calls a people. He tells Abram to go. He hears Israel in Egypt and sends Moses. He gives the Law at the mountain. The later books say he keeps his word when the people do not.",
+    "The prophets speak for him. The Gospels say Jesus is the one sent, and that the Word became flesh. The letters say God is light, and God is love, and that he raised Jesus from the dead.",
+    "The last book shows him on the throne, and a city where he will dwell with his people. The claim sits on the page. Read it there."
+  ]},
+  people: {title:"The people", play:null, kicker:"Who the book follows", body:[
+    "Adam and Eve are the first man and woman. Noah is the man kept through the flood. Abram, later Abraham, is the man called to leave his country. The promise was a people, a land, and a blessing.",
+    "Moses leads Israel out of Egypt. Joshua takes them into the land. The judges are the years when there was no king. Ruth is a short story inside those years. Samuel anoints Saul, then David.",
+    "David is the king the later books keep naming. The prophets speak to kings and to exiles. Esther is in the Persian court. Ezra and Nehemiah come back to Jerusalem.",
+    "The Gospels follow Jesus, and the people around him: Mary, the twelve, the crowds. Acts follows the apostles, especially Peter and Paul. The letters are written to churches and to a few named people."
+  ]},
+  events: {title:"The events", play:null, kicker:"What happens, in order", body:[
+    "Creation. The fall. The flood. The call of Abram. Joseph in Egypt, then a family that becomes a people in slavery.",
+    "The exodus. The sea. The Law at Sinai. The wilderness. The land under Joshua. The judges. The kingdom under Saul, David, and Solomon. The kingdom splits.",
+    "Assyria takes the north. Babylon takes Judah. The exile. A return. The temple is rebuilt. Then a long quiet, and the Gospels open.",
+    "Jesus is born, teaches, is crucified, and the Gospels say he was raised. Acts is the word going out. The letters are to those churches. Revelation is the last book, a city and a throne."
+  ]},
+  Law: {title:"The Law", play:"Law", kicker:"Genesis to Deuteronomy", body:[
+    "Five books. Genesis is the beginning, the family of Abraham, and the road to Egypt. Exodus is the leaving, the sea, and the Law. Leviticus is the holy place and the sacrifices. Numbers is the wilderness. Deuteronomy is Moses speaking the Law again before he dies.",
+    "God is the one who creates, calls, rescues, and commands. The people are Abraham's family, then Israel."
+  ]},
+  History: {title:"The Histories", play:"History", kicker:"Joshua to Esther", body:[
+    "Joshua is the land. Judges is the cycle of leaving and return. Ruth is one family in those years. Samuel and Kings are the kingdom, David, and the split. Chronicles tells the same years with the temple in view.",
+    "Ezra and Nehemiah are the return and the wall. Esther is the threat in the Persian court. The events are the land, the kings, the exile, and the return."
+  ]},
+  Wisdom: {title:"Wisdom", play:"Wisdom", kicker:"Job to the Song of Solomon", body:[
+    "Job is a man who suffers and will not let go of the question. Psalms are the prayers and songs. Proverbs is wisdom for a walk. Ecclesiastes looks at work and what lasts. The Song is a love song in the book.",
+    "These pages are not a later story. They are how the people prayed, learned, and spoke about God in the middle of the story."
+  ]},
+  Prophets: {title:"The Prophets", play:"Prophets", kicker:"Isaiah to Malachi", body:[
+    "The prophets speak to kings, to a people who left, and to exiles. Isaiah has the servant. Jeremiah warns, and Lamentations mourns the city. Ezekiel sees the bones live. Daniel is in Babylon.",
+    "The twelve shorter books call the people back. Jonah is sent to Nineveh. Malachi is the last of them, before the Gospels."
+  ]},
+  Gospels: {title:"The Gospels and Acts", play:"Gospels", kicker:"Matthew to Acts", body:[
+    "Four accounts of Jesus, then the book of the witnesses. Matthew opens on the son of David. Mark opens on the gospel of Jesus Christ. Luke writes an orderly account. John says the Word became flesh.",
+    "The events are his birth, his teaching, the cross, and the resurrection the pages claim. Acts is that word going from Jerusalem outward."
+  ]},
+  Letters: {title:"The Letters", play:"Letters", kicker:"Romans to Jude", body:[
+    "Paul writes to churches and to Timothy, Titus, and Philemon. The other letters are Hebrews, James, Peter, John, and Jude.",
+    "They explain the cross and the resurrection, how a church lives, and who Jesus is. They are not a new story. They are letters about the one the Gospels told."
+  ]},
+  Revelation: {title:"The last book", play:"Revelation", kicker:"Revelation", body:[
+    "John is told to write what he sees and send it to seven churches. The book is visions: a throne, lamps, a city, and a last word.",
+    "It sits at the end. The claim is that God finishes what he began, and that he will dwell with his people."
+  ]}
+};
+let guideKey = "god";
+function openGuide(key){
+  guideKey = key;
+  const g = GUIDE[key];
+  $("guideKicker").textContent = g.kicker;
+  $("guideTitle").textContent = g.title;
+  $("guideBody").innerHTML = g.body.map(p => "<p>"+esc(p)+"</p>").join("");
+  $("guidePlay").classList.toggle("hidden", !g.play);
+  $("guidePlay").textContent = g.play ? "Open this part" : "Open a book";
+  show("guide");
+}
+function setupLearn(){
+  const keys = ["god","people","events","Law","History","Wisdom","Prophets","Gospels","Letters","Revelation"];
+  $("learn").innerHTML = keys.map(k => '<button class="walk" type="button" data-key="'+k+'"><b>'+GUIDE[k].title+'</b><span>'+GUIDE[k].kicker+'</span></button>').join("");
+  $("learn").querySelectorAll("button").forEach(b => b.onclick = () => openGuide(b.dataset.key));
+}
 function setupHome(){
+  setupLearn();
   const walks = [
     {id:"mile", name:"A short walk", text:"Tap to open. Twelve questions.", w:"34%"},
     {id:"day", name:"One part", text:"Tap, then choose a part.", w:"66%"},
@@ -2595,6 +2678,8 @@ function review(){
 $("gallery").querySelectorAll("button").forEach(b => b.onclick = () => { camp = b.dataset.camp; mode = "day"; start(); });
 $("begin").onclick = start;
 $("today").onclick = () => startDay();
+$("guideHome").onclick = () => { show("home"); setupHome(); };
+$("guidePlay").onclick = () => { const g = GUIDE[guideKey]; if(!g.play){ show("home"); return; } camp = g.play; mode = "day"; start(); };
 $("invite").onclick = () => invite("inviteNote");
 $("clearHistory").onclick = clearHistory;
 $("inviteDone").onclick = () => invite("inviteDoneNote");
