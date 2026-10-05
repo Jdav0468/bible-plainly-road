@@ -350,7 +350,7 @@
   .trow { display:grid; grid-template-columns: 92px 1fr 64px; gap:8px; align-items:center; font-size:13px; }
   .tbar { height:8px; background:#e7e1d8; border-radius:99px; overflow:hidden; }
   .tbar span { display:block; height:100%; width:0; background:#c8c2b8; }
-  .tbar.known span { width:100%; background:#2c2824; }
+  .tbar.known span, .tbar span { background:#2c2824; }
   .tbar.opened span { width:45%; background:#8a8175; }
 
   #stepLine { margin: 2px 0 0; color:#1c1916 !important; font-size:15px; }
@@ -2281,7 +2281,7 @@ function timeUp(){
   renderKnow();
 }
 
-function load(){ try { return Object.assign({known:[], opened:[], notes:{}, used:[]}, JSON.parse(localStorage.getItem(KEY)||"{}")); } catch(e){ return {known:[], opened:[], notes:{}, used:[]}; } }
+function load(){ try { return Object.assign({known:[], opened:[], notes:{}, used:[], right:[]}, JSON.parse(localStorage.getItem(KEY)||"{}")); } catch(e){ return {known:[], opened:[], notes:{}, used:[], right:[]}; } }
 function persist(){ try { localStorage.setItem(KEY, JSON.stringify(save)); } catch(e){} }
 function esc(s){ return String(s).replace(/[&<>]/g, c => ({"&":"&","<":"<",">":">"}[c])); }
 function sectionOf(book){ const q = BANK.find(x => x.book===book); return q ? q.section : ""; }
@@ -2363,11 +2363,11 @@ function renderTally(){
   if(!el) return;
   if($("tallyLine")) $("tallyLine").textContent = save.known.length+" of 66 books you know.";
   el.innerHTML = ORDER.map(b => {
-    const known = save.known.includes(b);
-    const opened = save.opened.includes(b);
-    const state = known ? "known" : opened ? "opened" : "";
-    const word = known ? "known" : opened ? "opened" : "not yet";
-    return '<div class="trow"><span>'+SHORT[b]+'</span><div class="tbar '+state+'"><span></span></div><small>'+word+'</small></div>';
+    const total = bookQuestions(b).length || 1;
+    const got = bookRight(b);
+    const known = got===total;
+    const word = known ? "known" : got ? got+" of "+total : "not yet";
+    return '<div class="trow"><span>'+SHORT[b]+'</span><div class="tbar '+(known?"known":"")+'"><span style="width:'+Math.round(got/total*100)+'%"></span></div><small>'+word+'</small></div>';
   }).join("");
 }
 function renderKnow(){
@@ -2430,7 +2430,7 @@ async function invite(noteId, text){
 
 function clearHistory(){
   if(!confirm("Clear this game and start over? The books you know will be forgotten on this device.")) return;
-  save = {known:[], opened:[], notes:{}, used:[]};
+  save = {known:[], opened:[], notes:{}, used:[], right:[]};
   persist();
   walk = null;
   show("home");
@@ -2685,6 +2685,22 @@ function renderStep(){
   $("answers").innerHTML = opts.map((o,n) => '<button class="choice" type="button"><span class="key">'+(n+1)+'</span><span>'+esc(o.t)+'</span></button>').join("");
   $("answers").querySelectorAll("button").forEach((b,n) => b.onclick = () => answer(n));
 }
+
+function qid(item){ return item.book+"|"+item.ref+"|"+item.prompt; }
+function bookQuestions(book){ return BANK.filter(q => q.book===book); }
+function bookRight(book){ return bookQuestions(book).filter(q => (save.right||[]).includes(qid(q))).length; }
+function refreshBook(book){
+  const all = bookQuestions(book);
+  const got = bookRight(book);
+  if(!save.right) save.right = [];
+  if(all.length && got===all.length){
+    if(!save.known.includes(book)) save.known.push(book);
+    save.opened = save.opened.filter(b => b!==book);
+  } else {
+    save.known = save.known.filter(b => b!==book);
+    if(got>0 && !save.opened.includes(book)) save.opened.push(book);
+  }
+}
 function answer(n){
   if(walk.locked) return;
   const item = walk.queue[walk.i];
@@ -2696,27 +2712,28 @@ function answer(n){
     if(walk.opts[i].ok) b.classList.add("right");
     else if(i===n) b.classList.add("wrong");
   });
-  const id = item.book+"|"+item.ref+"|"+item.prompt;
+  const id = qid(item);
   if(!save.used.includes(id)) save.used.push(id);
+  if(!save.right) save.right = [];
   save.notes[item.book] = {ref:item.ref, plain:item.plain};
   if(ok){
     walk.streak += 1;
-    if(!walk.knownNow.includes(item.book)) walk.knownNow.push(item.book);
-    if(!save.known.includes(item.book)) save.known.push(item.book);
-    save.opened = save.opened.filter(b => b!==item.book);
+    if(!save.right.includes(id)) save.right.push(id);
     tone(true);
   } else {
     walk.missedNow.push(item);
-    if(!save.known.includes(item.book) && !save.opened.includes(item.book)) save.opened.push(item.book);
+    save.right = save.right.filter(x => x!==id);
     tone(false);
   }
+  refreshBook(item.book);
+  if(ok && save.known.includes(item.book) && !walk.knownNow.includes(item.book)) walk.knownNow.push(item.book);
   persist();
   stepLine();
   $("verdict").className = "verdict show "+(ok?"right":"wrong");
   const campBooks = CAMPS.find(c => c.books.includes(item.book));
   const placed = campBooks ? campBooks.books.filter(b => save.known.includes(b)).length : 0;
   const campBit = campBooks ? " "+campBooks.label+": "+placed+" of "+campBooks.books.length+"." : "";
-  $("verdict").innerHTML = "Found in "+esc(item.ref)+". "+(ok?"You know "+esc(item.book)+".":"Opened, not placed yet.")+"<span>"+esc(item.plain)+whyOthers()+campBit+" You know "+save.known.length+" of 66.</span>";
+  $("verdict").innerHTML = "Found in "+esc(item.ref)+". "+((save.known.includes(item.book)?"You know "+esc(item.book)+".":esc(item.book)+": "+bookRight(item.book)+" of "+bookQuestions(item.book).length+" right."))+"<span>"+esc(item.plain)+whyOthers()+campBit+" You know "+save.known.length+" of 66.</span>";
   renderKnow();
   $("page").classList.remove("show");
   $("ref").textContent = "";
