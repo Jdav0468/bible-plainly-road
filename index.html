@@ -292,6 +292,9 @@
 
   .playtop { display:flex; justify-content:space-between; align-items:center; gap:12px; }
   #back { min-height:44px; }
+
+  #clock { font-variant-numeric: tabular-nums; letter-spacing: 0.04em; font-size: 18px; color:#1c1916; }
+  #clock.low { color:#9f3d32; }
 </style>
 </head>
 <body>
@@ -349,6 +352,7 @@
       <div class="playtop">
         <button class="ghost" id="back" type="button">Main page</button>
         <div class="meta" id="progressLabel">1 of 12</div>
+        <div class="meta" id="clock">0:30</div>
       </div>
       <div class="bar"><span id="bar"></span></div>
       <div class="roadwrap"><div class="road" id="road"></div></div><p class="hint">Or open any book.</p><div class="spines" id="anybook"></div>
@@ -555,6 +559,49 @@ const KEY = "biblePlainlyRoadV3";
 const $ = id => document.getElementById(id);
 let save = load();
 let walk = null, mode = "mile", camp = "Law", soundOn = true, audioCtx = null;
+let clockTimer = null, clockLeft = 30;
+const QUESTION_SECONDS = 30;
+function clearClock(){ if(clockTimer){ clearInterval(clockTimer); clockTimer = null; } }
+function paintClock(){
+  const el = $("clock");
+  if(!el) return;
+  const m = Math.floor(clockLeft/60), s = clockLeft%60;
+  el.textContent = m+":"+(s<10?"0":"")+s;
+  el.classList.toggle("low", clockLeft<=5);
+}
+function startClock(){
+  clearClock();
+  clockLeft = QUESTION_SECONDS;
+  paintClock();
+  clockTimer = setInterval(() => {
+    clockLeft -= 1;
+    paintClock();
+    if(clockLeft<=0){ clearClock(); timeUp(); }
+  }, 1000);
+}
+function timeUp(){
+  if(!walk || walk.locked) return;
+  const item = walk.queue[walk.i];
+  if(!item || item.kind!=="q") return;
+  walk.locked = true;
+  $("answers").querySelectorAll("button").forEach((b,i) => {
+    b.disabled = true;
+    if(walk.opts[i].ok) b.classList.add("right");
+  });
+  const id = item.book+"|"+item.ref+"|"+item.prompt;
+  if(!save.used.includes(id)) save.used.push(id);
+  save.notes[item.book] = {ref:item.ref, plain:item.plain};
+  walk.missedNow.push(item);
+  if(!save.known.includes(item.book) && !save.opened.includes(item.book)) save.opened.push(item.book);
+  persist();
+  tone(false);
+  $("sideMark").textContent = SHORT[item.book];
+  $("sideNote").textContent = "Time. "+item.ref;
+  $("verdict").className = "verdict wrong";
+  $("verdict").textContent = "Time. "+item.ref;
+  renderRoad();
+  renderKnow();
+}
 
 function load(){ try { return Object.assign({known:[], opened:[], notes:{}, used:[]}, JSON.parse(localStorage.getItem(KEY)||"{}")); } catch(e){ return {known:[], opened:[], notes:{}, used:[]}; } }
 function persist(){ try { localStorage.setItem(KEY, JSON.stringify(save)); } catch(e){} }
@@ -734,6 +781,8 @@ function renderStep(){
   $("bar").style.width = Math.round((stepIndex()/steps().length)*100)+"%";
   const book = $("book"); book.style.animation = "none"; void book.offsetWidth; book.style.animation = "";
   if(item.kind==="rest"){
+    clearClock();
+    $("clock").textContent = "";
     $("progressLabel").textContent = "A rest";
     $("sideMark").textContent = campLabel(item.to);
     $("sideNote").textContent = "Nothing to answer. The road changes here.";
@@ -749,6 +798,7 @@ function renderStep(){
     return;
   }
   $("progressLabel").textContent = (stepIndex()+1)+" of "+steps().length;
+  startClock();
   setScene(item.section);
   $("sideMark").textContent = item.place ? "?" : SHORT[item.book];
   $("sideNote").textContent = item.place ? "The line is on the right. Name the book it sits in." : item.book+". Answer from what the page says.";
@@ -804,12 +854,14 @@ function answer(n){
   $("verdict").scrollIntoView({block:"nearest"});
 }
 function next(){
+  clearClock();
   const item = walk.queue[walk.i];
   walk.i += 1;
   if(walk.i>=walk.queue.length){ finish(); return; }
   renderStep();
 }
 function finish(){
+  clearClock();
   show("done");
   $("finalScore").textContent = save.known.length+" of 66 books you can place.";
   $("finalPlain").textContent = "This walk: "+walk.knownNow.length+" of "+steps().length+" from the page. The bars show the whole book.";
@@ -833,8 +885,8 @@ $("hint").onclick = () => {
   $("looked").classList.remove("hidden");
   $("page").classList.add("show");
 };
-$("quit").onclick = () => { show("home"); setupHome(); };
-$("back").onclick = () => { show("home"); setupHome(); };
+$("quit").onclick = () => { clearClock(); show("home"); setupHome(); };
+$("back").onclick = () => { clearClock(); show("home"); setupHome(); };
 $("again").onclick = () => { show("home"); setupHome(); };
 $("review").onclick = review;
 $("sound").onclick = () => { soundOn = !soundOn; $("sound").textContent = soundOn ? "Sound on" : "Sound off"; if(soundOn) tone(true); };
