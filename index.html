@@ -2375,19 +2375,19 @@ const dayLink = new URLSearchParams(location.search).get("day"); if(dayLink) sta
 }
 
 const GUIDE = {
-  god: {title:"God", play:null, kicker:"Before the stories", body:[
+  god: {title:"God", play:"Law", kicker:"Before the stories", body:[
     "The book opens with God. He speaks, and the heavens and the earth are there. He is not introduced. He is already the one who makes.",
     "He calls a people. He tells Abram to go. He hears Israel in Egypt and sends Moses. He gives the Law at the mountain. The later books say he keeps his word when the people do not.",
     "The prophets speak for him. The Gospels say Jesus is the one sent, and that the Word became flesh. The letters say God is light, and God is love, and that he raised Jesus from the dead.",
     "The last book shows him on the throne, and a city where he will dwell with his people. The claim sits on the page. Read it there."
   ]},
-  people: {title:"The people", play:null, kicker:"Who the book follows", body:[
+  people: {title:"The people", play:"History", kicker:"Who the book follows", body:[
     "Adam and Eve are the first man and woman. Noah is the man kept through the flood. Abram, later Abraham, is the man called to leave his country. The promise was a people, a land, and a blessing.",
     "Moses leads Israel out of Egypt. Joshua takes them into the land. The judges are the years when there was no king. Ruth is a short story inside those years. Samuel anoints Saul, then David.",
     "David is the king the later books keep naming. The prophets speak to kings and to exiles. Esther is in the Persian court. Ezra and Nehemiah come back to Jerusalem.",
     "The Gospels follow Jesus, and the people around him: Mary, the twelve, the crowds. Acts follows the apostles, especially Peter and Paul. The letters are written to churches and to a few named people."
   ]},
-  events: {title:"The events", play:null, kicker:"What happens, in order", body:[
+  events: {title:"The events", play:"road", kicker:"What happens, in order", body:[
     "Creation. The fall. The flood. The call of Abram. Joseph in Egypt, then a family that becomes a people in slavery.",
     "The exodus. The sea. The Law at Sinai. The wilderness. The land under Joshua. The judges. The kingdom under Saul, David, and Solomon. The kingdom splits.",
     "Assyria takes the north. Babylon takes Judah. The exile. A return. The temple is rebuilt. Then a long quiet, and the Gospels open.",
@@ -2429,8 +2429,8 @@ function openGuide(key){
   $("guideKicker").textContent = g.kicker;
   $("guideTitle").textContent = g.title;
   $("guideBody").innerHTML = g.body.map(p => "<p>"+esc(p)+"</p>").join("");
-  $("guidePlay").classList.toggle("hidden", !g.play);
-  $("guidePlay").textContent = g.play ? "Open this part" : "Open a book";
+  $("guidePlay").classList.remove("hidden");
+  $("guidePlay").textContent = g.play==="road" ? "Open the whole book" : "Open this part";
   show("guide");
 }
 function setupLearn(){
@@ -2679,7 +2679,7 @@ $("gallery").querySelectorAll("button").forEach(b => b.onclick = () => { camp = 
 $("begin").onclick = start;
 $("today").onclick = () => startDay();
 $("guideHome").onclick = () => { show("home"); setupHome(); };
-$("guidePlay").onclick = () => { const g = GUIDE[guideKey]; if(!g.play){ show("home"); return; } camp = g.play; mode = "day"; start(); };
+$("guidePlay").onclick = () => { const g = GUIDE[guideKey]; if(g.play==="road"){ mode = "road"; start(); return; } camp = g.play; mode = "day"; start(); };
 $("invite").onclick = () => invite("inviteNote");
 $("clearHistory").onclick = clearHistory;
 $("inviteDone").onclick = () => invite("inviteDoneNote");
