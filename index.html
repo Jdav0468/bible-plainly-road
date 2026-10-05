@@ -913,7 +913,7 @@ function hintFor(item){
     line = line.replace(re, "the one you are looking for");
   }
   if(item.place) return {title: part, text: "This line is about that page: "+line+" It sits in "+part+". The book is still yours to name."};
-  return {title: item.book, text: "Stay with the question. "+line+" Look in "+item.book+"."};
+  return {title: item.book, text: line+" Look in "+item.book+"."};
 }
 $("hint").onclick = () => {
   const item = walk.queue[walk.i];
