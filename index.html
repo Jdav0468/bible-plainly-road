@@ -347,6 +347,7 @@
     </div>
     <p class="lede">Sixty-six books. It is worth studying because the truth is in the Bible. A church can help, and a preacher can explain, but you still need to open it yourself. A hint can point you to the part. The line is still yours to place.</p>
     <div class="row" id="todayRow"><button class="go" id="today" type="button">Today's question</button></div>
+    <p class="hint" id="dayCount"></p>
 
     <section id="home">
       <div class="walks" id="walks"></div>
@@ -2350,6 +2351,7 @@ function clearHistory(){
   walk = null;
   show("home");
   setupHome();
+showDayCount(dayStamp());
 const dayLink = new URLSearchParams(location.search).get("day"); if(dayLink) startDay(dayLink);
   const note = $("inviteNote");
   if(note) note.textContent = "Cleared. You can start over.";
@@ -2412,9 +2414,41 @@ function questionForDay(stamp){
   return BANK[n];
 }
 function whyOthers(item){
-  const wrong = (item.choices||[]).slice(1);
-  if(!wrong.length) return "";
-  return " The other choices do not fit this page: "+wrong.join("; ")+". The page says something else.";
+  const choices = item.choices || [];
+  const bits = choices.slice(1).map((c,i) => {
+    const given = item.why && item.why[i];
+    return given ? c+" — "+given : c+" is a different story. It is not the line at "+item.ref+".";
+  });
+  return bits.length ? " Why the others do not fit: "+bits.join(" ") : "";
+}
+function dayKey(stamp){ return "bibleplainly-"+stamp; }
+async function dayCount(stamp, hit){
+  const key = dayKey(stamp);
+  const url = "https://abacus.jasoncameron.dev/"+(hit?"hit":"get")+"/jdav0468-bible/"+key;
+  try {
+    const res = await fetch(url);
+    if(!res.ok) return null;
+    const data = await res.json();
+    return Number(data.value);
+  } catch(e){ return null; }
+}
+async function showDayCount(stamp){
+  const el = $("dayCount");
+  if(!el) return;
+  const n = await dayCount(stamp, false);
+  const mine = localStorage.getItem("placed-"+stamp)==="1";
+  el.textContent = n==null ? "The day's count is not available right now." : n+" placed today's question."+(mine?" You are in that count.":"");
+}
+async function markPlaced(stamp){
+  if(localStorage.getItem("placed-"+stamp)==="1"){ showDayCount(stamp); return; }
+  localStorage.setItem("placed-"+stamp, "1");
+  await dayCount(stamp, true);
+  showDayCount(stamp);
+}
+function afterAnswer(item, ok){
+  if(!item.day) return;
+  showDayCount(item.day);
+  if(ok) markPlaced(item.day);
 }
 function startDay(stamp){
   stamp = stamp || dayStamp();
@@ -2426,6 +2460,7 @@ function startDay(stamp){
   show("play");
   renderStep();
   $("progressLabel").textContent = "Today, "+stamp;
+  showDayCount(stamp);
 }
 function start(){
   pageSound();
@@ -2531,6 +2566,7 @@ function answer(n){
   $("plain").textContent = "";
   $("tools").classList.add("hidden");
   $("nextRow").classList.add("show");
+  afterAnswer(item, ok);
   renderRoad();
   $("verdict").scrollIntoView({block:"nearest"});
 }
