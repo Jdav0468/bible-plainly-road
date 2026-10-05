@@ -151,11 +151,11 @@
       </div>
       <button class="sound" id="sound" type="button" aria-pressed="false">Sound off</button>
     </div>
-    <p class="lede">A walk through the whole book. Sixty-six stones. One question at each. You start with three measures of oil. A wrong answer spends one. At zero, you sit, then you can light it again.</p>
+    <p class="lede">A walk through the whole book. Sixty-six stones. One question at each. A right answer lights the stone. A miss still opens the page.</p>
 
     <section id="home">
       <figure class="hero">
-        <img src="https://raw.githubusercontent.com/Jdav0468/bible-plainly-road/main/table.jpg" alt="An open book and a brass lamp on a dark wood table." />
+        <img src="https://raw.githubusercontent.com/Jdav0468/bible-plainly-road/main/table.jpg" alt="An open book on a dark wood table." />
       </figure>
       <div class="walks" id="walks"></div>
       <div class="panel" id="campPanel">
@@ -183,15 +183,12 @@
     <section id="play" class="hidden">
       <div class="playtop">
         <div class="meta" id="progressLabel">1 of 12</div>
-        <p class="oil" id="oilTop">Oil left: 3</p>
       </div>
       <div class="bar"><span id="bar"></span></div>
       <div class="roadwrap"><div class="road" id="road"></div></div>
       <div class="book" id="book">
         <div class="leaf left">
           <p class="qbook" id="sideKicker">The road</p>
-          <div class="lampbox" id="lamp" aria-label="Oil lamp"></div>
-          <p class="oil" id="oilText">Oil left: 3. A wrong answer spends one.</p>
           <p class="mark" id="sideMark">Gen</p>
           <p class="aside" id="sideNote">Answer from the page.</p>
         </div>
@@ -209,19 +206,6 @@
             <button class="ghost" id="hint" type="button">Show the reference</button>
             <button class="ghost" id="quit" type="button">Close the book</button>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="bench" class="hidden">
-      <div class="panel">
-        <p class="qbook">The lamp is out</p>
-        <p class="scoreline">Sit a while.</p>
-        <p class="hint" id="benchPlain"></p>
-        <div id="benchList"></div>
-        <div class="row">
-          <button class="go" id="relight" type="button">Light it again</button>
-          <button class="ghost" id="benchLeave" type="button">Close the book</button>
         </div>
       </div>
     </section>
@@ -407,7 +391,7 @@ function persist(){ try { localStorage.setItem(KEY, JSON.stringify(save)); } cat
 function esc(s){ return String(s).replace(/[&<>]/g, c => ({"&":"&","<":"<",">":">"}[c])); }
 function sectionOf(book){ const q = BANK.find(x => x.book===book); return q ? q.section : ""; }
 function campLabel(section){ if(section==="Gospels"||section==="Acts") return "Gospels and Acts"; const c = CAMPS.find(x => x.id===section); return c ? c.label : section; }
-function show(id){ ["home","play","bench","done"].forEach(s => $(s).classList.toggle("hidden", s!==id)); }
+function show(id){ ["home","play","done"].forEach(s => $(s).classList.toggle("hidden", s!==id)); }
 function tone(ok){
   if(!soundOn) return;
   try {
@@ -477,22 +461,12 @@ function build(books){
 }
 function start(){
   const books = mode==="mile" ? MILE.slice() : mode==="day" ? CAMPS.find(c => c.id===camp).books.slice() : ORDER.slice();
-  walk = {mode, books, queue:build(books), i:0, lamp:3, max:4, streak:0, knownNow:[], missedNow:[], looked:false, locked:false};
+  walk = {mode, books, queue:build(books), i:0, knownNow:[], missedNow:[], looked:false, locked:false};
   show("play");
   renderStep();
 }
 function steps(){ return walk.queue.filter(x => x.kind==="q"); }
 function stepIndex(){ return walk.queue.slice(0, walk.i).filter(x => x.kind==="q").length; }
-function renderLamp(){
-  const n = Math.max(0, walk.lamp);
-  const h = Math.max(6, Math.round(42 * n / walk.max));
-  const y = 78 - h;
-  const flame = n>0 ? '<ellipse cx="40" cy="38" rx="5" ry="10" fill="#fff1c4"><animate attributeName="ry" values="10;7;10" dur="1.1s" repeatCount="indefinite"/></ellipse>' : '';
-  $("lamp").innerHTML = '<svg viewBox="0 0 80 120" width="88" height="132" aria-hidden="true"><ellipse cx="40" cy="110" rx="28" ry="6" fill="#d7c6ae"/><path d="M22 108 V80 h36 v28 z" fill="#8d7344"/><rect x="26" y="'+y+'" width="28" height="'+h+'" fill="#e7b85a"/><path d="M20 80 h40 v-7 h-40 z" fill="#c4a36a"/><path d="M28 73 h24 l7-30 h-38 z" fill="#f7f1e7" opacity="0.45" stroke="#c4a36a"/>'+flame+'</svg>';
-  const line = n>0 ? "Oil left: "+n+". A wrong answer spends one." : "No oil left.";
-  $("oilText").textContent = line;
-  $("oilTop").textContent = "Oil left: "+n;
-}
 function renderRoad(){
   const cur = walk.queue[walk.i];
   $("road").innerHTML = walk.books.map(b => {
@@ -511,7 +485,7 @@ function renderStep(){
   $("page").classList.remove("show");
   $("looked").classList.add("hidden");
   $("tools").classList.remove("hidden");
-  renderLamp(); renderRoad();
+  renderRoad();
   $("bar").style.width = Math.round((stepIndex()/steps().length)*100)+"%";
   const book = $("book"); book.style.animation = "none"; void book.offsetWidth; book.style.animation = "";
   if(item.kind==="rest"){
@@ -561,10 +535,9 @@ function answer(n){
     if(!walk.knownNow.includes(item.book)) walk.knownNow.push(item.book);
     if(!save.known.includes(item.book)) save.known.push(item.book);
     save.opened = save.opened.filter(b => b!==item.book);
-    if(walk.streak===3 && walk.lamp<walk.max){ walk.lamp += 1; walk.streak = 0; }
     tone(true);
   } else {
-    walk.streak = 0; walk.lamp -= 1; walk.missedNow.push(item);
+    walk.missedNow.push(item);
     if(!save.known.includes(item.book) && !save.opened.includes(item.book)) save.opened.push(item.book);
     tone(false);
   }
@@ -576,30 +549,18 @@ function answer(n){
   $("looked").classList.toggle("hidden", !walk.looked);
   $("page").classList.add("show");
   $("tools").classList.add("hidden");
-  renderLamp(); renderRoad();
-  if(!ok && walk.lamp<=0) $("next").textContent = "Sit down";
+  renderRoad();
 }
 function next(){
   const item = walk.queue[walk.i];
-  if(item && item.kind==="q" && walk.lamp<=0 && walk.locked){ bench(); return; }
   walk.i += 1;
-  if(walk.i>=walk.queue.length){ finish(); return; }
-  renderStep();
-}
-function bench(){
-  show("bench");
-  $("benchPlain").textContent = "Three wrong answers spent the oil. The pages below are the ones from this walk. Light it again and you go on, with two measures.";
-  $("benchList").innerHTML = walk.missedNow.map(m => '<div class="slip show"><b>'+esc(m.book)+" · "+esc(m.ref)+'</b><p>'+esc(m.plain)+'</p></div>').join("");
-}
-function relight(){
-  walk.lamp = 2; walk.streak = 0; walk.i += 1; show("play");
   if(walk.i>=walk.queue.length){ finish(); return; }
   renderStep();
 }
 function finish(){
   show("done");
   $("finalScore").textContent = walk.knownNow.length+" of "+steps().length+" from the page.";
-  $("finalPlain").textContent = walk.mode==="road" ? "You have walked the sixty-six. Open the book where the lamp went out." : "A short walk. The rest of the road is still there.";
+  $("finalPlain").textContent = walk.mode==="road" ? "You have walked the sixty-six. Open any page you missed." : "A short walk. The rest of the road is still there.";
   $("finalBooks").innerHTML = walk.books.map(b => '<button type="button" class="'+spineClass(b)+'">'+SHORT[b]+'</button>').join("");
   $("reviewList").innerHTML = "";
   $("bar").style.width = "100%";
@@ -621,8 +582,6 @@ $("hint").onclick = () => {
   $("page").classList.add("show");
 };
 $("quit").onclick = () => { show("home"); setupHome(); };
-$("relight").onclick = relight;
-$("benchLeave").onclick = () => { show("home"); setupHome(); };
 $("again").onclick = () => { show("home"); setupHome(); };
 $("review").onclick = review;
 $("sound").onclick = () => { soundOn = !soundOn; $("sound").textContent = soundOn ? "Sound on" : "Sound off"; if(soundOn) tone(true); };
