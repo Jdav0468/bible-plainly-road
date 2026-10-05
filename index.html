@@ -206,6 +206,29 @@
   .qbook, .ref, .slip b { color:#0f766e; }
   .bar { background:#e7f3f0; }
   .bar > span { background:#0f766e; }
+
+  body, .panel, .walk, .book, .leaf, .prompt, .knowline, .scoreline, .mark, .hint, .aside, .lede, .about, .foot, .slip, .page p {
+    color: #14211c;
+  }
+  .walk b, .walk span, .panel h2, .krow, .krow b, .stone, .stone b, .stone small, .choice, .choice .key {
+    color: #14211c;
+  }
+  .walk[aria-pressed="true"], .walk[aria-pressed="true"] b, .walk[aria-pressed="true"] span,
+  .camps button[aria-pressed="true"], .go, .stone.known, .stone.known b, .stone.known small,
+  .spines button.known {
+    color: #fff;
+  }
+  .spines button, .spines button.law, .spines button.history, .spines button.wisdom,
+  .spines button.prophets, .spines button.gospels, .spines button.acts, .spines button.letters, .spines button.revelation {
+    background: #e7f3f0;
+    color: #14211c;
+  }
+  .spines button.known { background: #0f766e; color: #fff; }
+  .qbook, .ref, .slip b, .kicker, h1 em { color: #0b5f59; }
+  .ghost, .camps button, .sound { color: #14211c; background: #fff; }
+  .choice.right { background: #e5f6ee; color: #14211c; border-color: #0f766e; }
+  .choice.wrong { background: #fdecea; color: #14211c; border-color: #b4453a; }
+  .verdict.right, .verdict.wrong { color: #14211c; }
 </style>
 </head>
 <body>
