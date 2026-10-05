@@ -2536,12 +2536,9 @@ function questionForDay(stamp){
   return BANK[n];
 }
 function whyOthers(item){
-  const choices = item.choices || [];
-  const bits = choices.slice(1).map((c,i) => {
-    const given = item.why && item.why[i];
-    return given ? c+" — "+given : c+" is a different story. It is not the line at "+item.ref+".";
-  });
-  return bits.length ? " Why the others do not fit: "+bits.join(" ") : "";
+  const wrong = (item.choices || []).slice(1);
+  if(!wrong.length) return "";
+  return " Not these: "+wrong.join(", ")+".";
 }
 function dayKey(stamp){ return "bibleplainly-"+stamp; }
 async function dayCount(stamp, hit){
