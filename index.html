@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- published 2026-10-05-1626 rebuild -->
+<!-- published 2026-10-05-0956 adult -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta property="og:title" content="How well do you know the Bible?" />
@@ -345,6 +345,13 @@
 
   #learn .read { background: transparent; box-shadow: none; border: 0; border-bottom: 1px solid #e4dfd6; border-radius: 0; color: #1c1916; }
   #learn .read b { font-weight: 500; }
+
+  .tally { display:grid; gap:6px; margin-top:12px; }
+  .trow { display:grid; grid-template-columns: 92px 1fr 64px; gap:8px; align-items:center; font-size:13px; }
+  .tbar { height:8px; background:#e7e1d8; border-radius:99px; overflow:hidden; }
+  .tbar span { display:block; height:100%; width:0; background:#c8c2b8; }
+  .tbar.known span { width:100%; background:#2c2824; }
+  .tbar.opened span { width:45%; background:#8a8175; }
 </style>
 </head>
 <body>
@@ -357,7 +364,7 @@
       <button class="sound" id="sound" type="button" aria-pressed="true">Sound on</button>
     </div>
     <p class="lede">Sixty-six books. It is worth studying because the truth is in the Bible. A church can help, and a preacher can explain, but you still need to open it yourself. A hint can point you to the part. The line is still yours to place.</p>
-    <div class="row" id="todayRow"><button class="go" id="today" type="button">Today's question</button><button class="ghost" id="sendResult" type="button">Send my result</button></div>
+    <div class="row" id="todayRow"><button class="go" id="today" type="button">Today's question</button><button class="ghost" id="sendResult" type="button">Share my results</button></div>
     <p class="hint" id="dayCount"></p>
 
     
@@ -464,7 +471,7 @@
         <div class="spines" id="finalBooks"></div>
         <div class="row">
           <button class="go" id="again" type="button">Another walk</button>
-          <button class="ghost" id="sendDone" type="button">Send my result</button>
+          <button class="ghost" id="sendDone" type="button">Share my results</button>
           <button class="ghost" id="inviteDone" type="button">Invite someone</button>
           <button class="ghost" id="review" type="button">Pages you missed</button>
         </div>
@@ -472,7 +479,12 @@
         <div id="reviewList"></div>
       </div>
     </section>
-    <p class="foot">The count is how many books you can place. Tap a stone to see what you know.<br>Keys: 1–4 to answer, H for the reference, Enter to turn the page.</p>
+    <section class="panel" id="tallyPanel">
+      <h2>Your progress</h2>
+      <p class="knowline" id="tallyLine">0 of 66 books you can place.</p>
+      <div class="tally" id="tally"></div>
+    </section>
+    <p class="foot">The count is how many books you can place.</p>
   </div>
 <script>
 const BANK = [
@@ -2340,7 +2352,21 @@ function setScene(section){
   if(!img) return;
   img.src = (ART[section] || "art/hero.jpg") + "?v=6";
 }
+
+function renderTally(){
+  const el = $("tally");
+  if(!el) return;
+  if($("tallyLine")) $("tallyLine").textContent = save.known.length+" of 66 books you can place.";
+  el.innerHTML = ORDER.map(b => {
+    const known = save.known.includes(b);
+    const opened = save.opened.includes(b);
+    const state = known ? "known" : opened ? "opened" : "";
+    const word = known ? "placed" : opened ? "opened" : "not yet";
+    return '<div class="trow"><span>'+SHORT[b]+'</span><div class="tbar '+state+'"><span></span></div><small>'+word+'</small></div>';
+  }).join("");
+}
 function renderKnow(){
+  renderTally();
   const line = save.known.length+" of 66 books you can place.";
   if($("knowLine")) $("knowLine").textContent = line;
   if($("know")) $("know").innerHTML = knowHtml();
