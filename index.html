@@ -283,6 +283,9 @@
   .hero img { height: 280px !important; object-fit: cover !important; }
   .book { background:#f7f1e4 url("art/hero.jpg?v=6") center / cover !important; }
   .leaf.left, .leaf.right { background: rgba(247,241,228,.94) !important; }
+
+  .playtop { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+  #back { min-height:44px; }
 </style>
 </head>
 <body>
@@ -338,6 +341,7 @@
 
     <section id="play" class="hidden">
       <div class="playtop">
+        <button class="ghost" id="back" type="button">Main page</button>
         <div class="meta" id="progressLabel">1 of 12</div>
       </div>
       <div class="bar"><span id="bar"></span></div>
@@ -364,7 +368,7 @@
           </div>
           <div class="row" id="tools">
             <button class="ghost" id="hint" type="button">Show the reference</button>
-            <button class="ghost" id="quit" type="button">Quit</button>
+            <button class="ghost" id="quit" type="button">Main page</button>
           </div>
         </div>
       </div>
@@ -824,6 +828,7 @@ $("hint").onclick = () => {
   $("page").classList.add("show");
 };
 $("quit").onclick = () => { show("home"); setupHome(); };
+$("back").onclick = () => { show("home"); setupHome(); };
 $("again").onclick = () => { show("home"); setupHome(); };
 $("review").onclick = review;
 $("sound").onclick = () => { soundOn = !soundOn; $("sound").textContent = soundOn ? "Sound on" : "Sound off"; if(soundOn) tone(true); };
