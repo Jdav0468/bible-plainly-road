@@ -592,9 +592,9 @@ function renderStep(){
     $("answers").innerHTML = "";
     $("tools").classList.add("hidden");
     $("page").classList.add("show");
-    $("ref").textContent = "Walk on";
+    $("ref").textContent = "Continue";
     $("plain").textContent = "Turn the page when you are ready.";
-    $("next").textContent = "Walk on";
+    $("next").textContent = "Continue";
     return;
   }
   $("progressLabel").textContent = (stepIndex()+1)+" of "+steps().length;
@@ -602,7 +602,7 @@ function renderStep(){
   $("sideNote").textContent = item.place ? "The line is on the right. Name the book it sits in." : item.book+". Answer from what the page says.";
   $("qbook").textContent = (item.place ? "Which book" : item.book)+" · "+campLabel(item.section);
   $("prompt").textContent = item.prompt;
-  $("next").textContent = walk.i===walk.queue.length-1 ? "Close the book" : "Turn the page";
+  $("next").textContent = walk.i===walk.queue.length-1 ? "Done" : "Next";
   const opts = item.choices.map((t,n) => ({t, ok:n===0}));
   for(let n=opts.length-1;n>0;n--){ const j = Math.floor(Math.random()*(n+1)); [opts[n], opts[j]] = [opts[j], opts[n]]; }
   walk.opts = opts;
