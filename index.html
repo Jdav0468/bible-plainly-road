@@ -603,17 +603,21 @@ function openSlip(book){
 }
 function setupHome(){
   const walks = [
-    {id:"mile", name:"A short walk", text:"Twelve questions. About five minutes.", w:"34%"},
-    {id:"day", name:"One part", text:"Law, Histories, Wisdom, Prophets, Gospels, or Letters.", w:"66%"},
-    {id:"road", name:"The whole book", text:"All sixty-six, in order.", w:"100%"}
+    {id:"mile", name:"A short walk", text:"Tap to open. Twelve questions.", w:"34%"},
+    {id:"day", name:"One part", text:"Tap, then choose a part.", w:"66%"},
+    {id:"road", name:"The whole book", text:"Tap to open all sixty-six.", w:"100%"}
   ];
   const pics = {mile:"art/hero.jpg?v=6", day:"art/gospels.jpg?v=6", road:"art/revelation.jpg?v=6"};
   $("walks").innerHTML = walks.map(w => '<button class="walk" type="button" data-id="'+w.id+'" aria-pressed="'+(w.id===mode)+'"><img src="'+pics[w.id]+'" alt=""><b>'+w.name+'</b><span>'+w.text+'</span><i style="width:'+w.w+'"></i></button>').join("");
-  $("walks").querySelectorAll("button").forEach(b => b.onclick = () => { mode = b.dataset.id; setupHome(); });
+  $("walks").querySelectorAll("button").forEach(b => b.onclick = () => {
+    mode = b.dataset.id;
+    if(mode==="day"){ setupHome(); return; }
+    start();
+  });
   $("campPanel").classList.toggle("hidden", mode!=="day");
   const campArt = {Law:"art/law.jpg?v=6", History:"art/history.jpg?v=6", Wisdom:"art/wisdom.jpg?v=6", Prophets:"art/prophets.jpg?v=6", Gospels:"art/gospels.jpg?v=6", Letters:"art/letters.jpg?v=6", Revelation:"art/revelation.jpg?v=6"};
   $("camps").innerHTML = CAMPS.map(c => '<button type="button" data-id="'+c.id+'" aria-pressed="'+(c.id===camp)+'"><img src="'+(campArt[c.id]||"art/hero.jpg?v=6")+'" alt=""><span>'+c.label+'</span></button>').join("");
-  $("camps").querySelectorAll("button").forEach(b => b.onclick = () => { camp = b.dataset.id; setupHome(); });
+  $("camps").querySelectorAll("button").forEach(b => b.onclick = () => { camp = b.dataset.id; mode = "day"; start(); });
   renderAtlas();
   renderKnow();
 }
