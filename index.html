@@ -352,6 +352,8 @@
   .tbar span { display:block; height:100%; width:0; background:#c8c2b8; }
   .tbar.known span { width:100%; background:#2c2824; }
   .tbar.opened span { width:45%; background:#8a8175; }
+
+  #stepLine { margin: 2px 0 0; color:#1c1916 !important; font-size:15px; }
 </style>
 </head>
 <body>
@@ -441,7 +443,10 @@
         </div>
         <div class="leaf right">
           <div class="qhead">
-            <p class="qbook" id="qbook"></p>
+            <div>
+              <p class="qbook" id="qbook"></p>
+              <p class="hint" id="stepLine">1 of 5. You know 0 of 66.</p>
+            </div>
             <div id="clock">0:30</div>
           </div>
           <h2 class="prompt" id="prompt"></h2>
@@ -2600,7 +2605,7 @@ function startDay(stamp){
   history.replaceState(null, "", location.pathname+"?day="+stamp);
   show("play");
   renderStep();
-  $("progressLabel").textContent = "Today, "+stamp;
+  stepLine();
   showDayCount(stamp);
 }
 function start(){
@@ -2611,6 +2616,16 @@ function start(){
   renderStep();
 }
 function steps(){ return walk.queue.filter(x => x.kind==="q"); }
+
+function stepLine(){
+  const item = walk && walk.queue[walk.i];
+  const n = steps().length || 1;
+  const here = Math.min(stepIndex()+1, n);
+  const part = item ? (item.day ? "Today" : campLabel(item.section)) : "This part";
+  const text = part+": "+here+" of "+n+". You know "+save.known.length+" of 66.";
+  if($("stepLine")) $("stepLine").textContent = text;
+  if($("progressLabel")) $("progressLabel").textContent = part+": "+here+" of "+n;
+}
 function stepIndex(){ return walk.queue.slice(0, walk.i).filter(x => x.kind==="q").length; }
 function renderRoad(){
   const cur = walk.queue[walk.i];
@@ -2658,7 +2673,7 @@ function renderStep(){
     $("next").textContent = "Continue";
     return;
   }
-  $("progressLabel").textContent = (stepIndex()+1)+" of "+steps().length;
+  stepLine();
   startClock();
   setScene(item.section);
   $("qbook").textContent = (item.place ? "Which book" : item.book)+" · "+campLabel(item.section);
@@ -2696,6 +2711,7 @@ function answer(n){
     tone(false);
   }
   persist();
+  stepLine();
   $("verdict").className = "verdict show "+(ok?"right":"wrong");
   const campBooks = CAMPS.find(c => c.books.includes(item.book));
   const placed = campBooks ? campBooks.books.filter(b => save.known.includes(b)).length : 0;
