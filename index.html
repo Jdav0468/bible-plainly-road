@@ -906,8 +906,14 @@ $("begin").onclick = start;
 $("next").onclick = next;
 function hintFor(item){
   const part = campLabel(item.section);
-  if(item.place) return {title: part, text: "The line sits in "+part+". The book is still yours to name."};
-  return {title: item.book, text: "Look in "+item.book+", in "+part+". The line is already in the question."};
+  let line = item.plain || "";
+  const answer = (item.choices && item.choices[0]) || "";
+  if(answer && line.toLowerCase().includes(answer.toLowerCase())){
+    const re = new RegExp(answer.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "ig");
+    line = line.replace(re, "the one you are looking for");
+  }
+  if(item.place) return {title: part, text: "This line is about that page: "+line+" It sits in "+part+". The book is still yours to name."};
+  return {title: item.book, text: "Stay with the question. "+line+" Look in "+item.book+"."};
 }
 $("hint").onclick = () => {
   const item = walk.queue[walk.i];
