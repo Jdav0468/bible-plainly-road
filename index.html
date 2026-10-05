@@ -4047,19 +4047,31 @@ function pageSound(){
   }).catch(()=>{});
 }
 let musicTimer = null;
+function hymn(freq, at){
+  [freq, freq/2].forEach((f,i) => {
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type = i ? "triangle" : "sine";
+    o.frequency.setValueAtTime(f, at);
+    g.gain.setValueAtTime(0.0001, at);
+    g.gain.exponentialRampToValueAtTime(i ? 0.018 : 0.03, at+0.18);
+    g.gain.exponentialRampToValueAtTime(0.0001, at+1.45);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(at); o.stop(at+1.5);
+  });
+}
 function startMusic(){
   if(!soundOn || musicTimer) return;
   ensureCtx().then(() => {
     if(musicTimer) return;
-    const notes = [196, 247, 294, 330, 294, 247];
+    const line = [294, 392, 494, 392, 494, 440, 392, 330, 294, 294, 392, 494, 392, 494, 440, 494, 587, 494, 440, 392];
     let step = 0;
-    musicTimer = setInterval(() => {
+    const play = () => {
       if(!soundOn){ stopMusic(); return; }
-      const now = audioCtx.currentTime;
-      blip(notes[step % notes.length], now, 0.7, "sine", 0.035);
-      blip(notes[(step+2) % notes.length] / 2, now, 0.9, "triangle", 0.02);
+      hymn(line[step % line.length], audioCtx.currentTime);
       step += 1;
-    }, 1400);
+    };
+    play();
+    musicTimer = setInterval(play, 1700);
   }).catch(()=>{});
 }
 function stopMusic(){
