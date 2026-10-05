@@ -381,8 +381,6 @@
           <p class="qbook">How well you know it</p>
           <p class="knowline" id="knowPlay">0 of 66</p>
           <div class="know" id="knowSide"></div>
-          <p class="mark" id="sideMark">Gen</p>
-          <p class="aside" id="sideNote">Answer from the page.</p>
         </div>
         <div class="leaf right">
           <div class="qhead">
@@ -619,8 +617,6 @@ function timeUp(){
   if(!save.known.includes(item.book) && !save.opened.includes(item.book)) save.opened.push(item.book);
   persist();
   tone(false);
-  $("sideMark").textContent = SHORT[item.book];
-  $("sideNote").textContent = "Time. Found in "+item.ref;
   const right = walk.opts.find(o => o.ok);
   $("verdict").className = "verdict show wrong";
   $("verdict").textContent = "Time. The answer is "+(right?right.t:"")+". Found in "+item.ref;
@@ -812,8 +808,6 @@ function renderStep(){
     clearClock();
     $("clock").textContent = "";
     $("progressLabel").textContent = "A rest";
-    $("sideMark").textContent = campLabel(item.to);
-    $("sideNote").textContent = "Nothing to answer. The road changes here.";
     setScene(item.to);
     $("qbook").textContent = campLabel(item.to);
     $("prompt").textContent = REST[item.from+"|"+item.to] || "The road changes here.";
@@ -828,8 +822,6 @@ function renderStep(){
   $("progressLabel").textContent = (stepIndex()+1)+" of "+steps().length;
   startClock();
   setScene(item.section);
-  $("sideMark").textContent = item.place ? "?" : SHORT[item.book];
-  $("sideNote").textContent = item.place ? "The line is on the right. Name the book it sits in." : item.book+". Answer from what the page says.";
   $("qbook").textContent = (item.place ? "Which book" : item.book)+" · "+campLabel(item.section);
   $("prompt").textContent = item.prompt;
   $("next").textContent = walk.i===walk.queue.length-1 ? "Done" : "Next";
@@ -865,8 +857,6 @@ function answer(n){
     tone(false);
   }
   persist();
-  $("sideMark").textContent = SHORT[item.book];
-  $("sideNote").textContent = ok ? "Right." : "Not that one.";
   $("verdict").className = "verdict show "+(ok?"right":"wrong");
   const campBooks = CAMPS.find(c => c.books.includes(item.book));
   const placed = campBooks ? campBooks.books.filter(b => save.known.includes(b)).length : 0;
