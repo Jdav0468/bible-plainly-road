@@ -177,6 +177,35 @@
   .choice:hover:not(:disabled) { transform: translateY(-1px); }
   .verdict { border-radius: 14px; }
   .book { box-shadow: 0 24px 60px rgba(0,0,0,.35); }
+
+  body { color:#17211c; background:#f4f7f5; }
+  .kicker { color:#0f766e; }
+  h1, h1 em, .lede, .about, .about strong, .meta, .foot { color:#17211c; }
+  h1 em { color:#0f766e; }
+  .lede, .about, .foot, .meta { color:#3d4f48; }
+  .sound { color:#0f766e; border-color:#b7ddd6; background:#fff; }
+  .panel, .walk, .book, .roadwrap, .leaf.left, .leaf.right {
+    background:#fff; color:#17211c; box-shadow:0 10px 30px rgba(23,33,28,.06);
+  }
+  .leaf.left { background:#f7fbfa; border-right:1px solid #e6eeeb; }
+  .leaf.right { background:#fff; }
+  .walk b, .panel h2, .prompt, .knowline, .scoreline, .mark { color:#17211c; }
+  .walk span, .hint, .aside { color:#4d615a; }
+  .go { background:#0f766e; color:#fff; }
+  .ghost, .camps button { background:#fff; color:#17211c; border-color:#d5e2dd; }
+  .camps button[aria-pressed="true"], .walk[aria-pressed="true"] { background:#0f766e; color:#fff; box-shadow:none; }
+  .ktrack { background:#e7f3f0; }
+  .ktrack span { background:#0f766e; }
+  .stone { background:#f7fbfa; border-color:#d5e2dd; color:#17211c; }
+  .stone.known { background:#0f766e; color:#fff; border-color:#0f766e; }
+  .stone.opened { background:#fff1ee; color:#9f3d32; border-color:#e7b2aa; }
+  .stone.now { outline:3px solid #0f766e; }
+  .choice { background:#f7fbfa; border-color:#d5e2dd; color:#17211c; }
+  .spines button { border-radius:999px; background:#e7f3f0; color:#17211c; }
+  .spines button.known { background:#0f766e; color:#fff; box-shadow:none; }
+  .qbook, .ref, .slip b { color:#0f766e; }
+  .bar { background:#e7f3f0; }
+  .bar > span { background:#0f766e; }
 </style>
 </head>
 <body>
@@ -191,9 +220,6 @@
     <p class="lede">Sixty-six books. Answer from the page. Watch how many you can place.</p>
 
     <section id="home">
-      <figure class="hero">
-        <img src="https://raw.githubusercontent.com/Jdav0468/bible-plainly-road/main/table.jpg" alt="An open book on a dark wood table." />
-      </figure>
       <div class="walks" id="walks"></div>
       <div class="panel" id="campPanel">
         <h2>Choose a camp</h2>
@@ -208,7 +234,7 @@
       </div>
       <div class="panel">
         <div class="row" style="margin-top:0">
-          <button class="go" id="begin" type="button">Start/button>
+          <button class="go" id="begin" type="button">Start</button>
         </div>
       </div>
       <div class="panel">
@@ -246,11 +272,11 @@
             <div class="ref" id="ref"></div>
             <p id="plain"></p>
             <p class="looked hidden" id="looked">You looked first. It still counts. The page is the point.</p>
-            <div class="row"><button class="go" id="next" type="button">Turn the page</button></div>
+            <div class="row"><button class="go" id="next" type="button">Next/button></div>
           </div>
           <div class="row" id="tools">
             <button class="ghost" id="hint" type="button">Show the reference</button>
-            <button class="ghost" id="quit" type="button">Close the book</button>
+            <button class="ghost" id="quit" type="button">Leave/button>
           </div>
         </div>
       </div>
