@@ -371,6 +371,7 @@
         <div class="row" style="margin-top:0">
           <button class="go" id="begin" type="button">Start</button>
           <button class="ghost" id="invite" type="button">Invite someone</button>
+          <button class="ghost" id="clearHistory" type="button">Start over</button>
         </div>
         <p class="hint" id="inviteNote"></p>
       </div>
@@ -2337,6 +2338,17 @@ async function invite(noteId){
     if(note) note.textContent = SHARE_URL;
   }
 }
+
+function clearHistory(){
+  if(!confirm("Clear this game and start over? The books you have placed will be forgotten on this device.")) return;
+  save = {known:[], opened:[], notes:{}, used:[]};
+  persist();
+  walk = null;
+  show("home");
+  setupHome();
+  const note = $("inviteNote");
+  if(note) note.textContent = "Cleared. You can start over.";
+}
 function setupHome(){
   const walks = [
     {id:"mile", name:"A short walk", text:"Tap to open. Twelve questions.", w:"34%"},
@@ -2516,6 +2528,7 @@ function review(){
 $("gallery").querySelectorAll("button").forEach(b => b.onclick = () => { camp = b.dataset.camp; mode = "day"; start(); });
 $("begin").onclick = start;
 $("invite").onclick = () => invite("inviteNote");
+$("clearHistory").onclick = clearHistory;
 $("inviteDone").onclick = () => invite("inviteDoneNote");
 $("next").onclick = next;
 function hintFor(item){
