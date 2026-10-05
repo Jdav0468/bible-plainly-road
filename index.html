@@ -373,7 +373,7 @@
           <div class="page" id="page">
             <div class="ref" id="ref"></div>
             <p id="plain"></p>
-            <p class="looked hidden" id="looked">You used a hint. It still counts. Answer from the page.</p>
+            
             <div class="row"><button class="go" id="next" type="button">Next/button></div>
           </div>
           <div class="row" id="tools">
@@ -596,9 +596,9 @@ function timeUp(){
   persist();
   tone(false);
   $("sideMark").textContent = SHORT[item.book];
-  $("sideNote").textContent = "Time. "+item.ref;
+  $("sideNote").textContent = "Time. Found in "+item.ref;
   $("verdict").className = "verdict wrong";
-  $("verdict").textContent = "Time. "+item.ref;
+  $("verdict").textContent = "Time. Found in "+item.ref;
   renderRoad();
   renderKnow();
 }
@@ -774,7 +774,7 @@ function renderStep(){
   $("page").classList.remove("show");
   $("verdict").className = "verdict";
   $("verdict").innerHTML = "";
-  $("looked").classList.add("hidden");
+  
   $("tools").classList.remove("hidden");
   renderRoad();
   renderKnow();
@@ -838,16 +838,16 @@ function answer(n){
   }
   persist();
   $("sideMark").textContent = SHORT[item.book];
-  $("sideNote").textContent = ok ? "Right. "+item.ref : "Not that one. "+item.ref;
+  $("sideNote").textContent = "Found in "+item.ref;
   $("verdict").className = "verdict show "+(ok?"right":"wrong");
   const campBooks = CAMPS.find(c => c.books.includes(item.book));
   const placed = campBooks ? campBooks.books.filter(b => save.known.includes(b)).length : 0;
   const campBit = campBooks ? " "+campBooks.label+": "+placed+" of "+campBooks.books.length+"." : "";
-  $("verdict").innerHTML = (ok?"You can place "+esc(item.book)+".":"Opened, not placed yet.")+"<span>"+esc(item.ref)+". "+esc(item.plain)+campBit+" You can place "+save.known.length+" of 66.</span>";
+  $("verdict").innerHTML = "Found in "+esc(item.ref)+". "+(ok?"You can place "+esc(item.book)+".":"Opened, not placed yet.")+"<span>"+esc(item.plain)+campBit+" You can place "+save.known.length+" of 66.</span>";
   renderKnow();
   $("ref").textContent = item.ref;
   $("plain").textContent = item.plain;
-  $("looked").classList.toggle("hidden", !walk.looked);
+  
   $("page").classList.add("show");
   $("tools").classList.add("hidden");
   renderRoad();
@@ -888,7 +888,7 @@ $("hint").onclick = () => {
   const h = hintFor(item);
   $("ref").textContent = h.title;
   $("plain").textContent = h.text;
-  $("looked").classList.remove("hidden");
+  
   $("page").classList.add("show");
 };
 $("quit").onclick = () => { clearClock(); show("home"); setupHome(); };
