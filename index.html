@@ -370,6 +370,7 @@
       <div class="panel">
         <div class="row" style="margin-top:0">
           <button class="go" id="begin" type="button">Start</button>
+          <button class="ghost" id="today" type="button">Today's question</button>
           <button class="ghost" id="invite" type="button">Invite someone</button>
           <button class="ghost" id="clearHistory" type="button">Start over</button>
         </div>
@@ -2224,7 +2225,7 @@ function timeUp(){
   tone(false);
   const right = walk.opts.find(o => o.ok);
   $("verdict").className = "verdict show wrong";
-  $("verdict").textContent = "Time. The answer is "+(right?right.t:"")+". Found in "+item.ref;
+  $("verdict").innerHTML = "Time. The answer is "+esc(right?right.t:"")+". Found in "+esc(item.ref)+".<span>"+esc(item.plain)+whyOthers(item)+"</span>";
   $("tools").classList.add("hidden");
   $("nextRow").classList.add("show");
   renderRoad();
@@ -2346,6 +2347,7 @@ function clearHistory(){
   walk = null;
   show("home");
   setupHome();
+const dayLink = new URLSearchParams(location.search).get("day"); if(dayLink) startDay(dayLink);
   const note = $("inviteNote");
   if(note) note.textContent = "Cleared. You can start over.";
 }
@@ -2395,6 +2397,32 @@ function build(books){
     last = sectionOf(b);
   });
   return queue;
+}
+
+function dayStamp(d){
+  d = d || new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function questionForDay(stamp){
+  let n = 0;
+  for(let i=0;i<stamp.length;i++) n = (n*33 + stamp.charCodeAt(i)) % BANK.length;
+  return BANK[n];
+}
+function whyOthers(item){
+  const wrong = (item.choices||[]).slice(1);
+  if(!wrong.length) return "";
+  return " The other choices do not fit this page: "+wrong.join("; ")+". The page says something else.";
+}
+function startDay(stamp){
+  stamp = stamp || dayStamp();
+  const q = questionForDay(stamp);
+  mode = "today";
+  pageSound();
+  walk = {mode, books:[q.book], queue:[Object.assign({kind:"q", place:false, day:stamp}, q)], i:0, knownNow:[], missedNow:[], looked:false, locked:false};
+  history.replaceState(null, "", location.pathname+"?day="+stamp);
+  show("play");
+  renderStep();
+  $("progressLabel").textContent = "Today, "+stamp;
 }
 function start(){
   pageSound();
@@ -2493,7 +2521,7 @@ function answer(n){
   const campBooks = CAMPS.find(c => c.books.includes(item.book));
   const placed = campBooks ? campBooks.books.filter(b => save.known.includes(b)).length : 0;
   const campBit = campBooks ? " "+campBooks.label+": "+placed+" of "+campBooks.books.length+"." : "";
-  $("verdict").innerHTML = "Found in "+esc(item.ref)+". "+(ok?"You can place "+esc(item.book)+".":"Opened, not placed yet.")+"<span>"+esc(item.plain)+campBit+" You can place "+save.known.length+" of 66.</span>";
+  $("verdict").innerHTML = "Found in "+esc(item.ref)+". "+(ok?"You can place "+esc(item.book)+".":"Opened, not placed yet.")+"<span>"+esc(item.plain)+whyOthers(item)+campBit+" You can place "+save.known.length+" of 66.</span>";
   renderKnow();
   $("page").classList.remove("show");
   $("ref").textContent = "";
@@ -2527,6 +2555,7 @@ function review(){
 
 $("gallery").querySelectorAll("button").forEach(b => b.onclick = () => { camp = b.dataset.camp; mode = "day"; start(); });
 $("begin").onclick = start;
+$("today").onclick = () => startDay();
 $("invite").onclick = () => invite("inviteNote");
 $("clearHistory").onclick = clearHistory;
 $("inviteDone").onclick = () => invite("inviteDoneNote");
