@@ -2281,7 +2281,14 @@ function timeUp(){
   renderKnow();
 }
 
-function load(){ try { return Object.assign({known:[], opened:[], notes:{}, used:[], right:[]}, JSON.parse(localStorage.getItem(KEY)||"{}")); } catch(e){ return {known:[], opened:[], notes:{}, used:[], right:[]}; } }
+function load(){
+  try {
+    const s = Object.assign({known:[], opened:[], notes:{}, used:[], right:[]}, JSON.parse(localStorage.getItem(KEY)||"{}"));
+    if(!s.right) s.right = [];
+    s.known = s.known.filter(b => bookQuestions(b).length && bookQuestions(b).every(q => s.right.includes(q.book+"|"+q.ref+"|"+q.prompt)));
+    return s;
+  } catch(e){ return {known:[], opened:[], notes:{}, used:[], right:[]}; }
+}
 function persist(){ try { localStorage.setItem(KEY, JSON.stringify(save)); } catch(e){} }
 function esc(s){ return String(s).replace(/[&<>]/g, c => ({"&":"&","<":"<",">":">"}[c])); }
 function sectionOf(book){ const q = BANK.find(x => x.book===book); return q ? q.section : ""; }
