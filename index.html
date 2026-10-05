@@ -295,6 +295,16 @@
 
   #clock { font-variant-numeric: tabular-nums; letter-spacing: 0.04em; font-size: 18px; color:#1c1916; }
   #clock.low { color:#9f3d32; }
+
+  #clock {
+    min-width: 72px; text-align: center; font-size: 22px !important; font-weight: 700;
+    color: #1c1916 !important; background: #fff !important; border: 2px solid #1c1916;
+    border-radius: 8px; padding: 6px 10px;
+  }
+  #clock.low { color: #9f3d32 !important; border-color: #9f3d32; }
+  #nextRow { display: none; margin-top: 14px; }
+  #nextRow.show { display: flex; }
+  #next { min-height: 48px; width: 100%; }
 </style>
 </head>
 <body>
@@ -373,12 +383,13 @@
           <div class="page" id="page">
             <div class="ref" id="ref"></div>
             <p id="plain"></p>
-            
-            <div class="row"><button class="go" id="next" type="button">Next/button></div>
           </div>
           <div class="row" id="tools">
             <button class="ghost" id="hint" type="button">Hint</button>
             <button class="ghost" id="quit" type="button">Main page</button>
+          </div>
+          <div class="row" id="nextRow">
+            <button class="go" id="next" type="button">Next</button>
           </div>
         </div>
       </div>
@@ -599,6 +610,8 @@ function timeUp(){
   $("sideNote").textContent = "Time. Found in "+item.ref;
   $("verdict").className = "verdict wrong";
   $("verdict").textContent = "Time. Found in "+item.ref;
+  $("tools").classList.add("hidden");
+  $("nextRow").classList.add("show");
   renderRoad();
   renderKnow();
 }
@@ -776,6 +789,7 @@ function renderStep(){
   $("verdict").innerHTML = "";
   
   $("tools").classList.remove("hidden");
+  $("nextRow").classList.remove("show");
   renderRoad();
   renderKnow();
   $("bar").style.width = Math.round((stepIndex()/steps().length)*100)+"%";
@@ -849,6 +863,7 @@ function answer(n){
   $("ref").textContent = "";
   $("plain").textContent = "";
   $("tools").classList.add("hidden");
+  $("nextRow").classList.add("show");
   renderRoad();
   $("verdict").scrollIntoView({block:"nearest"});
 }
