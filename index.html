@@ -328,6 +328,9 @@
   .choice { background:#fff !important; color:#1c1916 !important; border:1px solid #d9d3c8 !important; font-size:18px !important; }
   #clock { background:#fff !important; color:#1c1916 !important; border:2px solid #1c1916 !important; }
   .verdict.show { display:block !important; }
+
+  .gallery button { padding:0; border:0; background:#fff; text-align:left; cursor:pointer; border-radius:8px; overflow:hidden; color:#1c1916; }
+  .gallery button span { display:block; padding:8px 10px 10px; font-size:14px; }
 </style>
 </head>
 <body>
@@ -343,14 +346,14 @@
 
     <section id="home">
       <div class="walks" id="walks"></div>
-      <div class="gallery" aria-label="Parts of the book">
-        <figure><img src="art/law.jpg?v=6" alt="A mountain and a path." /><figcaption>The Law</figcaption></figure>
-        <figure><img src="art/history.jpg?v=6" alt="A city on a hill." /><figcaption>The Histories</figcaption></figure>
-        <figure><img src="art/wisdom.jpg?v=6" alt="A tree by the water." /><figcaption>Wisdom</figcaption></figure>
-        <figure><img src="art/prophets.jpg?v=6" alt="A person looking toward a city." /><figcaption>The Prophets</figcaption></figure>
-        <figure><img src="art/gospels.jpg?v=6" alt="People seated on a hillside." /><figcaption>The Gospels</figcaption></figure>
-        <figure><img src="art/letters.jpg?v=6" alt="Letters on a table." /><figcaption>The Letters</figcaption></figure>
-        <figure><img src="art/revelation.jpg?v=6" alt="A city of light by the water." /><figcaption>The last book</figcaption></figure>
+      <div class="gallery" id="gallery" aria-label="Open a part of the book">
+        <button type="button" data-camp="Law"><img src="art/law.jpg?v=6" alt=""><span>The Law</span></button>
+        <button type="button" data-camp="History"><img src="art/history.jpg?v=6" alt=""><span>The Histories</span></button>
+        <button type="button" data-camp="Wisdom"><img src="art/wisdom.jpg?v=6" alt=""><span>Wisdom</span></button>
+        <button type="button" data-camp="Prophets"><img src="art/prophets.jpg?v=6" alt=""><span>The Prophets</span></button>
+        <button type="button" data-camp="Gospels"><img src="art/gospels.jpg?v=6" alt=""><span>The Gospels</span></button>
+        <button type="button" data-camp="Letters"><img src="art/letters.jpg?v=6" alt=""><span>The Letters</span></button>
+        <button type="button" data-camp="Revelation"><img src="art/revelation.jpg?v=6" alt=""><span>The last book</span></button>
       </div>
 
       <div class="panel" id="campPanel">
@@ -2509,6 +2512,8 @@ function review(){
   if(box.innerHTML){ box.innerHTML = ""; return; }
   box.innerHTML = walk.missedNow.length ? walk.missedNow.map(m => '<div class="slip show"><b>'+esc(m.book)+" · "+esc(m.ref)+'</b><p>'+esc(m.plain)+'</p></div>').join("") : '<p class="hint">No misses on this walk.</p>';
 }
+
+$("gallery").querySelectorAll("button").forEach(b => b.onclick = () => { camp = b.dataset.camp; mode = "day"; start(); });
 $("begin").onclick = start;
 $("invite").onclick = () => invite("inviteNote");
 $("inviteDone").onclick = () => invite("inviteDoneNote");
