@@ -91,15 +91,17 @@
   .playtop .oil { color: #e4d7c4; }
   .bar { height: 3px; background: rgba(196,163,106,.22); border-radius: 99px; overflow: hidden; margin-bottom: 12px; }
   .bar > span { display: block; height: 100%; width: 0; background: var(--gold); transition: width .35s ease; }
-  .roadwrap { overflow-x: auto; margin: 0 0 12px; padding-bottom: 6px; }
-  .road { display: flex; gap: 2px; min-width: max-content; align-items: end; }
-  .stone { width: 48px; background: none; border: 0; color: #8a7d6e; text-align: center; padding: 0; }
-  .stone .dot { width: 12px; height: 12px; border-radius: 50%; margin: 0 auto 5px; background: #3a3128; border: 1px solid #5c4e40; }
-  .stone.known .dot { background: var(--gold); box-shadow: 0 0 8px rgba(196,163,106,.7); }
-  .stone.opened .dot { background: #6d5a45; }
-  .stone.now .dot { background: #f7f1e7; transform: scale(1.3); box-shadow: 0 0 0 4px rgba(196,163,106,.28); }
-  .stone small { font-size: 10px; }
-  .stone.now small { color: var(--gold); }
+  .roadwrap { overflow-x: auto; margin: 0 0 14px; padding: 12px; background: var(--paper); border-radius: 10px; }
+  .road { display: flex; gap: 8px; min-width: max-content; }
+  .stone {
+    width: 72px; background: #fbf7f1; border: 1px solid #e0d3c2; color: #6d6256;
+    border-radius: 8px; text-align: center; padding: 8px 4px;
+  }
+  .stone b { display: block; font-size: 13px; font-weight: 650; }
+  .stone small { display: block; font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .stone.known { background: #241c14; color: var(--paper); border-color: #241c14; }
+  .stone.opened { background: #f6e6e1; color: #8a4036; border-color: #8a4036; }
+  .stone.now { outline: 3px solid var(--gold); }
   .book {
     display: grid; grid-template-columns: 0.82fr 1.18fr; min-height: 420px;
     background: var(--paper); color: var(--ink); border-radius: 8px 14px 14px 8px;
@@ -121,8 +123,16 @@
   }
   .choice:hover:not(:disabled) { border-color: var(--gold-dim); transform: translateX(2px); }
   .choice .key { color: var(--gold-dim); font-weight: 700; width: 1.1em; }
-  .choice.right { background: var(--ok-bg); border-color: var(--ok); }
-  .choice.wrong { background: var(--bad-bg); border-color: var(--bad); }
+  .choice.right { background: #d7eadc; border: 2px solid #2c5a42; color: #1c1712; }
+  .choice.wrong { background: #f6d9d2; border: 2px solid #8a4036; color: #1c1712; }
+  .verdict {
+    display: none; margin: 0 0 12px; padding: 12px 14px; border-radius: 8px;
+    font-family: var(--serif); font-size: 22px; line-height: 1.3;
+  }
+  .verdict.show { display: block; }
+  .verdict.right { background: #d7eadc; color: #1c1712; }
+  .verdict.wrong { background: #f6d9d2; color: #1c1712; }
+  .verdict span { display: block; font-family: var(--sans); font-size: 15px; margin-top: 4px; }
   .choice:disabled { cursor: default; }
   .page { display: none; margin-top: 8px; padding-top: 10px; border-top: 1px solid #e4d9c8; }
   .page.show { display: block; }
@@ -195,6 +205,7 @@
         <div class="leaf right">
           <p class="qbook" id="qbook"></p>
           <h2 class="prompt" id="prompt"></h2>
+          <div class="verdict" id="verdict"></div>
           <div id="answers"></div>
           <div class="page" id="page">
             <div class="ref" id="ref"></div>
@@ -473,16 +484,18 @@ function renderRoad(){
     const known = walk.knownNow.includes(b) || save.known.includes(b);
     const opened = walk.missedNow.some(m => m.book===b) || save.opened.includes(b);
     const now = cur && cur.book===b;
-    return '<div class="stone'+(known?" known":opened?" opened":"")+(now?" now":"")+'"><div class="dot"></div><small>'+SHORT[b]+'</small></div>';
+    return '<div class="stone'+(known?" known":opened?" opened":"")+(now?" now":"")+'"><b>'+SHORT[b]+'</b><small>'+(known?"from the page":opened?"opened":now?"now":"ahead")+'</small></div>';
   }).join("");
   const node = $("road").querySelector(".now");
-  if(node) node.scrollIntoView({inline:"center", block:"nearest"});
+  if(node && node.scrollIntoView) node.scrollIntoView({inline:"center", block:"nearest"});
 }
 function renderStep(){
   const item = walk.queue[walk.i];
   if(!item){ finish(); return; }
   walk.looked = false; walk.locked = false;
   $("page").classList.remove("show");
+  $("verdict").className = "verdict";
+  $("verdict").innerHTML = "";
   $("looked").classList.add("hidden");
   $("tools").classList.remove("hidden");
   renderRoad();
@@ -543,13 +556,16 @@ function answer(n){
   }
   persist();
   $("sideMark").textContent = SHORT[item.book];
-  $("sideNote").textContent = item.ref;
+  $("sideNote").textContent = ok ? "Right. "+item.ref : "Not that one. "+item.ref;
+  $("verdict").className = "verdict show "+(ok?"right":"wrong");
+  $("verdict").innerHTML = (ok?"Right.":"Not that one.")+"<span>"+esc(item.ref)+". "+esc(item.plain)+"</span>";
   $("ref").textContent = item.ref;
   $("plain").textContent = item.plain;
   $("looked").classList.toggle("hidden", !walk.looked);
   $("page").classList.add("show");
   $("tools").classList.add("hidden");
   renderRoad();
+  $("verdict").scrollIntoView({block:"nearest"});
 }
 function next(){
   const item = walk.queue[walk.i];
