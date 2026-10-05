@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Bible, Plainly — The Road</title>
+<style>
+  :root {
+    --bg: #12100e;
+    --paper: #f4efe6;
+    --paper-2: #e8dfd0;
+    --ink: #1c1712;
+    --ink-soft: #3c342c;
+    --muted: #8a7d6e;
+    --gold: #c4a36a;
+    --gold-dim: #8d7344;
+    --ok: #2c5a42;
+    --ok-bg: #e4efe7;
+    --bad: #8a4036;
+    --bad-bg: #f6e7e2;
+    --serif: Palatino, "Palatino Linotype", Georgia, serif;
+    --sans: "Segoe UI", "Source Sans 3", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    color: var(--paper);
+    font-family: var(--sans);
+    background:
+      radial-gradient(1200px 600px at 50% -10%, rgba(196,163,106,0.08), transparent 55%),
+      var(--bg);
+  }
+  .wrap { width: min(880px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 64px; position: relative; }
+  .kicker {
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-size: 12px;
+    font-weight: 600;
+    margin: 0 0 8px;
+  }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(34px, 5vw, 52px);
+    line-height: 1.05;
+    margin: 0;
+    color: #f7f1e7;
+  }
+  h1 em { font-style: italic; color: var(--gold); }
+  .lede { max-width: 40em; color: #d9d0c3; font-size: 18px; line-height: 1.5; margin: 14px 0 0; }
+  .hero {
+    margin: 22px 0 8px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid rgba(196,163,106,0.25);
+    box-shadow: 0 18px 50px rgba(0,0,0,0.35);
+  }
+  .hero img { display: block; width: 100%; height: auto; }
+  .hero figcaption {
+    background: #1a1613;
+    color: var(--muted);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    padding: 8px 12px 10px;
+  }
+  .panel {
+    background: var(--paper);
+    color: var(--ink);
+    border-radius: 8px;
+    padding: 22px 22px 20px;
+    margin-top: 18px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  }
+  .panel h2 { font-family: var(--serif); font-size: 22px; font-weight: 400; margin: 0 0 6px; }
+  .hintline { color: var(--ink-soft); margin: 0 0 14px; font-size: 15.5px; line-height: 1.45; }
+  .label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin: 14px 0 8px;
+    font-weight: 600;
+  }
+  .choices, .lengths { display: flex; flex-wrap: wrap; gap: 8px; }
+  button.chip, button.choice, button.go, button.ghost {
+    font-family: var(--sans);
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  button.chip {
+    border: 1px solid #d9cbb6;
+    background: #fbf7f1;
+    color: var(--ink);
+    padding: 8px 12px;
+    font-size: 14.5px;
+  }
+  button.chip[aria-pressed="true"] { background: #241c14; color: var(--paper); border-color: #241c14; }
+  button.go {
+    margin-top: 0;
+    background: #241c14;
+    color: var(--paper);
+    border: 0;
+    padding: 12px 18px;
+    font-size: 16px;
+    letter-spacing: 0.02em;
+  }
+  button.go:hover, button.ghost:hover, button.chip:hover, button.choice:hover { filter: brightness(1.06); }
+  button.ghost {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid #d9cbb6;
+    padding: 10px 14px;
+    font-size: 15px;
+  }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    color: var(--muted);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .bar { height: 3px; background: #e4d9c8; border-radius: 99px; overflow: hidden; margin: 8px 0 14px; }
+  .bar > span { display: block; height: 100%; background: var(--gold-dim); width: 0; transition: width .35s ease; }
+  .qbook {
+    color: var(--gold-dim);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 600;
+    margin: 0 0 8px;
+  }
+  .prompt {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(22px, 3vw, 28px);
+    line-height: 1.35;
+    margin: 0 0 16px;
+  }
+  button.choice {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: #fbf7f1;
+    border: 1px solid #e0d3c2;
+    color: var(--ink);
+    padding: 12px 14px;
+    margin: 0 0 8px;
+    font-size: 16.5px;
+    line-height: 1.35;
+  }
+  button.choice .key { display: inline-block; width: 1.4em; color: var(--gold-dim); font-weight: 600; }
+  button.choice.right { background: var(--ok-bg); border-color: var(--ok); }
+  button.choice.wrong { background: var(--bad-bg); border-color: var(--bad); }
+  button.choice:disabled { cursor: default; }
+  .note { margin-top: 12px; padding-top: 12px; border-top: 1px solid #e4d9c8; }
+  .note .ref { color: var(--gold-dim); font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }
+  .note p { margin: 6px 0 0; font-size: 16.5px; line-height: 1.5; }
+  .looked { font-size: 13px; color: var(--muted); margin-top: 8px; }
+  .scoreline { font-family: var(--serif); font-size: 28px; margin: 0 0 6px; }
+  .atlas { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .atlas button, .atlas span.bk {
+    border: 1px solid #e0d3c2;
+    background: #fbf7f1;
+    color: #6d6256;
+    border-radius: 99px;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-family: var(--sans);
+  }
+  .atlas .known { background: #241c14; color: var(--paper); border-color: #241c14; }
+  .atlas .opened { background: #efe4d4; color: #6a5340; border-color: #d7c4a8; }
+  .atlas .this { outline: 2px solid var(--gold); }
+  .foot { margin-top: 22px; color: var(--muted); font-size: 14px; line-height: 1.5; }
+  .hidden { display: none !important; }
+  .about { color: #d9d0c3; font-size: 15.5px; line-height: 1.55; max-width: 40em; }
+  .about strong { color: var(--paper); font-weight: 600; }
+  .lampbox { display: flex; align-items: center; gap: 8px; }
+  .drop {
+    width: 12px; height: 16px; border-radius: 8px 8px 8px 8px;
+    background: #e4d9c8; border: 1px solid #d3c4ae;
+  }
+  .drop.on {
+    background: radial-gradient(circle at 40% 35%, #f3e2b8, #c4a36a 55%, #8d7344);
+    border-color: #8d7344;
+    box-shadow: 0 0 8px rgba(196,163,106,0.55);
+  }
+  .drop.out { animation: flick .45s ease; }
+  @keyframes flick { 50% { transform: translateY(1px) scale(.9); opacity: .55; } }
+  .road {
+    display: flex; flex-wrap: wrap; gap: 4px;
+    margin: 4px 0 14px;
+  }
+  .road i {
+    width: 10px; height: 10px; border-radius: 99px;
+    background: #e4d9c8; display: block; font-style: normal;
+  }
+  .road i.known { background: #241c14; }
+  .road i.opened { background: #c4a36a; }
+  .road i.now { outline: 2px solid var(--gold-dim); background: #f7f1e7; }
+  .restline { font-family: var(--serif); font-size: 22px; line-height: 1.4; margin: 0 0 10px; }
+  .missitem { border-top: 1px solid #e4d9c8; padding: 10px 0; }
+  .missitem strong { font-weight: 600; }
+  @media (max-width: 640px) {
+    .wrap { width: min(100% - 20px, 880px); padding-top: 18px; }
+    .panel { padding: 16px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bar > span, .drop.out { transition: none; animation: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="kicker">The Bible, Plainly</p>
+    <h1>The <em>road</em>.</h1>
+    <p class="lede">A game through the whole book. Sixty-six stones, one question at each. The lamp is only so you notice when you are guessing. The page is still the point.</p>
+
+    <section id="home">
+      <figure class="hero">
+        <svg viewBox="0 0 880 420" role="img" aria-label="An open book, a lamp, and a road on a wood table.">
+        <rect width="880" height="420" fill="#1a1613"/>
+        <rect x="0" y="250" width="880" height="170" fill="#2a221c"/>
+        <g stroke="#3a3128" stroke-width="1" opacity="0.7">
+          <path d="M0 270 H880"/><path d="M0 300 H880"/><path d="M0 338 H880"/><path d="M0 372 H880"/>
+        </g>
+        <rect x="70" y="150" width="340" height="210" rx="4" fill="#c4a36a" opacity="0.25"/>
+        <path d="M80 170 h150 l-8 170 H88 Z" fill="#f4efe6"/>
+        <path d="M238 170 h150 l8 170 h-134 Z" fill="#efe6d8"/>
+        <path d="M230 168 v174" stroke="#8d7344" stroke-width="3"/>
+        <g stroke="#d9cbb6" stroke-width="1.2" opacity="0.8">
+          <path d="M100 200 h110"/><path d="M100 214 h110"/><path d="M100 228 h100"/><path d="M100 242 h108"/>
+          <path d="M258 200 h110"/><path d="M258 214 h104"/><path d="M258 228 h110"/><path d="M258 242 h90"/>
+        </g>
+        <g transform="translate(520 150)">
+          <ellipse cx="70" cy="168" rx="46" ry="10" fill="#3a3128"/>
+          <path d="M40 168 V118 h60 v50" fill="#8d7344"/>
+          <path d="M48 118 h44 v-8 h-44z" fill="#c4a36a"/>
+          <path d="M52 110 h36 l8-46 h-52 z" fill="#f4efe6" opacity="0.35" stroke="#c4a36a"/>
+          <ellipse cx="70" cy="62" rx="6" ry="10" fill="#f3e2b8"/>
+        </g>
+        <path d="M620 300 C700 250 760 250 820 210" fill="none" stroke="#c4a36a" stroke-width="2" stroke-dasharray="6 7"/>
+        <circle cx="620" cy="300" r="4" fill="#c4a36a"/>
+        <circle cx="820" cy="210" r="4" fill="#f4efe6"/>
+      </svg>
+        <figcaption>Same table as the films. A lamp, a book, a road.</figcaption>
+      </figure>
+      <div class="panel">
+        <h2>Choose a walk</h2>
+        <p class="hintline">A miss spends a drop of oil. Three right in a row puts a drop back. When the lamp goes out, you sit, then you can light it again. The stone is still marked.</p>
+        <span class="label">Walk</span>
+        <div class="choices" id="modes"></div>
+        <div id="campBlock" class="hidden">
+          <span class="label">Camp</span>
+          <div class="choices" id="camps"></div>
+        </div>
+        <div class="row">
+          <button class="go" id="begin">Take the road</button>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Stones already walked</h2>
+        <p class="hintline" id="atlasLine">A dark stone is a book you have answered from the page. A warm stone is a book you opened after a miss.</p>
+        <div class="atlas" id="atlas"></div>
+      </div>
+      <div class="about">
+        <p>This is the same rule as the films. A church can help. A preacher can explain a hard page. <strong>The score here is not the point.</strong> The point is to know where a line sits, and to go read it.</p>
+        <p>The questions use the sixty-six books most English Bibles print. They do not score the extra books some churches keep. Wording is plain English, not a copyrighted translation. The reference is the place to open.</p>
+      </div>
+    </section>
+
+    <section id="play" class="hidden">
+      <div class="panel">
+        <div class="meta">
+          <span id="progressLabel">1 of 12</span>
+          <span class="lampbox" id="lamp" aria-label="Lamp"></span>
+        </div>
+        <div class="bar"><span id="bar"></span></div>
+        <div class="road" id="road" aria-hidden="true"></div>
+        <p class="qbook" id="qbook"></p>
+        <h2 class="prompt" id="prompt"></h2>
+        <div id="answers"></div>
+        <div class="note hidden" id="note">
+          <div class="ref" id="ref"></div>
+          <p id="plain"></p>
+          <p class="looked hidden" id="looked">You looked up the reference first. It still counts. The page is the point.</p>
+          <div class="row">
+            <button class="go" id="next">Next stone</button>
+          </div>
+        </div>
+        <div class="row" id="tools">
+          <button class="ghost" id="hint">Show the reference</button>
+          <button class="ghost" id="quit">Leave this walk</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="bench" class="hidden">
+      <div class="panel">
+        <p class="kicker" style="color:var(--gold-dim)">The lamp is out</p>
+        <p class="scoreline">Sit a while.</p>
+        <p class="hintline" id="benchPlain"></p>
+        <div id="benchList"></div>
+        <div class="row">
+          <button class="go" id="relight">Light it again</button>
+          <button class="ghost" id="benchLeave">Leave the road</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="done" class="hidden">
+      <div class="panel">
+        <p class="kicker" style="color:var(--gold-dim)">The walk</p>
+        <p class="scoreline" id="finalScore"></p>
+        <p class="hintline" id="finalPlain"></p>
+        <div class="atlas" id="finalBooks"></div>
+        <div class="row">
+          <button class="go" id="again">Another walk</button>
+          <button class="ghost" id="review">See the ones you missed</button>
+        </div>
+        <div id="reviewList"></div>
+      </div>
+    </section>
+
+    <p class="foot">Study the Word. Get it from the page, not from a score.<br>Keys: 1–4 to answer, H to show the reference, Enter for the next stone.</p>
+  </div>
+<script>
+const BANK = [
+  {"book": "Genesis", "section": "Law", "prompt": "The first line says God created what?", "choices": ["The heavens and the earth", "Only a garden", "The angels, then a temple", "A sea with no land"], "ref": "Genesis 1:1", "plain": "The book opens on that line. In the beginning God created the heavens and the earth."},
+  {"book": "Genesis", "section": "Law", "prompt": "Who did God call to leave his country?", "choices": ["Abram", "Noah", "Jacob", "Lot"], "ref": "Genesis 12:1", "plain": "God told Abram to go to a land he would show him. The promise was a people, a land, and a blessing."},
+  {"book": "Exodus", "section": "Law", "prompt": "Where did God speak to Moses from a bush that burned and was not consumed?", "choices": ["Horeb, the mountain of God", "The palace in Egypt", "The camp at Sinai, after the sea", "Midian, in Jethro’s tent"], "ref": "Exodus 3:1–2", "plain": "Moses was keeping the flock. The bush burned, and God sent him to bring Israel out of Egypt."},
+  {"book": "Exodus", "section": "Law", "prompt": "How many plagues does the story set on Egypt before Pharaoh lets the people go?", "choices": ["Ten", "Seven", "Twelve", "Three"], "ref": "Exodus 7–12", "plain": "They run from the Nile turned to blood through the death of the firstborn. Then the people leave."},
+  {"book": "Leviticus", "section": "Law", "prompt": "On the Day of Atonement, where does the high priest bring the blood?", "choices": ["Inside the veil, into the most holy place", "Onto the altar in the courtyard only", "To the tent door, and no farther", "To a high place outside the camp"], "ref": "Leviticus 16:15", "plain": "Once a year the high priest goes in. The blood is for the holy place and for the people."},
+  {"book": "Leviticus", "section": "Law", "prompt": "What does the year of Jubilee return?", "choices": ["Land to its family, and liberty to the one sold", "Only the tithe of the flock", "The ark to Shiloh", "A new king over the tribes"], "ref": "Leviticus 25:10", "plain": "The fiftieth year is holy. Each one returns to his possession and to his family."},
+  {"book": "Numbers", "section": "Law", "prompt": "Who, of the spies, said Israel should go up and take the land?", "choices": ["Joshua and Caleb", "Aaron and Hur", "Balaam and Balak", "Only the ten who feared"], "ref": "Numbers 14:6–9", "plain": "Twelve looked at the land. Ten said the people were too strong. Joshua and Caleb said the Lord was with Israel."},
+  {"book": "Numbers", "section": "Law", "prompt": "What did Moses lift up when serpents bit the camp?", "choices": ["A bronze serpent on a pole", "The staff that struck the Nile", "A bowl of manna", "The altar fire"], "ref": "Numbers 21:8–9", "plain": "God told him to set a serpent on a pole. Whoever looked at it lived."},
+  {"book": "Deuteronomy", "section": "Law", "prompt": "The Shema begins with which line?", "choices": ["Hear, O Israel: the Lord our God, the Lord is one", "You shall have no other gods before me", "In the beginning God created", "The Lord is my shepherd"], "ref": "Deuteronomy 6:4", "plain": "Moses tells Israel to hear, and to love the Lord with all the heart, soul, and strength."},
+  {"book": "Deuteronomy", "section": "Law", "prompt": "Where does the book leave Moses?", "choices": ["Dead on Mount Nebo, in sight of the land", "Leading the people across the Jordan", "Buried by Aaron in Kadesh", "Alive, handing the ark to Joshua"], "ref": "Deuteronomy 34:1–5", "plain": "God shows him the land. He dies there. Joshua takes the people on."},
+  {"book": "Joshua", "section": "History", "prompt": "Who hid the spies in Jericho?", "choices": ["Rahab", "Achan", "Deborah", "A priest of Ai"], "ref": "Joshua 2:1–4", "plain": "Rahab hid them under the flax. The wall fell. She and her house were kept."},
+  {"book": "Joshua", "section": "History", "prompt": "What stood still while Israel fought the Amorites?", "choices": ["The sun, over Gibeon", "The Jordan, for a second day", "The ark, outside Jericho", "A pillar of fire"], "ref": "Joshua 10:12–13", "plain": "Joshua spoke, and the sun stood still until the nation took vengeance on its enemies."},
+  {"book": "Judges", "section": "History", "prompt": "The book’s last line says there was no king, and every man did what?", "choices": ["What was right in his own eyes", "What Moses commanded", "What the priest at Shiloh said", "What the neighboring kings did"], "ref": "Judges 21:25", "plain": "The cycle is the same through the book. Israel turns, is oppressed, cries out, and a judge is raised. Then the line returns."},
+  {"book": "Judges", "section": "History", "prompt": "Who judged Israel from under a palm tree, and went with Barak to the fight?", "choices": ["Deborah", "Jael", "Samson’s mother", "Hannah"], "ref": "Judges 4:4–9", "plain": "Deborah the prophet sent Barak. Jael killed Sisera. The song is in the next chapter."},
+  {"book": "Ruth", "section": "History", "prompt": "In whose field did Ruth glean?", "choices": ["Boaz", "Elimelech", "A man of Moab", "The nearest kinsman, who refused"], "ref": "Ruth 2:3", "plain": "She happened on the field of Boaz. He was a kinsman. The child of the line is Obed, father of Jesse, father of David."},
+  {"book": "Ruth", "section": "History", "prompt": "What did Naomi ask to be called when she came back to Bethlehem?", "choices": ["Mara, for the Almighty had dealt bitterly", "Orpah, the one who turned back", "Rachel, for the lost sons", "Esther, for a hidden face"], "ref": "Ruth 1:20", "plain": "She said, do not call me Naomi. Call me Mara. The book does not leave her there."},
+  {"book": "1 Samuel", "section": "History", "prompt": "What did David take into the fight with Goliath?", "choices": ["A sling and five smooth stones", "Saul’s sword and armor", "A spear from the armory", "Only a shepherd’s staff"], "ref": "1 Samuel 17:40", "plain": "Saul’s armor did not fit. David took his staff, five stones, and the sling."},
+  {"book": "1 Samuel", "section": "History", "prompt": "Who was the priest at Shiloh when Hannah prayed for a son?", "choices": ["Eli", "Samuel", "Abiathar", "Zadok"], "ref": "1 Samuel 1:9", "plain": "Hannah prayed. Eli thought she was drunk. The boy she asked for was Samuel."},
+  {"book": "2 Samuel", "section": "History", "prompt": "Who told David a story of a rich man and a poor man’s lamb?", "choices": ["Nathan", "Joab", "Abiathar", "Gad the seer"], "ref": "2 Samuel 12:1–7", "plain": "David judged the man in the story. Nathan said, you are the man."},
+  {"book": "2 Samuel", "section": "History", "prompt": "Who rebelled against David and died hanging in an oak?", "choices": ["Absalom", "Amnon", "Ish-bosheth", "Sheba"], "ref": "2 Samuel 18:9", "plain": "Absalom’s head caught in the oak. Joab struck him. David wept for his son."},
+  {"book": "1 Kings", "section": "History", "prompt": "What did Solomon ask for when God said, ask?", "choices": ["An understanding heart to judge the people", "Long life and victory", "Gold for the temple", "A fleet at Ezion-geber"], "ref": "1 Kings 3:9", "plain": "He asked for a hearing heart. The temple, the wealth, and the fame come after."},
+  {"book": "1 Kings", "section": "History", "prompt": "On Carmel, what did Elijah set against the prophets of Baal?", "choices": ["A bull on a wood altar, with no fire laid", "A golden calf", "The ark of the covenant", "A trench of oil only"], "ref": "1 Kings 18:23–38", "plain": "Baal’s prophets called all day. Elijah poured water. The fire of the Lord fell."},
+  {"book": "2 Kings", "section": "History", "prompt": "Who was told to wash seven times in the Jordan?", "choices": ["Naaman", "Hezekiah", "Gehazi", "Ben-hadad"], "ref": "2 Kings 5:10", "plain": "Elisha did not come out. He sent word. Naaman washed, and his flesh was restored."},
+  {"book": "2 Kings", "section": "History", "prompt": "What did Hilkiah find in the temple in Josiah’s day?", "choices": ["The book of the law", "The ark, which had been lost in Egypt", "Aaron’s rod", "A letter from Babylon"], "ref": "2 Kings 22:8", "plain": "The book was read to the king. Josiah tore his clothes. The reform follows the page."},
+  {"book": "1 Chronicles", "section": "History", "prompt": "How does the book begin?", "choices": ["With a genealogy, from Adam", "With David already king", "With the fall of Jerusalem", "With Solomon’s prayer"], "ref": "1 Chronicles 1:1", "plain": "Adam, Seth, Enosh. The lists run a long way before the story of David takes the page."},
+  {"book": "1 Chronicles", "section": "History", "prompt": "Why was David not the one to build the temple?", "choices": ["He had shed much blood", "He was too old", "The ark was still in Philistia", "Nathan refused the plan"], "ref": "1 Chronicles 22:8", "plain": "God said a son of peace would build it. David gathered the materials. Solomon built."},
+  {"book": "2 Chronicles", "section": "History", "prompt": "The book ends with a decree from which king?", "choices": ["Cyrus of Persia, to rebuild the house in Jerusalem", "Nebuchadnezzar, to burn it", "Artaxerxes, to stop the work", "Pharaoh Neco, to tax Judah"], "ref": "2 Chronicles 36:22–23", "plain": "The house falls. Then the last lines are Cyrus: let the people go up and build."},
+  {"book": "2 Chronicles", "section": "History", "prompt": "When Judah was outnumbered, who did Jehoshaphat put in front of the army?", "choices": ["Singers, praising the Lord", "The chariots from Egypt", "The priests carrying the ark into the fight", "Hired soldiers from Israel"], "ref": "2 Chronicles 20:21", "plain": "He set singers ahead. The ambush was already turned. Judah came to the watchtower and looked at the dead."},
+  {"book": "Ezra", "section": "History", "prompt": "What was Ezra?", "choices": ["A scribe skilled in the law of Moses", "A cupbearer to the Persian king", "A prophet in Babylon only", "The high priest who built the altar alone"], "ref": "Ezra 7:6", "plain": "He went up from Babylon. The king’s letter was in his hand. The law was his work."},
+  {"book": "Ezra", "section": "History", "prompt": "When the foundation of the house was laid, what did the old men do?", "choices": ["They wept, while others shouted for joy", "They refused to come", "They sent to Samaria for builders", "They hid the gold vessels"], "ref": "Ezra 3:12", "plain": "The ones who had seen the first house wept. The shout and the weeping could not be told apart."},
+  {"book": "Nehemiah", "section": "History", "prompt": "What was Nehemiah’s work in Susa before he asked to leave?", "choices": ["Cupbearer to the king", "Scribe of the law", "Captain of the guard", "Keeper of the temple vessels"], "ref": "Nehemiah 1:11", "plain": "He heard the wall was broken. He prayed. The king sent him to Jerusalem to build."},
+  {"book": "Nehemiah", "section": "History", "prompt": "Who tried to stop the wall?", "choices": ["Sanballat, Tobiah, and Geshem", "Haman and the princes", "Cyrus and Darius", "The returned priests only"], "ref": "Nehemiah 2:19", "plain": "They mocked, then threatened. The builders worked with a tool in one hand. The wall was finished in fifty-two days."},
+  {"book": "Esther", "section": "History", "prompt": "What did Mordecai tell Esther when she feared to go in to the king?", "choices": ["You may have come to the kingdom for such a time as this", "Hide, and the decree will pass", "Take the crown and rule in Persia", "Go back to Jerusalem with the gold"], "ref": "Esther 4:14", "plain": "The book never says the name of God. The turn of the story is still this: Esther goes in, and the decree is reversed."},
+  {"book": "Esther", "section": "History", "prompt": "What feast comes from this story?", "choices": ["Purim", "Passover", "Booths", "The new moon"], "ref": "Esther 9:26", "plain": "The lot is called Pur. The day Haman planned became the day the Jews kept."},
+  {"book": "Job", "section": "Wisdom", "prompt": "How does God answer Job at the end?", "choices": ["Out of the whirlwind, with questions about the world", "By giving him the names of his friends’ sins", "Through Elihu only", "By a dream of the ladder"], "ref": "Job 38:1", "plain": "The Lord answers from the storm. Where were you when I laid the foundation of the earth?"},
+  {"book": "Job", "section": "Wisdom", "prompt": "Who are the three friends who sit with Job?", "choices": ["Eliphaz, Bildad, and Zophar", "Nathan, Gad, and Ahijah", "Bildad, Elihu, and Moses", "Aaron, Hur, and Jethro"], "ref": "Job 2:11", "plain": "They sit seven days and say nothing. Then they explain. A younger man, Elihu, speaks later."},
+  {"book": "Psalms", "section": "Wisdom", "prompt": "Psalm 23 begins with what line?", "choices": ["The Lord is my shepherd", "The heavens declare the glory of God", "Bless the Lord, O my soul", "How long, O Lord?"], "ref": "Psalm 23:1", "plain": "A shepherd psalm. Green pastures, a valley, a table, a house to dwell in."},
+  {"book": "Psalms", "section": "Wisdom", "prompt": "Which psalm walks the alphabet, line after line, on the word of the Lord?", "choices": ["Psalm 119", "Psalm 51", "Psalm 22", "Psalm 90"], "ref": "Psalm 119", "plain": "It is the long one. Statute, testimony, precept, law. The page stays on the word."},
+  {"book": "Proverbs", "section": "Wisdom", "prompt": "The fear of the Lord is called the beginning of what?", "choices": ["Knowledge", "The temple service", "The judges", "The return from exile"], "ref": "Proverbs 1:7", "plain": "The opening sets it there. Fools despise wisdom and instruction."},
+  {"book": "Proverbs", "section": "Wisdom", "prompt": "The last chapter is counsel from a mother to whom?", "choices": ["King Lemuel", "Solomon, as a boy", "David, before Goliath", "Hezekiah’s men"], "ref": "Proverbs 31:1", "plain": "Lemuel’s mother speaks. The chapter then describes a woman who fears the Lord."},
+  {"book": "Ecclesiastes", "section": "Wisdom", "prompt": "The preacher’s refrain is that all is what?", "choices": ["Vanity", "Holy", "Lost in the sea", "Written in the law"], "ref": "Ecclesiastes 1:2", "plain": "Vapor. A generation goes and a generation comes. The end of the book is plain: fear God, and keep his commandments."},
+  {"book": "Ecclesiastes", "section": "Wisdom", "prompt": "Chapter 3 says there is a time to be born, and a time to do what?", "choices": ["Die", "Build the temple", "Count the tribes", "Hide the ark"], "ref": "Ecclesiastes 3:2", "plain": "A time for every matter under heaven. Born and die, plant and pluck, weep and laugh."},
+  {"book": "Song of Solomon", "section": "Wisdom", "prompt": "Who is speaking through most of the book?", "choices": ["A woman and her beloved, with the daughters of Jerusalem", "A king giving law", "A prophet against Tyre", "A priest at the altar"], "ref": "Song of Solomon 1:5", "plain": "It is a song of love. She is dark and lovely. The beloved is chief among ten thousand. The book does not turn into a sermon."},
+  {"book": "Song of Solomon", "section": "Wisdom", "prompt": "What does the woman say of herself and her beloved near the end?", "choices": ["I am my beloved’s, and my beloved is mine", "I will go down to Egypt", "The winter is forever", "Do not awaken love until the temple is built"], "ref": "Song of Solomon 6:3", "plain": "The line is the claim of the song. Love is strong as death, the next-to-last chapter says."},
+  {"book": "Isaiah", "section": "Prophets", "prompt": "In the throne-room vision, what do the seraphim call?", "choices": ["Holy, holy, holy", "Comfort, comfort", "How long?", "The day of the Lord"], "ref": "Isaiah 6:3", "plain": "Isaiah sees the Lord high and lifted up. He says he is a man of unclean lips. A coal is taken from the altar."},
+  {"book": "Isaiah", "section": "Prophets", "prompt": "The sign to Ahaz is a child called what?", "choices": ["Immanuel", "Maher-shalal-hash-baz only", "Cyrus", "The branch from Jesse, unnamed"], "ref": "Isaiah 7:14", "plain": "A young woman will bear a son. His name is Immanuel: God with us."},
+  {"book": "Jeremiah", "section": "Prophets", "prompt": "What did God tell Jeremiah he was, when he was called?", "choices": ["A prophet to the nations, though he said he was only a youth", "A priest who must never speak", "King after Josiah", "A scribe in Babylon"], "ref": "Jeremiah 1:5–7", "plain": "He said he did not know how to speak. God said, do not say, I am only a youth."},
+  {"book": "Jeremiah", "section": "Prophets", "prompt": "At the potter’s house, what is the picture?", "choices": ["A vessel marred, remade by the potter", "A wall with a plumb line", "Dry bones in a valley", "A scroll eaten"], "ref": "Jeremiah 18:4–6", "plain": "The clay was spoiled in the hand. He made it another vessel. So, God says, are you in my hand."},
+  {"book": "Lamentations", "section": "Prophets", "prompt": "What does the book mourn?", "choices": ["The fall of Jerusalem", "The death of Moses", "A famine in Egypt", "The loss of the ark at Shiloh"], "ref": "Lamentations 1:1", "plain": "How lonely sits the city. The poems are acrostics. In the middle: the steadfast love of the Lord does not end."},
+  {"book": "Lamentations", "section": "Prophets", "prompt": "Which line sits in the middle poem?", "choices": ["The steadfast love of the Lord never ceases", "A child will be born in Bethlehem", "The just shall live by faith", "Prepare the way of the Lord"], "ref": "Lamentations 3:22–23", "plain": "His mercies are new every morning. The city is still in ruins around the line."},
+  {"book": "Ezekiel", "section": "Prophets", "prompt": "What did Ezekiel see in the valley?", "choices": ["Dry bones", "A ladder to heaven", "Four rivers", "A plumb line"], "ref": "Ezekiel 37:1", "plain": "The bones were very dry. He prophesied. Breath came into them, and they stood."},
+  {"book": "Ezekiel", "section": "Prophets", "prompt": "God calls Ezekiel a watchman for whom?", "choices": ["The house of Israel", "Nineveh", "Edom", "The court of Pharaoh"], "ref": "Ezekiel 3:17", "plain": "If he warns and they do not turn, their blood is on them. If he does not warn, it is required of him."},
+  {"book": "Daniel", "section": "Prophets", "prompt": "Who was thrown into the fiery furnace?", "choices": ["Shadrach, Meshach, and Abednego", "Daniel alone", "The wise men of Babylon", "Belshazzar’s guards"], "ref": "Daniel 3:20", "plain": "They would not bow to the image. A fourth was seen in the fire. They came out with no smell of smoke."},
+  {"book": "Daniel", "section": "Prophets", "prompt": "What appeared on the wall at Belshazzar’s feast?", "choices": ["Writing: weighed, numbered, divided", "A hand holding a plumb line", "The name of Cyrus", "A map of Jerusalem"], "ref": "Daniel 5:25", "plain": "Mene, mene, tekel, parsin. Daniel read it. That night the kingdom fell."},
+  {"book": "Hosea", "section": "Prophets", "prompt": "Whom did God tell Hosea to marry?", "choices": ["Gomer, a woman of whoredom", "A daughter of the king", "The widow of a prophet", "No one; he was to stay alone"], "ref": "Hosea 1:2", "plain": "The marriage is the picture. Israel has gone after other gods. The names of the children say it, then the mercy comes back."},
+  {"book": "Hosea", "section": "Prophets", "prompt": "What does God say he desires, rather than sacrifice?", "choices": ["Steadfast love, and knowledge of God", "A taller altar", "Silence in the temple", "The tribute of Assyria"], "ref": "Hosea 6:6", "plain": "The line is short. Mercy, not sacrifice. Knowledge of God, rather than burnt offerings."},
+  {"book": "Joel", "section": "Prophets", "prompt": "What swarm opens the book?", "choices": ["Locusts", "Lions from Babylon", "Frogs, as in Egypt", "Chariots of Edom"], "ref": "Joel 1:4", "plain": "What the cutting locust left, the swarming locust ate. Then the promise: I will pour out my Spirit on all flesh."},
+  {"book": "Joel", "section": "Prophets", "prompt": "The later promise is that God will pour out his Spirit on whom?", "choices": ["All flesh", "Only the priests in Jerusalem", "The king and his sons", "The prophets of Baal, if they turn"], "ref": "Joel 2:28", "plain": "Sons and daughters will prophesy. Old men will dream. Peter reads this page on the day of Pentecost."},
+  {"book": "Amos", "section": "Prophets", "prompt": "Amos said he was not a prophet, but what?", "choices": ["A herdsman, and a dresser of sycamore figs", "A priest at Bethel", "A prince of Judah", "A scribe of the law"], "ref": "Amos 7:14", "plain": "Amaziah the priest told him to go home. Amos said the Lord took him from the flock."},
+  {"book": "Amos", "section": "Prophets", "prompt": "What was in the Lord’s hand by the wall?", "choices": ["A plumb line", "A scroll", "A lampstand", "A cup of wrath, unnamed"], "ref": "Amos 7:7–8", "plain": "The wall was built with a plumb line. The Lord said he was setting one in the midst of Israel."},
+  {"book": "Obadiah", "section": "Prophets", "prompt": "The vision is against which people?", "choices": ["Edom", "Nineveh", "Tyre", "Egypt"], "ref": "Obadiah 1", "plain": "It is the short book. Edom stood by when strangers entered Jacob’s gates. The page does not let that stand."},
+  {"book": "Obadiah", "section": "Prophets", "prompt": "Why is Edom charged?", "choices": ["Violence against his brother Jacob", "Building a tower to heaven", "Worshiping the queen of heaven", "Refusing the census"], "ref": "Obadiah 10", "plain": "For the violence done to your brother Jacob, shame will cover you."},
+  {"book": "Jonah", "section": "Prophets", "prompt": "Where did God send Jonah?", "choices": ["Nineveh", "Babylon", "Tarshish, which is where Jonah chose", "Jerusalem, to the king"], "ref": "Jonah 1:2", "plain": "He went the other way, toward Tarshish. A fish, a preaching, a plant, and a question from God close the book."},
+  {"book": "Jonah", "section": "Prophets", "prompt": "What did Jonah sit under, east of the city, until it withered?", "choices": ["A plant God appointed", "A broom tree, like Elijah", "The gate of Nineveh", "A vine from his own garden"], "ref": "Jonah 4:6", "plain": "He was glad of the plant. A worm struck it. God asked about the city."},
+  {"book": "Micah", "section": "Prophets", "prompt": "Where does Micah say a ruler will come from?", "choices": ["Bethlehem Ephrathah", "Nineveh", "Samaria’s high place", "The river Chebar"], "ref": "Micah 5:2", "plain": "Small among the clans of Judah. From there one who will shepherd Israel."},
+  {"book": "Micah", "section": "Prophets", "prompt": "What does the Lord require?", "choices": ["To do justice, love kindness, and walk humbly with God", "A burnt offering of rivers of oil only", "Silence until the exile ends", "The rebuilding of the wall"], "ref": "Micah 6:8", "plain": "The question is put first: with what shall I come before the Lord? The answer is the three lines."},
+  {"book": "Nahum", "section": "Prophets", "prompt": "Nahum’s burden is against which city?", "choices": ["Nineveh", "Babylon", "Damascus", "Rome"], "ref": "Nahum 1:1", "plain": "An oracle about Nineveh. The city Jonah preached to falls in this book. The Lord is slow to anger, and he will not leave the guilty."},
+  {"book": "Nahum", "section": "Prophets", "prompt": "How is Nineveh pictured as the word goes out?", "choices": ["As a ruined pool, with people fleeing", "As a vine God will replant", "As a lampstand of gold", "As a city that repents a second time"], "ref": "Nahum 2:8", "plain": "Nineveh is like a pool whose waters run away. Halt, they cry, but no one turns."},
+  {"book": "Habakkuk", "section": "Prophets", "prompt": "The line later letters quote is which?", "choices": ["The righteous shall live by his faith", "Prepare the way of the Lord", "A child is born to us", "I will pour out my Spirit"], "ref": "Habakkuk 2:4", "plain": "Habakkuk asks how long. The answer includes this: the proud soul is not upright, but the righteous one lives by faith."},
+  {"book": "Habakkuk", "section": "Prophets", "prompt": "How does the book end?", "choices": ["With a prayer, and joy even if the fig tree does not blossom", "With Nineveh’s fall", "With a genealogy", "With the call of a king"], "ref": "Habakkuk 3:17–18", "plain": "Though the flock is cut off, yet I will rejoice in the Lord."},
+  {"book": "Zephaniah", "section": "Prophets", "prompt": "The warning gathers on what day?", "choices": ["The day of the Lord", "The day of atonement only", "Purim", "The jubilee"], "ref": "Zephaniah 1:14", "plain": "The great day of the Lord is near. Then the last lines turn: he will rejoice over you with gladness."},
+  {"book": "Zephaniah", "section": "Prophets", "prompt": "In the days of which king did Zephaniah speak?", "choices": ["Josiah of Judah", "Ahab", "Cyrus", "Herod"], "ref": "Zephaniah 1:1", "plain": "The heading names Josiah, son of Amon. The word is before the reform has finished the high places."},
+  {"book": "Haggai", "section": "Prophets", "prompt": "What were the people saying about the house of the Lord?", "choices": ["The time has not yet come to rebuild it", "It must be taller than Solomon’s", "It should be built in Babylon", "The ark must be found first"], "ref": "Haggai 1:2", "plain": "They lived in paneled houses. The house of the Lord lay in ruins. Haggai says, consider your ways."},
+  {"book": "Haggai", "section": "Prophets", "prompt": "Who is named with Zerubbabel as the work starts again?", "choices": ["Joshua the high priest", "Ezra the scribe", "Nehemiah the cupbearer", "Eliashib"], "ref": "Haggai 1:12", "plain": "Zerubbabel and Joshua obey the voice of the Lord. The people fear, and work."},
+  {"book": "Zechariah", "section": "Prophets", "prompt": "The word to Zerubbabel is, not by might, nor by power, but by what?", "choices": ["My Spirit", "A stronger wall", "The gold of Persia", "The sword of Judah"], "ref": "Zechariah 4:6", "plain": "A lampstand and two olive trees sit in the vision. The mountain before Zerubbabel will become a plain."},
+  {"book": "Zechariah", "section": "Prophets", "prompt": "How does the king come to Jerusalem in the later oracle?", "choices": ["Humble, riding on a donkey", "In a chariot of fire", "Hidden in a cloud", "At the head of Persia’s army"], "ref": "Zechariah 9:9", "plain": "Rejoice greatly, daughter of Zion. Your king comes to you, righteous and saved, on a colt."},
+  {"book": "Malachi", "section": "Prophets", "prompt": "The last lines say who will come before the great day?", "choices": ["Elijah the prophet", "A king from Bethlehem, unnamed", "Cyrus", "The branch, only"], "ref": "Malachi 4:5", "plain": "The Old Testament, in this order, ends here. He will turn the hearts of fathers to children, and children to fathers."},
+  {"book": "Malachi", "section": "Prophets", "prompt": "What does Malachi say will rise for those who fear the Lord’s name?", "choices": ["The sun of righteousness, with healing in its wings", "A new temple, already measured", "A star over the East only", "The bow in the cloud"], "ref": "Malachi 4:2", "plain": "The day is coming, burning like an oven. For the ones who fear his name, the sun rises."},
+  {"book": "Matthew", "section": "Gospels", "prompt": "How does Matthew open?", "choices": ["The book of the genealogy of Jesus Christ, son of David, son of Abraham", "In the beginning was the Word", "A letter to Theophilus", "The beginning of the gospel"], "ref": "Matthew 1:1", "plain": "The names run from Abraham to Joseph. Then the birth, and the magi."},
+  {"book": "Matthew", "section": "Gospels", "prompt": "Where does Jesus give the longer sermon that begins, blessed are the poor in spirit?", "choices": ["On a mountain", "In the synagogue at Capernaum only", "On the road to Emmaus", "In the temple, at twelve years old"], "ref": "Matthew 5:1", "plain": "He went up the mountain. The beatitudes open the sermon. It closes on the house built on rock."},
+  {"book": "Mark", "section": "Gospels", "prompt": "Mark’s first line calls the book what?", "choices": ["The beginning of the gospel of Jesus Christ", "A genealogy", "An orderly account for Theophilus", "A revelation to John"], "ref": "Mark 1:1", "plain": "John is in the wilderness at once. The word “immediately” keeps the pages moving."},
+  {"book": "Mark", "section": "Gospels", "prompt": "What did Jesus say to the paralytic before he told him to walk?", "choices": ["Son, your sins are forgiven", "Your name is written in the book", "Go, wash in the pool", "Sell all you have"], "ref": "Mark 2:5", "plain": "Friends lowered him through the roof. The scribes questioned the forgiveness. Jesus told him to take up the mat."},
+  {"book": "Luke", "section": "Gospels", "prompt": "To whom is the account written?", "choices": ["Theophilus", "The twelve, unnamed", "The church at Rome", "Philemon"], "ref": "Luke 1:3", "plain": "An orderly account of things fulfilled. The same name opens Acts."},
+  {"book": "Luke", "section": "Gospels", "prompt": "In the story of the two sons, what does the father do when the younger comes home?", "choices": ["Runs, embraces him, and kills the fattened calf", "Refuses him until the debt is paid", "Sends him to the field with the older son", "Hands him to the servants"], "ref": "Luke 15:20", "plain": "The son had a speech ready. The father was already running. The older son stays outside, angry."},
+  {"book": "John", "section": "Gospels", "prompt": "John’s opening is about what?", "choices": ["The Word, who was with God and was God", "A genealogy from Abraham", "A decree from Caesar", "A vision of lampstands"], "ref": "John 1:1", "plain": "In the beginning was the Word. The Word became flesh and dwelt among us."},
+  {"book": "John", "section": "Gospels", "prompt": "What did Jesus say was finished?", "choices": ["The work, as he died", "The building of a synagogue", "The journey to Egypt", "The writing of the law"], "ref": "John 19:30", "plain": "He received the sour wine. He said, it is finished. And he bowed his head."},
+  {"book": "Acts", "section": "Acts", "prompt": "What happened when the day of Pentecost came?", "choices": ["A sound like a mighty wind, and tongues as of fire", "The veil of the temple torn", "A star over Bethlehem", "A decree from Caesar"], "ref": "Acts 2:1–4", "plain": "They spoke in other languages. Peter stood up and opened Joel."},
+  {"book": "Acts", "section": "Acts", "prompt": "On the Damascus road, who was stopped by a light?", "choices": ["Saul", "Cornelius", "The jailer at Philippi", "Apollos"], "ref": "Acts 9:3", "plain": "He was breathing threats. A light. A voice: Saul, Saul, why are you persecuting me?"},
+  {"book": "Romans", "section": "Letters", "prompt": "Paul says he is not ashamed of what?", "choices": ["The gospel", "The collection for Jerusalem", "His Roman citizenship", "The altar to an unknown god"], "ref": "Romans 1:16", "plain": "It is the power of God for salvation, to the Jew first and also to the Greek."},
+  {"book": "Romans", "section": "Letters", "prompt": "What can separate from the love of God in Christ?", "choices": ["Nothing, in the list he gives", "Only death", "Only a denial before men", "The law, if it is broken"], "ref": "Romans 8:38–39", "plain": "Death, life, angels, rulers, things present, things to come. None of them."},
+  {"book": "1 Corinthians", "section": "Letters", "prompt": "Chapter 13 says the greatest of the three is what?", "choices": ["Love", "Faith", "Hope", "Knowledge"], "ref": "1 Corinthians 13:13", "plain": "Faith, hope, and love abide. The greatest is love. Without it, the gifts are a noisy gong."},
+  {"book": "1 Corinthians", "section": "Letters", "prompt": "If Christ has not been raised, Paul says the preaching is what?", "choices": ["In vain, and faith is in vain", "Still useful as a moral tale", "True for the Jews only", "Hidden until the temple falls"], "ref": "1 Corinthians 15:14", "plain": "He sets the witnesses first. Then the argument: if there is no resurrection, we are still in our sins."},
+  {"book": "2 Corinthians", "section": "Letters", "prompt": "What did Paul ask to have taken from him?", "choices": ["A thorn in the flesh", "A letter from the emperor", "The collection", "His chains in Caesarea"], "ref": "2 Corinthians 12:7–9", "plain": "Three times he asked. The answer: my grace is sufficient. Power is made perfect in weakness."},
+  {"book": "2 Corinthians", "section": "Letters", "prompt": "God comforts in affliction, Paul says, so that we can do what?", "choices": ["Comfort others with the same comfort", "Avoid every city that opposed him", "Stop writing letters", "Build a house church in Athens only"], "ref": "2 Corinthians 1:4", "plain": "The letter opens on comfort. The God of all comfort, for the sake of those who are afflicted."},
+  {"book": "Galatians", "section": "Letters", "prompt": "Paul says a person is not justified by works of the law, but through what?", "choices": ["Faith in Jesus Christ", "The calendar of feasts", "Circumcision added to the gospel", "A vision of the third heaven"], "ref": "Galatians 2:16", "plain": "The letter is hot. Another gospel is no gospel. The Spirit comes by hearing with faith."},
+  {"book": "Galatians", "section": "Letters", "prompt": "The fruit of the Spirit begins with what?", "choices": ["Love", "The law written on stone", "Tongues", "A crown"], "ref": "Galatians 5:22", "plain": "Love, joy, peace, patience, kindness, goodness, faithfulness, gentleness, self-control."},
+  {"book": "Ephesians", "section": "Letters", "prompt": "By grace you have been saved, through faith, and this is not what?", "choices": ["Your own doing", "For the Jew only", "Written in the law of Moses", "A secret Paul withholds"], "ref": "Ephesians 2:8", "plain": "Not a result of works, so that no one may boast. You are his workmanship."},
+  {"book": "Ephesians", "section": "Letters", "prompt": "The armor list ends with which piece?", "choices": ["The sword of the Spirit, which is the word of God", "The helmet of salvation, and then he stops", "A shield only", "The belt, named last"], "ref": "Ephesians 6:17", "plain": "Belt, breastplate, shoes, shield, helmet, sword. Then prayer."},
+  {"book": "Philippians", "section": "Letters", "prompt": "Where does Paul say his bonds have become known?", "choices": ["Among the whole imperial guard", "Only in the church at Jerusalem", "In the synagogue at Antioch", "On the ship to Rome, and nowhere else"], "ref": "Philippians 1:13", "plain": "He writes from custody. He tells them to rejoice. The hymn says every knee will bow."},
+  {"book": "Philippians", "section": "Letters", "prompt": "What does Paul say he has learned, in whatever state?", "choices": ["To be content", "To ask for release at once", "To stop speaking of the gospel", "To take wages from every church"], "ref": "Philippians 4:11", "plain": "Plenty and hunger, abundance and need. I can do all things through him who strengthens me."},
+  {"book": "Colossians", "section": "Letters", "prompt": "The hymn says the Son is the image of whom?", "choices": ["The invisible God", "Moses", "The high priest in Jerusalem", "An angel of the churches"], "ref": "Colossians 1:15", "plain": "Firstborn over creation. In him all things hold together. The fullness was pleased to dwell in him."},
+  {"book": "Colossians", "section": "Letters", "prompt": "Paul tells them to set their minds on things that are where?", "choices": ["Above, where Christ is", "In the philosophy of the age", "On the feast calendar only", "On the vision of the throne, and nothing else"], "ref": "Colossians 3:1–2", "plain": "If you have been raised with Christ, seek the things above. The old self is to be put off."},
+  {"book": "1 Thessalonians", "section": "Letters", "prompt": "The day of the Lord, Paul says, comes like what?", "choices": ["A thief in the night", "A trumpet only the priests hear", "The dawn, announced a year ahead", "A feast on the calendar"], "ref": "1 Thessalonians 5:2", "plain": "They were not to grieve as those without hope. The dead in Christ rise first. The day still comes like a thief."},
+  {"book": "1 Thessalonians", "section": "Letters", "prompt": "What report had come back from this church?", "choices": ["Their faith had gone out in Macedonia and Achaia", "They had left the gospel for the law", "They refused Paul’s letter", "They were already facing Nero, named"], "ref": "1 Thessalonians 1:8", "plain": "Paul remembers their work of faith, labor of love, and patience of hope."},
+  {"book": "2 Thessalonians", "section": "Letters", "prompt": "Paul tells them not to be shaken by a letter saying what?", "choices": ["That the day of the Lord has already come", "That the collection is cancelled", "That Peter has forbidden Gentiles", "That the temple will stand forever"], "ref": "2 Thessalonians 2:2", "plain": "The rebellion comes first, and the man of lawlessness. They are to stand firm and hold the traditions."},
+  {"book": "2 Thessalonians", "section": "Letters", "prompt": "What does he say about the one who is unwilling to work?", "choices": ["He should not eat", "He should be sent to Jerusalem", "He may live from the altar", "He is free of the letter"], "ref": "2 Thessalonians 3:10", "plain": "A quiet life, and one’s own work. The idle are to be warned as brothers."},
+  {"book": "1 Timothy", "section": "Letters", "prompt": "The love of money is called what?", "choices": ["A root of all kinds of evils", "The greatest gift", "Lawful, if tithed", "The mark of an overseer"], "ref": "1 Timothy 6:10", "plain": "Not “money,” the line says. The love of it. Some have wandered from the faith, pierced through."},
+  {"book": "1 Timothy", "section": "Letters", "prompt": "An overseer must be what, in the list?", "choices": ["Above reproach, husband of one wife, able to teach", "A Levite from Aaron’s line", "Unmarried", "Rich enough to fund the church"], "ref": "1 Timothy 3:2", "plain": "The office is described, not invented later in the letter. Deacons have a list of their own."},
+  {"book": "2 Timothy", "section": "Letters", "prompt": "All Scripture is said to be what?", "choices": ["Breathed out by God, and profitable", "A private letter to Timothy only", "Useful once the apostles are gone, and not before", "The law, and not the prophets"], "ref": "2 Timothy 3:16", "plain": "For teaching, reproof, correction, and training in righteousness."},
+  {"book": "2 Timothy", "section": "Letters", "prompt": "Near the end Paul says he has done what?", "choices": ["Fought the fight, finished the race, kept the faith", "Asked to be released to Spain in this letter", "Denied the gospel once, and returned", "Built the church at Rome with his hands"], "ref": "2 Timothy 4:7", "plain": "The time of his departure has come. A crown is laid up. Luke is with him. He asks for the cloak and the books."},
+  {"book": "Titus", "section": "Letters", "prompt": "Where had Paul left Titus?", "choices": ["Crete, to put in order what was lacking", "Ephesus, in place of Timothy", "Rome, under house arrest", "Malta, after the shipwreck"], "ref": "Titus 1:5", "plain": "Appoint elders in every town. The grace of God has appeared, training us to renounce ungodliness."},
+  {"book": "Titus", "section": "Letters", "prompt": "How does Paul describe the grace that appeared?", "choices": ["Bringing salvation for all people", "Only for the circumcision", "A secret for Crete", "The law given a second time"], "ref": "Titus 2:11", "plain": "It trains. We wait for the blessed hope, the appearing of the glory of our great God and Savior."},
+  {"book": "Philemon", "section": "Letters", "prompt": "Whom does Paul send back to Philemon?", "choices": ["Onesimus", "Timothy", "Tychicus", "John Mark"], "ref": "Philemon 10–12", "plain": "Once useless, now useful. Paul asks Philemon to receive him as a brother, and charges any wrong to Paul’s account."},
+  {"book": "Philemon", "section": "Letters", "prompt": "How does Paul describe himself as he writes?", "choices": ["A prisoner of Christ Jesus", "An apostle to Crete", "The high priest’s guest", "Free, and about to sail"], "ref": "Philemon 1", "plain": "A short letter from custody. Onesimus, whose name means useful, is the occasion."},
+  {"book": "Hebrews", "section": "Letters", "prompt": "The long list of faith begins with whom?", "choices": ["Abel, then Enoch, Noah, Abraham", "Peter and Paul", "The twelve apostles", "Melchizedek alone"], "ref": "Hebrews 11:4", "plain": "By faith Abel, by faith Enoch, by faith Noah. The chapter does not stop at the famous names."},
+  {"book": "Hebrews", "section": "Letters", "prompt": "Jesus is compared with which priest-king?", "choices": ["Melchizedek", "Aaron only, and no further", "Zadok", "The high priest Caiaphas"], "ref": "Hebrews 7:1", "plain": "Without father or mother in the story, he blessed Abraham. The point is a priest who remains."},
+  {"book": "James", "section": "Letters", "prompt": "Be doers of the word, and not what only?", "choices": ["Hearers", "Speakers in tongues", "Keepers of the feast", "Writers of letters"], "ref": "James 1:22", "plain": "A hearer who does not do is like a man who looks in a mirror and goes away."},
+  {"book": "James", "section": "Letters", "prompt": "Faith without works is called what?", "choices": ["Dead", "The gospel itself", "Enough, if it is sincere", "The fulfillment of the law"], "ref": "James 2:26", "plain": "He uses Abraham and Rahab. As the body without the spirit is dead, so faith without works."},
+  {"book": "1 Peter", "section": "Letters", "prompt": "The readers are called what in the opening?", "choices": ["Elect exiles of the Dispersion", "The church at Rome, by that name", "Priests in the temple", "Apostles with Peter"], "ref": "1 Peter 1:1", "plain": "Pontus, Galatia, Cappadocia, Asia, Bithynia. A living hope through the resurrection."},
+  {"book": "1 Peter", "section": "Letters", "prompt": "They are to come to Jesus as to what?", "choices": ["A living stone", "A second Moses on Sinai", "The ark", "A king who will not suffer"], "ref": "1 Peter 2:4", "plain": "Rejected by men, chosen by God. They themselves are living stones, a holy priesthood."},
+  {"book": "2 Peter", "section": "Letters", "prompt": "No prophecy of Scripture, he says, comes from what?", "choices": ["Someone’s own interpretation, as a private will", "The Spirit", "The old covenant", "A vision"], "ref": "2 Peter 1:20–21", "plain": "Men spoke from God as they were carried along by the Holy Spirit."},
+  {"book": "2 Peter", "section": "Letters", "prompt": "What does he say about Paul’s letters?", "choices": ["There are some things in them hard to understand", "They should not be read in the churches", "They cancel Peter’s", "They are only for Rome"], "ref": "2 Peter 3:16", "plain": "The ignorant twist them, as they do the other Scriptures. The day of the Lord will come like a thief."},
+  {"book": "1 John", "section": "Letters", "prompt": "God is light, and in him is what?", "choices": ["No darkness at all", "A hidden cloud", "The law only", "A lamp for the temple"], "ref": "1 John 1:5", "plain": "If we say we have no sin, we deceive ourselves. If we confess, he is faithful to forgive."},
+  {"book": "1 John", "section": "Letters", "prompt": "The short claim in chapter 4 is that God is what?", "choices": ["Love", "A judge only", "Unknown", "The temple"], "ref": "1 John 4:8", "plain": "The one who does not love does not know God. He loved us and sent his Son."},
+  {"book": "2 John", "section": "Letters", "prompt": "John says not to receive a teacher who denies what?", "choices": ["That Jesus Christ has come in the flesh", "The food laws", "The resurrection of Lazarus only", "That Peter is first"], "ref": "2 John 7", "plain": "Many deceivers have gone out. Do not receive them into the house, or share in their wicked works."},
+  {"book": "2 John", "section": "Letters", "prompt": "How is the letter addressed?", "choices": ["To the elect lady and her children", "To the church at Corinth", "To Gaius", "To the seven churches"], "ref": "2 John 1", "plain": "A very short letter. Truth and love are the two words he will not split."},
+  {"book": "3 John", "section": "Letters", "prompt": "Whom does John commend for walking in the truth?", "choices": ["Gaius", "Diotrephes", "Alexander", "Demas"], "ref": "3 John 1", "plain": "Gaius is loved. Diotrephes loves to be first and will not receive the brothers. Demetrius has a good testimony."},
+  {"book": "3 John", "section": "Letters", "prompt": "What was Diotrephes doing?", "choices": ["Putting himself first, and refusing the brothers", "Preaching the gospel in every town", "Copying the Scriptures", "Hiding from Rome"], "ref": "3 John 9–10", "plain": "He does not acknowledge John’s authority. He talks wicked nonsense, and puts out of the church those who want to welcome the brothers."},
+  {"book": "Jude", "section": "Letters", "prompt": "What does Jude say he found it necessary to do?", "choices": ["Contend for the faith once delivered to the saints", "Collect money for Jerusalem", "Write a gospel", "Appoint elders in Crete"], "ref": "Jude 3", "plain": "He had meant to write about a shared salvation. He writes instead to contend. Ungodly people have crept in."},
+  {"book": "Jude", "section": "Letters", "prompt": "Who disputed about the body of Moses?", "choices": ["Michael the archangel, with the devil", "Peter, with the council", "Elijah, with the prophets of Baal", "Gabriel, with a king"], "ref": "Jude 9", "plain": "Michael did not bring a railing judgment. He said, the Lord rebuke you. Enoch is quoted later in the letter."},
+  {"book": "Revelation", "section": "Revelation", "prompt": "John is told to write what he sees and send it where?", "choices": ["To the seven churches in Asia", "To Rome only", "To Jerusalem’s council", "To Theophilus"], "ref": "Revelation 1:11", "plain": "Ephesus, Smyrna, Pergamum, Thyatira, Sardis, Philadelphia, Laodicea. A lampstand for each."},
+  {"book": "Revelation", "section": "Revelation", "prompt": "How does the book end the story of the city?", "choices": ["A new heaven and a new earth, and the holy city coming down", "The ark returned to Shiloh", "Jerusalem left in ruins, with no further word", "A temple built by the emperors"], "ref": "Revelation 21:1–2", "plain": "He will wipe away every tear. The one on the throne says, behold, I am making all things new. The last lines ask the Lord to come."},
+];
+const ORDER = ["Genesis","Exodus","Leviticus","Numbers","Deuteronomy","Joshua","Judges","Ruth","1 Samuel","2 Samuel","1 Kings","2 Kings","1 Chronicles","2 Chronicles","Ezra","Nehemiah","Esther","Job","Psalms","Proverbs","Ecclesiastes","Song of Solomon","Isaiah","Jeremiah","Lamentations","Ezekiel","Daniel","Hosea","Joel","Amos","Obadiah","Jonah","Micah","Nahum","Habakkuk","Zephaniah","Haggai","Zechariah","Malachi","Matthew","Mark","Luke","John","Acts","Romans","1 Corinthians","2 Corinthians","Galatians","Ephesians","Philippians","Colossians","1 Thessalonians","2 Thessalonians","1 Timothy","2 Timothy","Titus","Philemon","Hebrews","James","1 Peter","2 Peter","1 John","2 John","3 John","Jude","Revelation"];
+const SHORT = {
+  "Genesis": "Gen",
+  "Exodus": "Exod",
+  "Leviticus": "Lev",
+  "Numbers": "Num",
+  "Deuteronomy": "Deut",
+  "Joshua": "Josh",
+  "Judges": "Judg",
+  "Ruth": "Ruth",
+  "1 Samuel": "1 Sam",
+  "2 Samuel": "2 Sam",
+  "1 Kings": "1 Kgs",
+  "2 Kings": "2 Kgs",
+  "1 Chronicles": "1 Chr",
+  "2 Chronicles": "2 Chr",
+  "Ezra": "Ezra",
+  "Nehemiah": "Neh",
+  "Esther": "Esth",
+  "Job": "Job",
+  "Psalms": "Ps",
+  "Proverbs": "Prov",
+  "Ecclesiastes": "Eccl",
+  "Song of Solomon": "Song",
+  "Isaiah": "Isa",
+  "Jeremiah": "Jer",
+  "Lamentations": "Lam",
+  "Ezekiel": "Ezek",
+  "Daniel": "Dan",
+  "Hosea": "Hos",
+  "Joel": "Joel",
+  "Amos": "Amos",
+  "Obadiah": "Obad",
+  "Jonah": "Jonah",
+  "Micah": "Mic",
+  "Nahum": "Nah",
+  "Habakkuk": "Hab",
+  "Zephaniah": "Zeph",
+  "Haggai": "Hag",
+  "Zechariah": "Zech",
+  "Malachi": "Mal",
+  "Matthew": "Matt",
+  "Mark": "Mark",
+  "Luke": "Luke",
+  "John": "John",
+  "Acts": "Acts",
+  "Romans": "Rom",
+  "1 Corinthians": "1 Cor",
+  "2 Corinthians": "2 Cor",
+  "Galatians": "Gal",
+  "Ephesians": "Eph",
+  "Philippians": "Phil",
+  "Colossians": "Col",
+  "1 Thessalonians": "1 Th",
+  "2 Thessalonians": "2 Th",
+  "1 Timothy": "1 Tim",
+  "2 Timothy": "2 Tim",
+  "Titus": "Titus",
+  "Philemon": "Phlm",
+  "Hebrews": "Heb",
+  "James": "Jas",
+  "1 Peter": "1 Pet",
+  "2 Peter": "2 Pet",
+  "1 John": "1 Jn",
+  "2 John": "2 Jn",
+  "3 John": "3 Jn",
+  "Jude": "Jude",
+  "Revelation": "Rev",
+};
+const CAMPS = [
+  {id:"Law", label:"The Law", books:["Genesis","Exodus","Leviticus","Numbers","Deuteronomy"]},
+  {id:"History", label:"The Histories", books:["Joshua","Judges","Ruth","1 Samuel","2 Samuel","1 Kings","2 Kings","1 Chronicles","2 Chronicles","Ezra","Nehemiah","Esther"]},
+  {id:"Wisdom", label:"The Wisdom books", books:["Job","Psalms","Proverbs","Ecclesiastes","Song of Solomon"]},
+  {id:"Prophets", label:"The Prophets", books:["Isaiah","Jeremiah","Lamentations","Ezekiel","Daniel","Hosea","Joel","Amos","Obadiah","Jonah","Micah","Nahum","Habakkuk","Zephaniah","Haggai","Zechariah","Malachi"]},
+  {id:"Gospels", label:"Gospels and Acts", books:["Matthew","Mark","Luke","John","Acts"]},
+  {id:"Letters", label:"The Letters", books:["Romans","1 Corinthians","2 Corinthians","Galatians","Ephesians","Philippians","Colossians","1 Thessalonians","2 Thessalonians","1 Timothy","2 Timothy","Titus","Philemon","Hebrews","James","1 Peter","2 Peter","1 John","2 John","3 John","Jude"]},
+  {id:"Revelation", label:"The last book", books:["Revelation"]}
+];
+const MILE = ["Genesis","Exodus","Ruth","Psalms","Isaiah","Jonah","Matthew","Luke","John","Acts","Romans","Revelation"];
+const REST = {
+  "Law|History":"The law is behind you. Moses has seen the land and died on Nebo. The road crosses the Jordan.",
+  "History|Wisdom":"The histories end with a decree to go up and build. The next books sit down. Job, the songs, the sayings.",
+  "Wisdom|Prophets":"The songs are sung. The prophets begin, speaking to kings and to cities.",
+  "Prophets|Gospels":"Malachi is the last of these pages, in this order. The road goes quiet. Then a genealogy.",
+  "Gospels|Acts":"Four accounts of the same man. The next book is what the witnesses did after.",
+  "Acts|Letters":"The story of the journeys pauses. The letters start, to churches and to persons.",
+  "Letters|Revelation":"The short letters are done. John is on an island. He is told to write what he sees."
+};
+const KEY = "biblePlainlyRoad";
+
+const $=id=>document.getElementById(id);
+let save = load();
+let walk = null;
+
+function load(){
+  try { return Object.assign({known:[], opened:[], walks:0, used:[]}, JSON.parse(localStorage.getItem(KEY)||"{}")); }
+  catch(e){ return {known:[], opened:[], walks:0, used:[]}; }
+}
+function persist(){ localStorage.setItem(KEY, JSON.stringify(save)); }
+
+function sectionOf(book){
+  const q = BANK.find(x=>x.book===book);
+  return q ? q.section : "";
+}
+function campLabel(section){
+  if(section==="Gospels"||section==="Acts") return "Gospels and Acts";
+  const c = CAMPS.find(x=>x.id===section);
+  return c ? c.label : section;
+}
+
+function renderAtlas(el, current){
+  el.innerHTML = "";
+  ORDER.forEach(b=>{
+    const s = document.createElement("span");
+    s.className = "bk" + (save.known.includes(b)?" known":"") + (save.opened.includes(b)&&!save.known.includes(b)?" opened":"") + (b===current?" this":"");
+    s.textContent = SHORT[b];
+    s.title = b;
+    el.appendChild(s);
+  });
+}
+function atlasLine(){
+  const k = save.known.length, o = save.opened.filter(b=>!save.known.includes(b)).length;
+  $("atlasLine").textContent = k||o
+    ? k+" book"+(k===1?"":"s")+" answered from the page. "+o+" opened after a miss."
+    : "A dark stone is a book you have answered from the page. A warm stone is a book you opened after a miss.";
+}
+
+let mode = "mile";
+let camp = "Law";
+function chips(el, items, current, on){
+  el.innerHTML = "";
+  items.forEach(it=>{
+    const b = document.createElement("button");
+    b.className = "chip";
+    b.type = "button";
+    b.textContent = it.label;
+    b.setAttribute("aria-pressed", it.id===current ? "true" : "false");
+    b.onclick = ()=>{ on(it.id); chips(el, items, it.id, on); };
+    el.appendChild(b);
+  });
+}
+function setupHome(){
+  chips($("modes"), [
+    {id:"mile", label:"A mile · 12 stones"},
+    {id:"day", label:"A day’s walk · one camp"},
+    {id:"road", label:"The whole road · 66"}
+  ], mode, id=>{ mode=id; $("campBlock").classList.toggle("hidden", id!=="day"); });
+  chips($("camps"), CAMPS.map(c=>({id:c.id, label:c.label})), camp, id=>{ camp=id; });
+  renderAtlas($("atlas"));
+  atlasLine();
+}
+
+function pick(book){
+  const qs = BANK.filter(q=>q.book===book);
+  const fresh = qs.filter(q=>!save.used.includes(q.book+"|"+q.ref+"|"+q.prompt));
+  const pool = fresh.length ? fresh : qs;
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+function build(books){
+  const queue = [];
+  let last = null;
+  books.forEach(b=>{
+    const q = Object.assign({}, pick(b));
+    q.kind = "q";
+    if(last && sectionOf(b)!==last && mode!=="mile"){
+      queue.push({kind:"rest", from:last, to:sectionOf(b)});
+    }
+    queue.push(q);
+    last = sectionOf(b);
+  });
+  return queue;
+}
+
+function start(){
+  const books = mode==="mile" ? MILE.slice() : mode==="day" ? CAMPS.find(c=>c.id===camp).books.slice() : ORDER.slice();
+  walk = {
+    mode, books, queue: build(books), i: 0,
+    lamp: 3, max: 4, streak: 0,
+    knownNow: [], missedNow: [], looked: false, locked: false
+  };
+  save.walks += 1; persist();
+  show("play");
+  renderStep();
+}
+
+function show(id){
+  ["home","play","bench","done"].forEach(s=>$(s).classList.toggle("hidden", s!==id));
+}
+
+function steps(){ return walk.queue.filter(x=>x.kind==="q"); }
+function stepIndex(){ return walk.queue.slice(0, walk.i).filter(x=>x.kind==="q").length; }
+
+function renderLamp(){
+  const el = $("lamp");
+  el.innerHTML = "";
+  for(let n=0;n<walk.max;n++){
+    const d = document.createElement("i");
+    d.className = "drop" + (n<walk.lamp?" on":"");
+    el.appendChild(d);
+  }
+}
+function renderRoad(){
+  const el = $("road");
+  el.innerHTML = "";
+  const cur = walk.queue[walk.i];
+  walk.books.forEach(b=>{
+    const i = document.createElement("i");
+    const known = walk.knownNow.includes(b) || save.known.includes(b);
+    const opened = walk.missedNow.some(m=>m.book===b) || save.opened.includes(b);
+    i.className = (known?"known":opened?"opened":"") + (cur && cur.book===b ? " now":"");
+    i.title = b;
+    el.appendChild(i);
+  });
+}
+
+function renderStep(){
+  const item = walk.queue[walk.i];
+  if(!item){ finish(); return; }
+  walk.looked = false;
+  walk.locked = false;
+  $("note").classList.add("hidden");
+  $("looked").classList.add("hidden");
+  $("tools").classList.remove("hidden");
+  renderLamp();
+  renderRoad();
+  const total = steps().length;
+  const at = stepIndex()+ (item.kind==="q"?1:0);
+  $("bar").style.width = Math.round((stepIndex()/total)*100)+"%";
+  if(item.kind==="rest"){
+    $("progressLabel").textContent = "A rest";
+    $("qbook").textContent = campLabel(item.to);
+    $("prompt").textContent = REST[item.from+"|"+item.to] || "The road changes here.";
+    $("prompt").classList.add("restline");
+    $("answers").innerHTML = "";
+    $("tools").classList.add("hidden");
+    $("note").classList.remove("hidden");
+    $("ref").textContent = "Between the books";
+    $("plain").textContent = "Nothing to answer. Walk on when you are ready.";
+    $("next").textContent = "Walk on";
+    return;
+  }
+  $("prompt").classList.remove("restline");
+  $("progressLabel").textContent = at+" of "+total+" · "+item.book;
+  $("qbook").textContent = item.book+" · "+campLabel(item.section);
+  $("prompt").textContent = item.prompt;
+  $("next").textContent = walk.i===walk.queue.length-1 ? "End this walk" : "Next stone";
+  const opts = item.choices.map((t,n)=>({t, ok:n===0}));
+  for(let n=opts.length-1;n>0;n--){
+    const j = Math.floor(Math.random()*(n+1));
+    [opts[n], opts[j]] = [opts[j], opts[n]];
+  }
+  walk.opts = opts;
+  const box = $("answers");
+  box.innerHTML = "";
+  opts.forEach((o,n)=>{
+    const b = document.createElement("button");
+    b.className = "choice";
+    b.type = "button";
+    b.innerHTML = '<span class="key">'+(n+1)+'</span> '+escapeHtml(o.t);
+    b.onclick = ()=>answer(n);
+    box.appendChild(b);
+  });
+}
+
+function escapeHtml(s){ return s.replace(/[&<>]/g, c=>({"&":"&","<":"<",">":">"}[c])); }
+
+function answer(n){
+  if(walk.locked) return;
+  const item = walk.queue[walk.i];
+  if(!item || item.kind!=="q") return;
+  walk.locked = true;
+  const ok = walk.opts[n].ok;
+  const buttons = $("answers").querySelectorAll("button");
+  buttons.forEach((b,i)=>{
+    b.disabled = true;
+    if(walk.opts[i].ok) b.classList.add("right");
+    else if(i===n) b.classList.add("wrong");
+  });
+  const id = item.book+"|"+item.ref+"|"+item.prompt;
+  if(!save.used.includes(id)) save.used.push(id);
+  if(ok){
+    walk.streak += 1;
+    if(!walk.knownNow.includes(item.book)) walk.knownNow.push(item.book);
+    if(!save.known.includes(item.book)) save.known.push(item.book);
+    save.opened = save.opened.filter(b=>b!==item.book);
+    if(walk.streak===3 && walk.lamp<walk.max){ walk.lamp += 1; walk.streak = 0; }
+  } else {
+    walk.streak = 0;
+    walk.lamp -= 1;
+    walk.missedNow.push(item);
+    if(!save.known.includes(item.book) && !save.opened.includes(item.book)) save.opened.push(item.book);
+    const drops = $("lamp").querySelectorAll(".drop.on");
+    if(drops.length) drops[drops.length-1].classList.add("out");
+  }
+  persist();
+  $("ref").textContent = item.ref;
+  $("plain").textContent = item.plain;
+  $("looked").classList.toggle("hidden", !walk.looked);
+  $("note").classList.remove("hidden");
+  $("tools").classList.add("hidden");
+  renderLamp();
+  renderRoad();
+  if(!ok && walk.lamp<=0){
+    $("next").textContent = "Sit down";
+  }
+}
+
+function next(){
+  const item = walk.queue[walk.i];
+  if(item && item.kind==="q" && walk.lamp<=0 && walk.locked){
+    bench();
+    return;
+  }
+  walk.i += 1;
+  if(walk.i>=walk.queue.length){ finish(); return; }
+  renderStep();
+}
+
+function bench(){
+  show("bench");
+  const miss = walk.missedNow;
+  $("benchPlain").textContent = miss.length
+    ? "The oil is gone. These are the pages from this walk. Light the lamp again and the road continues, or leave it here."
+    : "The oil is gone. Light it again, or leave the road.";
+  $("benchList").innerHTML = miss.map(m=>'<div class="missitem"><strong>'+escapeHtml(m.book)+'</strong> · '+escapeHtml(m.ref)+'<br>'+escapeHtml(m.plain)+'</div>').join("");
+}
+function relight(){
+  walk.lamp = 2;
+  walk.streak = 0;
+  walk.i += 1;
+  show("play");
+  if(walk.i>=walk.queue.length){ finish(); return; }
+  renderStep();
+}
+
+function finish(){
+  show("done");
+  const total = steps().length;
+  const known = walk.knownNow.length;
+  $("finalScore").textContent = known+" of "+total+" from the page.";
+  $("finalPlain").textContent = walk.mode==="road"
+    ? "You have walked the sixty-six. Open the book where the lamp went out."
+    : "A short walk. The rest of the road is still there.";
+  $("finalBooks").innerHTML = "";
+  walk.books.forEach(b=>{
+    const s = document.createElement("span");
+    s.className = "bk"+(walk.knownNow.includes(b)?" known":" opened");
+    s.textContent = SHORT[b];
+    s.title = b;
+    $("finalBooks").appendChild(s);
+  });
+  $("reviewList").innerHTML = "";
+  $("bar") && ($("bar").style.width = "100%");
+}
+
+function review(){
+  const box = $("reviewList");
+  if(box.innerHTML){ box.innerHTML=""; return; }
+  box.innerHTML = walk.missedNow.length
+    ? walk.missedNow.map(m=>'<div class="missitem"><strong>'+escapeHtml(m.book)+'</strong> · '+escapeHtml(m.ref)+'<p>'+escapeHtml(m.plain)+'</p></div>').join("")
+    : '<p class="hintline">No misses on this walk.</p>';
+}
+
+$("begin").onclick = start;
+$("next").onclick = next;
+$("hint").onclick = ()=>{
+  const item = walk.queue[walk.i];
+  if(!item || item.kind!=="q" || walk.locked) return;
+  walk.looked = true;
+  $("ref").textContent = item.ref;
+  $("plain").textContent = "The reference is open. Answer from the page.";
+  $("looked").classList.remove("hidden");
+  $("note").classList.remove("hidden");
+};
+$("quit").onclick = ()=>{ show("home"); setupHome(); };
+$("relight").onclick = relight;
+$("benchLeave").onclick = ()=>{ show("home"); setupHome(); };
+$("again").onclick = ()=>{ show("home"); setupHome(); };
+$("review").onclick = review;
+
+document.addEventListener("keydown", e=>{
+  if($("play").classList.contains("hidden")) return;
+  const item = walk && walk.queue[walk.i];
+  if(!item) return;
+  if(e.key==="Enter" && !$("note").classList.contains("hidden")){ next(); return; }
+  if(item.kind!=="q" || walk.locked) return;
+  if(e.key==="h" || e.key==="H"){ $("hint").click(); }
+  const n = parseInt(e.key,10);
+  if(n>=1 && n<=4) answer(n-1);
+});
+
+setupHome();
+</script>
+</body>
+</html>
