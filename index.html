@@ -354,6 +354,10 @@
   .tbar.opened span { width:45%; background:#8a8175; }
 
   #stepLine { margin: 2px 0 0; color:#1c1916 !important; font-size:15px; }
+
+  .choice.right { background:#d7eadc !important; border:2px solid #1f7a4d !important; color:#1c1916 !important; box-shadow:0 0 0 3px #1f7a4d; }
+  .choice.wrong { background:#f6d9d2 !important; border:2px solid #8a4036 !important; color:#1c1916 !important; }
+  .choice em { margin-left:8px; font-style:normal; font-size:13px; letter-spacing:.04em; text-transform:uppercase; }
 </style>
 </head>
 <body>
@@ -3979,7 +3983,7 @@ function timeUp(){
   walk.locked = true;
   $("answers").querySelectorAll("button").forEach((b,i) => {
     b.disabled = true;
-    if(walk.opts[i].ok) b.classList.add("right");
+    if(walk.opts[i].ok){ b.classList.add("right"); b.insertAdjacentHTML("beforeend", "<em>Correct</em>"); }
   });
   const id = item.book+"|"+item.ref+"|"+item.prompt;
   if(!save.used.includes(id)) save.used.push(id);
@@ -4432,8 +4436,10 @@ function answer(n){
   const ok = walk.opts[n].ok;
   $("answers").querySelectorAll("button").forEach((b,i) => {
     b.disabled = true;
-    if(walk.opts[i].ok) b.classList.add("right");
-    else if(i===n) b.classList.add("wrong");
+    if(walk.opts[i].ok){
+      b.classList.add("right");
+      if(!ok) b.insertAdjacentHTML("beforeend", "<em>Correct</em>");
+    } else if(i===n) b.classList.add("wrong");
   });
   const id = qid(item);
   if(!save.used.includes(id)) save.used.push(id);
