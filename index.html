@@ -325,8 +325,8 @@
         </div>
       </div>
       <div class="panel">
-        <h2>The shelf</h2>
-        <p class="hint" id="atlasLine">A gold edge means you answered that book from the page. Tap a spine you have opened.</p>
+        <h2>Choose a book</h2>
+        <p class="hint" id="atlasLine">Tap any book. It does not have to be next.</p>
         <div class="spines" id="atlas"></div>
         <div class="slip" id="slip"></div>
       </div>
@@ -341,7 +341,7 @@
         <div class="meta" id="progressLabel">1 of 12</div>
       </div>
       <div class="bar"><span id="bar"></span></div>
-      <div class="roadwrap"><div class="road" id="road"></div></div>
+      <div class="roadwrap"><div class="road" id="road"></div></div><p class="hint">Or open any book.</p><div class="spines" id="anybook"></div>
       <div class="book" id="book">
         <div class="leaf left">
                     <figure class="scene"><img id="scene" src="art/hero.jpg?v=6" alt="" /></figure>
@@ -592,14 +592,30 @@ function renderKnow(){
 }
 function renderAtlas(){
   $("atlas").innerHTML = ORDER.map(b => '<button type="button" class="'+spineClass(b)+'" data-book="'+b+'">'+SHORT[b]+'</button>').join("");
-  $("atlas").querySelectorAll("button").forEach(b => b.onclick = () => openSlip(b.dataset.book));
+  $("atlas").querySelectorAll("button").forEach(b => b.onclick = () => openBook(b.dataset.book));
   const k = save.known.length, o = save.opened.filter(b => !save.known.includes(b)).length;
-  $("atlasLine").textContent = (k||o) ? k+" from the page. "+o+" opened after a miss. Tap a spine." : "A gold edge means you answered that book from the page. Tap a spine you have opened.";
+  $("atlasLine").textContent = (k||o) ? k+" from the page. "+o+" opened after a miss. Tap a spine." : "Tap any book. It does not have to be next.";
+}
+function openBook(book){
+  mode = "book";
+  walk = {mode, books:[book], queue:build([book]), i:0, knownNow:[], missedNow:[], looked:false, locked:false};
+  show("play");
+  renderStep();
+}
+function jumpTo(book){
+  if(!walk || !walk.queue){ openBook(book); return; }
+  const i = walk.queue.findIndex(x => x.kind==="q" && x.book===book);
+  if(i<0){ openBook(book); return; }
+  walk.i = i;
+  walk.locked = false;
+  walk.looked = false;
+  renderStep();
 }
 function openSlip(book){
   const note = save.notes[book];
   $("slip").className = "slip show";
-  $("slip").innerHTML = note ? "<b>"+esc(book)+" · "+esc(note.ref)+"</b><p>"+esc(note.plain)+"</p>" : "<b>"+esc(book)+"</b><p>Not opened on this road yet.</p>";
+  $("slip").innerHTML = (note ? "<b>"+esc(book)+" · "+esc(note.ref)+"</b><p>"+esc(note.plain)+"</p>" : "<b>"+esc(book)+"</b><p>Not opened on this road yet.</p>") + '<button class="go" type="button" id="openThis">Open this book</button>';
+  $("openThis").onclick = () => openBook(book);
 }
 function setupHome(){
   const walks = [
@@ -664,10 +680,12 @@ function renderRoad(){
     const now = cur && cur.book===b;
     return '<button type="button" class="stone'+(known?" known":opened?" opened":"")+(now?" now":"")+'" data-book="'+b+'"><b>'+SHORT[b]+'</b><small>'+(known?"placed":opened?"opened":now?"now":"ahead")+'</small></button>';
   }).join("");
-  $("road").querySelectorAll("button").forEach(el => el.onclick = () => {
-    const note = save.notes[el.dataset.book];
-    $("sideNote").textContent = note ? el.dataset.book+": "+note.plain : el.dataset.book+" is not placed yet.";
-  });
+  $("road").querySelectorAll("button").forEach(el => el.onclick = () => jumpTo(el.dataset.book));
+  const any = $("anybook");
+  if(any){
+    any.innerHTML = ORDER.map(b => '<button type="button" class="'+spineClass(b)+'" data-book="'+b+'">'+SHORT[b]+'</button>').join("");
+    any.querySelectorAll("button").forEach(el => el.onclick = () => openBook(el.dataset.book));
+  }
   const node = $("road").querySelector(".now");
   if(node && node.scrollIntoView) node.scrollIntoView({inline:"center", block:"nearest"});
 }
