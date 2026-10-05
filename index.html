@@ -331,6 +331,9 @@
 
   .gallery button { padding:0; border:0; background:#fff; text-align:left; cursor:pointer; border-radius:8px; overflow:hidden; color:#1c1916; }
   .gallery button span { display:block; padding:8px 10px 10px; font-size:14px; }
+
+  #todayRow { margin: 14px 0 18px; }
+  #today { min-height: 48px; }
 </style>
 </head>
 <body>
@@ -343,6 +346,7 @@
       <button class="sound" id="sound" type="button" aria-pressed="true">Sound on</button>
     </div>
     <p class="lede">Sixty-six books. It is worth studying because the truth is in the Bible. A church can help, and a preacher can explain, but you still need to open it yourself. A hint can point you to the part. The line is still yours to place.</p>
+    <div class="row" id="todayRow"><button class="go" id="today" type="button">Today's question</button></div>
 
     <section id="home">
       <div class="walks" id="walks"></div>
@@ -370,7 +374,6 @@
       <div class="panel">
         <div class="row" style="margin-top:0">
           <button class="go" id="begin" type="button">Start</button>
-          <button class="ghost" id="today" type="button">Today's question</button>
           <button class="ghost" id="invite" type="button">Invite someone</button>
           <button class="ghost" id="clearHistory" type="button">Start over</button>
         </div>
