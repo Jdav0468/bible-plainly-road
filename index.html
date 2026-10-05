@@ -7,8 +7,9 @@
 <style>
   :root {
     --bg: #12100e;
+    --wood: #2a211b;
     --paper: #f4efe6;
-    --paper-2: #e8dfd0;
+    --paper-2: #e7dccb;
     --ink: #1c1712;
     --ink-soft: #3c342c;
     --muted: #8a7d6e;
@@ -18,8 +19,8 @@
     --ok-bg: #e4efe7;
     --bad: #8a4036;
     --bad-bg: #f6e7e2;
-    --serif: Palatino, "Palatino Linotype", Georgia, serif;
-    --sans: "Segoe UI", "Source Sans 3", sans-serif;
+    --serif: Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+    --sans: "Segoe UI", "Helvetica Neue", sans-serif;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
@@ -28,307 +29,275 @@
     color: var(--paper);
     font-family: var(--sans);
     background:
-      radial-gradient(1200px 600px at 50% -10%, rgba(196,163,106,0.08), transparent 55%),
-      var(--bg);
+      radial-gradient(900px 420px at 50% -8%, rgba(196,163,106,0.16), transparent 60%),
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.015) 0 2px, transparent 2px 7px),
+      linear-gradient(180deg, #1a1613, #0e0c0b 40%, #161310);
   }
-  .wrap { width: min(880px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 64px; position: relative; }
-  .kicker {
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--gold);
-    font-size: 12px;
-    font-weight: 600;
-    margin: 0 0 8px;
-  }
-  h1 {
-    font-family: var(--serif);
-    font-weight: 400;
-    font-size: clamp(34px, 5vw, 52px);
-    line-height: 1.05;
-    margin: 0;
-    color: #f7f1e7;
-  }
+  button, input { font-family: inherit; }
+  .wrap { width: min(980px, calc(100% - 28px)); margin: 0 auto; padding: 28px 0 72px; }
+  .top { display: flex; justify-content: space-between; gap: 16px; align-items: flex-end; }
+  .kicker { letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); font-size: 12px; font-weight: 650; margin: 0 0 8px; }
+  h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(40px, 6vw, 64px); line-height: 0.95; margin: 0; color: #f7f1e7; }
   h1 em { font-style: italic; color: var(--gold); }
-  .lede { max-width: 40em; color: #d9d0c3; font-size: 18px; line-height: 1.5; margin: 14px 0 0; }
-  .hero {
-    margin: 22px 0 8px;
-    border-radius: 6px;
-    overflow: hidden;
-    border: 1px solid rgba(196,163,106,0.25);
-    box-shadow: 0 18px 50px rgba(0,0,0,0.35);
+  .lede { max-width: 38em; color: #d9d0c3; font-size: 18px; line-height: 1.5; margin: 14px 0 0; }
+  .sound {
+    border: 1px solid rgba(196,163,106,0.35);
+    background: transparent;
+    color: var(--gold);
+    border-radius: 99px;
+    padding: 8px 12px;
+    cursor: pointer;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 11px;
   }
-  .hero img { display: block; width: 100%; height: auto; }
+  .hero {
+    margin: 22px 0 0;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(196,163,106,0.28);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+    position: relative;
+  }
+  .hero img { display: block; width: 100%; height: min(42vw, 360px); object-fit: cover; }
   .hero figcaption {
-    background: #1a1613;
-    color: var(--muted);
+    position: absolute; left: 12px; bottom: 12px;
+    background: rgba(18,16,14,0.78);
+    color: #e7dccb;
     font-size: 13px;
     letter-spacing: 0.04em;
-    padding: 8px 12px 10px;
+    padding: 6px 10px;
+    border-radius: 4px;
   }
+  .walks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 18px; }
+  .walk {
+    text-align: left;
+    background: var(--paper);
+    color: var(--ink);
+    border: 1px solid transparent;
+    border-radius: 10px;
+    padding: 16px 16px 14px;
+    cursor: pointer;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.25);
+    transition: transform .18s ease, border-color .18s ease;
+  }
+  .walk:hover { transform: translateY(-2px); }
+  .walk[aria-pressed="true"] { border-color: #241c14; box-shadow: 0 0 0 2px var(--gold); }
+  .walk b { display: block; font-family: var(--serif); font-weight: 400; font-size: 22px; margin-bottom: 4px; }
+  .walk span { display: block; color: var(--ink-soft); font-size: 14.5px; line-height: 1.4; }
+  .walk i { display: block; height: 8px; margin-top: 12px; border-radius: 99px; background: linear-gradient(90deg, #241c14, var(--gold)); }
   .panel {
     background: var(--paper);
     color: var(--ink);
-    border-radius: 8px;
-    padding: 22px 22px 20px;
-    margin-top: 18px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 14px;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.28);
   }
-  .panel h2 { font-family: var(--serif); font-size: 22px; font-weight: 400; margin: 0 0 6px; }
-  .hintline { color: var(--ink-soft); margin: 0 0 14px; font-size: 15.5px; line-height: 1.45; }
-  .label {
-    display: block;
-    font-size: 11px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--gold-dim);
-    margin: 14px 0 8px;
-    font-weight: 600;
+  .panel h2 { font-family: var(--serif); font-weight: 400; font-size: 24px; margin: 0 0 6px; }
+  .hint { color: var(--ink-soft); margin: 0 0 12px; font-size: 15.5px; line-height: 1.45; }
+  .label { display: block; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold-dim); margin: 8px 0; font-weight: 700; }
+  .camps { display: flex; flex-wrap: wrap; gap: 8px; }
+  .camps button, .go, .ghost {
+    cursor: pointer; border-radius: 6px;
   }
-  .choices, .lengths { display: flex; flex-wrap: wrap; gap: 8px; }
-  button.chip, button.choice, button.go, button.ghost {
-    font-family: var(--sans);
-    cursor: pointer;
-    border-radius: 4px;
+  .camps button {
+    border: 1px solid #d9cbb6; background: #fbf7f1; color: var(--ink); padding: 8px 12px; font-size: 14.5px;
   }
-  button.chip {
-    border: 1px solid #d9cbb6;
-    background: #fbf7f1;
-    color: var(--ink);
-    padding: 8px 12px;
-    font-size: 14.5px;
-  }
-  button.chip[aria-pressed="true"] { background: #241c14; color: var(--paper); border-color: #241c14; }
-  button.go {
-    margin-top: 0;
-    background: #241c14;
-    color: var(--paper);
-    border: 0;
-    padding: 12px 18px;
-    font-size: 16px;
-    letter-spacing: 0.02em;
-  }
-  button.go:hover, button.ghost:hover, button.chip:hover, button.choice:hover { filter: brightness(1.06); }
-  button.ghost {
-    background: transparent;
-    color: var(--ink);
-    border: 1px solid #d9cbb6;
-    padding: 10px 14px;
-    font-size: 15px;
-  }
+  .camps button[aria-pressed="true"] { background: #241c14; color: var(--paper); border-color: #241c14; }
+  .go { background: #241c14; color: var(--paper); border: 0; padding: 12px 18px; font-size: 16px; }
+  .ghost { background: transparent; color: var(--ink); border: 1px solid #d9cbb6; padding: 10px 14px; font-size: 15px; }
+  .go:hover, .ghost:hover, .camps button:hover { filter: brightness(1.06); }
   .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
-  .meta {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    color: var(--muted);
-    font-size: 13px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    margin-bottom: 8px;
+  .spines { display: flex; flex-wrap: wrap; gap: 6px; }
+  .spines button {
+    border: 0; border-radius: 3px 8px 8px 3px; padding: 8px 8px 7px;
+    font-size: 11px; letter-spacing: 0.04em; cursor: pointer; color: #f4efe6;
+    background: #3c342c;
   }
-  .bar { height: 3px; background: #e4d9c8; border-radius: 99px; overflow: hidden; margin: 8px 0 14px; }
-  .bar > span { display: block; height: 100%; background: var(--gold-dim); width: 0; transition: width .35s ease; }
-  .qbook {
-    color: var(--gold-dim);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    font-size: 12px;
-    font-weight: 600;
-    margin: 0 0 8px;
+  .spines button.known { background: #241c14; box-shadow: inset 3px 0 var(--gold); }
+  .spines button.opened { background: #6d5a45; }
+  .spines button.this { outline: 2px solid var(--gold); }
+  .slip {
+    margin-top: 12px; padding: 12px 14px; background: #fbf7f1; border-left: 3px solid var(--gold-dim); display: none;
   }
-  .prompt {
-    font-family: var(--serif);
-    font-weight: 400;
-    font-size: clamp(22px, 3vw, 28px);
-    line-height: 1.35;
-    margin: 0 0 16px;
+  .slip.show { display: block; }
+  .slip b { color: var(--gold-dim); letter-spacing: 0.08em; text-transform: uppercase; font-size: 12px; }
+  .about { color: #d9d0c3; font-size: 15.5px; line-height: 1.55; max-width: 42em; margin-top: 18px; }
+  .about strong { color: var(--paper); }
+
+  .playhead { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 10px; }
+  .meta { color: #d9cbb6; letter-spacing: 0.08em; text-transform: uppercase; font-size: 12px; }
+  .lamp { display: flex; align-items: flex-end; gap: 5px; height: 28px; }
+  .flame {
+    width: 10px; border-radius: 8px 8px 4px 4px;
+    background: #3a3128; height: 8px; transform-origin: center bottom;
   }
-  button.choice {
-    display: block;
-    width: 100%;
-    text-align: left;
-    background: #fbf7f1;
-    border: 1px solid #e0d3c2;
-    color: var(--ink);
-    padding: 12px 14px;
-    margin: 0 0 8px;
-    font-size: 16.5px;
-    line-height: 1.35;
+  .flame.on {
+    height: 18px;
+    background: radial-gradient(circle at 50% 30%, #fff4d2, #e7b85a 45%, #8d7344);
+    box-shadow: 0 0 10px rgba(231,184,90,0.7);
+    animation: burn 1.1s ease-in-out infinite;
   }
-  button.choice .key { display: inline-block; width: 1.4em; color: var(--gold-dim); font-weight: 600; }
-  button.choice.right { background: var(--ok-bg); border-color: var(--ok); }
-  button.choice.wrong { background: var(--bad-bg); border-color: var(--bad); }
-  button.choice:disabled { cursor: default; }
-  .note { margin-top: 12px; padding-top: 12px; border-top: 1px solid #e4d9c8; }
-  .note .ref { color: var(--gold-dim); font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }
-  .note p { margin: 6px 0 0; font-size: 16.5px; line-height: 1.5; }
-  .looked { font-size: 13px; color: var(--muted); margin-top: 8px; }
-  .scoreline { font-family: var(--serif); font-size: 28px; margin: 0 0 6px; }
-  .atlas { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-  .atlas button, .atlas span.bk {
-    border: 1px solid #e0d3c2;
-    background: #fbf7f1;
-    color: #6d6256;
-    border-radius: 99px;
-    padding: 4px 8px;
-    font-size: 12px;
-    font-family: var(--sans);
+  .flame.dim { animation: none; filter: grayscale(0.4); opacity: 0.7; }
+  @keyframes burn { 50% { transform: scaleY(0.86) scaleX(1.08); } }
+  .roadwrap {
+    overflow-x: auto; padding: 8px 2px 14px; margin: 0 -4px 8px;
+    scrollbar-width: thin;
   }
-  .atlas .known { background: #241c14; color: var(--paper); border-color: #241c14; }
-  .atlas .opened { background: #efe4d4; color: #6a5340; border-color: #d7c4a8; }
-  .atlas .this { outline: 2px solid var(--gold); }
-  .foot { margin-top: 22px; color: var(--muted); font-size: 14px; line-height: 1.5; }
+  .road { display: flex; gap: 0; min-width: max-content; align-items: flex-end; position: relative; }
+  .road::before {
+    content: ""; position: absolute; left: 8px; right: 8px; bottom: 13px; height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(196,163,106,0.7), transparent);
+  }
+  .stone {
+    width: 54px; text-align: center; background: none; border: 0; color: #8a7d6e; cursor: default; padding: 0 2px 0;
+  }
+  .stone .dot {
+    width: 14px; height: 14px; border-radius: 50%; margin: 0 auto 6px;
+    background: #3a3128; border: 1px solid #5c4d3e; position: relative; z-index: 1;
+  }
+  .stone.known .dot { background: var(--gold); border-color: #f3e2b8; box-shadow: 0 0 8px rgba(196,163,106,0.7); }
+  .stone.opened .dot { background: #6d5a45; }
+  .stone.now .dot {
+    background: #f7f1e7; border-color: var(--gold); transform: scale(1.25);
+    box-shadow: 0 0 0 4px rgba(196,163,106,0.25);
+  }
+  .stone small { display: block; font-size: 10px; letter-spacing: 0.02em; }
+  .stone.now small { color: var(--gold); }
+  .sheet {
+    background: var(--paper); color: var(--ink); border-radius: 10px; padding: 22px 22px 18px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+    animation: arrive .35s ease;
+  }
+  @keyframes arrive { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .qbook { color: var(--gold-dim); letter-spacing: 0.16em; text-transform: uppercase; font-size: 12px; font-weight: 700; margin: 0 0 8px; }
+  .prompt { font-family: var(--serif); font-weight: 400; font-size: clamp(24px, 3vw, 32px); line-height: 1.3; margin: 0 0 16px; }
+  .choice {
+    display: flex; gap: 10px; width: 100%; text-align: left;
+    background: #fbf7f1; border: 1px solid #e0d3c2; color: var(--ink);
+    padding: 13px 14px; margin: 0 0 8px; font-size: 17px; line-height: 1.35;
+    border-radius: 6px; cursor: pointer; transition: transform .12s ease, border-color .12s ease;
+  }
+  .choice:hover:not(:disabled) { transform: translateX(3px); border-color: var(--gold-dim); }
+  .choice .key { color: var(--gold-dim); font-weight: 700; width: 1.2em; }
+  .choice.right { background: var(--ok-bg); border-color: var(--ok); }
+  .choice.wrong { background: var(--bad-bg); border-color: var(--bad); animation: shake .35s ease; }
+  .choice:disabled { cursor: default; }
+  @keyframes shake { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+  .page {
+    display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid #e4d9c8;
+  }
+  .page.show { display: block; animation: arrive .3s ease; }
+  .page .ref { color: var(--gold-dim); letter-spacing: 0.1em; text-transform: uppercase; font-size: 12px; font-weight: 700; }
+  .page p { margin: 6px 0 0; font-size: 16.5px; line-height: 1.5; }
+  .looked { color: var(--muted); font-size: 13px; }
+  .bar { height: 3px; background: rgba(196,163,106,0.2); border-radius: 99px; overflow: hidden; margin: 8px 0 14px; }
+  .bar > span { display: block; height: 100%; width: 0; background: var(--gold); transition: width .4s ease; }
+  .scoreline { font-family: var(--serif); font-size: 32px; margin: 0 0 6px; }
+  .foot { margin-top: 18px; color: var(--muted); font-size: 14px; line-height: 1.5; }
   .hidden { display: none !important; }
-  .about { color: #d9d0c3; font-size: 15.5px; line-height: 1.55; max-width: 40em; }
-  .about strong { color: var(--paper); font-weight: 600; }
-  .lampbox { display: flex; align-items: center; gap: 8px; }
-  .drop {
-    width: 12px; height: 16px; border-radius: 8px 8px 8px 8px;
-    background: #e4d9c8; border: 1px solid #d3c4ae;
-  }
-  .drop.on {
-    background: radial-gradient(circle at 40% 35%, #f3e2b8, #c4a36a 55%, #8d7344);
-    border-color: #8d7344;
-    box-shadow: 0 0 8px rgba(196,163,106,0.55);
-  }
-  .drop.out { animation: flick .45s ease; }
-  @keyframes flick { 50% { transform: translateY(1px) scale(.9); opacity: .55; } }
-  .road {
-    display: flex; flex-wrap: wrap; gap: 4px;
-    margin: 4px 0 14px;
-  }
-  .road i {
-    width: 10px; height: 10px; border-radius: 99px;
-    background: #e4d9c8; display: block; font-style: normal;
-  }
-  .road i.known { background: #241c14; }
-  .road i.opened { background: #c4a36a; }
-  .road i.now { outline: 2px solid var(--gold-dim); background: #f7f1e7; }
-  .restline { font-family: var(--serif); font-size: 22px; line-height: 1.4; margin: 0 0 10px; }
-  .missitem { border-top: 1px solid #e4d9c8; padding: 10px 0; }
-  .missitem strong { font-weight: 600; }
-  @media (max-width: 640px) {
-    .wrap { width: min(100% - 20px, 880px); padding-top: 18px; }
-    .panel { padding: 16px; }
+  @media (max-width: 760px) {
+    .walks { grid-template-columns: 1fr; }
+    .wrap { width: min(100% - 18px, 980px); padding-top: 18px; }
+    .sheet, .panel { padding: 16px; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .bar > span, .drop.out { transition: none; animation: none; }
+    .flame.on, .sheet, .page.show, .choice.wrong { animation: none; }
+    .walk, .choice, .bar > span { transition: none; }
   }
 </style>
 </head>
 <body>
   <div class="wrap">
-    <p class="kicker">The Bible, Plainly</p>
-    <h1>The <em>road</em>.</h1>
-    <p class="lede">A game through the whole book. Sixty-six stones, one question at each. The lamp is only so you notice when you are guessing. The page is still the point.</p>
+    <div class="top">
+      <div>
+        <p class="kicker">The Bible, Plainly</p>
+        <h1>The <em>road</em>.</h1>
+      </div>
+      <button class="sound" id="sound" type="button" aria-pressed="false">Sound off</button>
+    </div>
+    <p class="lede">Walk the book. Sixty-six stones, one question at each. The lamp marks a guess. The page is still the point.</p>
 
     <section id="home">
       <figure class="hero">
-        <svg viewBox="0 0 880 420" role="img" aria-label="An open book, a lamp, and a road on a wood table.">
-        <rect width="880" height="420" fill="#1a1613"/>
-        <rect x="0" y="250" width="880" height="170" fill="#2a221c"/>
-        <g stroke="#3a3128" stroke-width="1" opacity="0.7">
-          <path d="M0 270 H880"/><path d="M0 300 H880"/><path d="M0 338 H880"/><path d="M0 372 H880"/>
-        </g>
-        <rect x="70" y="150" width="340" height="210" rx="4" fill="#c4a36a" opacity="0.25"/>
-        <path d="M80 170 h150 l-8 170 H88 Z" fill="#f4efe6"/>
-        <path d="M238 170 h150 l8 170 h-134 Z" fill="#efe6d8"/>
-        <path d="M230 168 v174" stroke="#8d7344" stroke-width="3"/>
-        <g stroke="#d9cbb6" stroke-width="1.2" opacity="0.8">
-          <path d="M100 200 h110"/><path d="M100 214 h110"/><path d="M100 228 h100"/><path d="M100 242 h108"/>
-          <path d="M258 200 h110"/><path d="M258 214 h104"/><path d="M258 228 h110"/><path d="M258 242 h90"/>
-        </g>
-        <g transform="translate(520 150)">
-          <ellipse cx="70" cy="168" rx="46" ry="10" fill="#3a3128"/>
-          <path d="M40 168 V118 h60 v50" fill="#8d7344"/>
-          <path d="M48 118 h44 v-8 h-44z" fill="#c4a36a"/>
-          <path d="M52 110 h36 l8-46 h-52 z" fill="#f4efe6" opacity="0.35" stroke="#c4a36a"/>
-          <ellipse cx="70" cy="62" rx="6" ry="10" fill="#f3e2b8"/>
-        </g>
-        <path d="M620 300 C700 250 760 250 820 210" fill="none" stroke="#c4a36a" stroke-width="2" stroke-dasharray="6 7"/>
-        <circle cx="620" cy="300" r="4" fill="#c4a36a"/>
-        <circle cx="820" cy="210" r="4" fill="#f4efe6"/>
-      </svg>
-        <figcaption>Same table as the films. A lamp, a book, a road.</figcaption>
+        <img src="https://raw.githubusercontent.com/Jdav0468/bible-plainly-road/main/table.jpg" alt="An open Bible, a brass lamp, and a sketched road on a dark wood table." />
+        <figcaption>Same table as the films. Take a lamp. Walk.</figcaption>
       </figure>
-      <div class="panel">
-        <h2>Choose a walk</h2>
-        <p class="hintline">A miss spends a drop of oil. Three right in a row puts a drop back. When the lamp goes out, you sit, then you can light it again. The stone is still marked.</p>
-        <span class="label">Walk</span>
-        <div class="choices" id="modes"></div>
-        <div id="campBlock" class="hidden">
-          <span class="label">Camp</span>
-          <div class="choices" id="camps"></div>
-        </div>
+      <div class="walks" id="walks"></div>
+      <div class="panel" id="campPanel">
+        <h2 id="campTitle">A day’s walk</h2>
+        <p class="hint" id="campHint">Pick a camp. You stop at every book in it.</p>
+        <div class="camps" id="camps"></div>
         <div class="row">
-          <button class="go" id="begin">Take the road</button>
+          <button class="go" id="begin" type="button">Take the road</button>
         </div>
       </div>
       <div class="panel">
-        <h2>Stones already walked</h2>
-        <p class="hintline" id="atlasLine">A dark stone is a book you have answered from the page. A warm stone is a book you opened after a miss.</p>
-        <div class="atlas" id="atlas"></div>
+        <h2>The shelf</h2>
+        <p class="hint" id="atlasLine">A dark spine with a gold edge is a book you answered from the page. Tap one you have opened.</p>
+        <div class="spines" id="atlas"></div>
+        <div class="slip" id="slip"></div>
       </div>
       <div class="about">
         <p>This is the same rule as the films. A church can help. A preacher can explain a hard page. <strong>The score here is not the point.</strong> The point is to know where a line sits, and to go read it.</p>
-        <p>The questions use the sixty-six books most English Bibles print. They do not score the extra books some churches keep. Wording is plain English, not a copyrighted translation. The reference is the place to open.</p>
+        <p>Sixty-six books, the ones most English Bibles print. Plain English, not a copyrighted translation. The reference is the place to open.</p>
       </div>
     </section>
 
     <section id="play" class="hidden">
-      <div class="panel">
-        <div class="meta">
-          <span id="progressLabel">1 of 12</span>
-          <span class="lampbox" id="lamp" aria-label="Lamp"></span>
-        </div>
-        <div class="bar"><span id="bar"></span></div>
-        <div class="road" id="road" aria-hidden="true"></div>
+      <div class="playhead">
+        <div class="meta" id="progressLabel">1 of 12</div>
+        <div class="lamp" id="lamp" aria-label="Lamp"></div>
+      </div>
+      <div class="bar"><span id="bar"></span></div>
+      <div class="roadwrap" id="roadwrap"><div class="road" id="road"></div></div>
+      <div class="sheet" id="sheet">
         <p class="qbook" id="qbook"></p>
         <h2 class="prompt" id="prompt"></h2>
         <div id="answers"></div>
-        <div class="note hidden" id="note">
+        <div class="page" id="page">
           <div class="ref" id="ref"></div>
           <p id="plain"></p>
           <p class="looked hidden" id="looked">You looked up the reference first. It still counts. The page is the point.</p>
           <div class="row">
-            <button class="go" id="next">Next stone</button>
+            <button class="go" id="next" type="button">Next stone</button>
           </div>
         </div>
         <div class="row" id="tools">
-          <button class="ghost" id="hint">Show the reference</button>
-          <button class="ghost" id="quit">Leave this walk</button>
+          <button class="ghost" id="hint" type="button">Show the reference</button>
+          <button class="ghost" id="quit" type="button">Leave this walk</button>
         </div>
       </div>
     </section>
 
     <section id="bench" class="hidden">
-      <div class="panel">
-        <p class="kicker" style="color:var(--gold-dim)">The lamp is out</p>
-        <p class="scoreline">Sit a while.</p>
-        <p class="hintline" id="benchPlain"></p>
+      <div class="sheet">
+        <p class="qbook">The lamp is out</p>
+        <h2 class="prompt">Sit a while.</h2>
+        <p class="hint" id="benchPlain"></p>
         <div id="benchList"></div>
         <div class="row">
-          <button class="go" id="relight">Light it again</button>
-          <button class="ghost" id="benchLeave">Leave the road</button>
+          <button class="go" id="relight" type="button">Light it again</button>
+          <button class="ghost" id="benchLeave" type="button">Leave the road</button>
         </div>
       </div>
     </section>
 
     <section id="done" class="hidden">
-      <div class="panel">
-        <p class="kicker" style="color:var(--gold-dim)">The walk</p>
-        <p class="scoreline" id="finalScore"></p>
-        <p class="hintline" id="finalPlain"></p>
-        <div class="atlas" id="finalBooks"></div>
+      <div class="sheet">
+        <p class="qbook">The walk</p>
+        <h2 class="prompt" id="finalScore"></h2>
+        <p class="hint" id="finalPlain"></p>
+        <div class="spines" id="finalBooks"></div>
         <div class="row">
-          <button class="go" id="again">Another walk</button>
-          <button class="ghost" id="review">See the ones you missed</button>
+          <button class="go" id="again" type="button">Another walk</button>
+          <button class="ghost" id="review" type="button">See the ones you missed</button>
         </div>
         <div id="reviewList"></div>
       </div>
     </section>
-
-    <p class="foot">Study the Word. Get it from the page, not from a score.<br>Keys: 1–4 to answer, H to show the reference, Enter for the next stone.</p>
+    <p class="foot">Study the Word. Get it from the page, not from a score.<br>Keys: 1–4 to answer, H for the reference, Enter for the next stone.</p>
   </div>
 <script>
 const BANK = [
@@ -466,78 +435,11 @@ const BANK = [
   {"book": "Revelation", "section": "Revelation", "prompt": "How does the book end the story of the city?", "choices": ["A new heaven and a new earth, and the holy city coming down", "The ark returned to Shiloh", "Jerusalem left in ruins, with no further word", "A temple built by the emperors"], "ref": "Revelation 21:1–2", "plain": "He will wipe away every tear. The one on the throne says, behold, I am making all things new. The last lines ask the Lord to come."},
 ];
 const ORDER = ["Genesis","Exodus","Leviticus","Numbers","Deuteronomy","Joshua","Judges","Ruth","1 Samuel","2 Samuel","1 Kings","2 Kings","1 Chronicles","2 Chronicles","Ezra","Nehemiah","Esther","Job","Psalms","Proverbs","Ecclesiastes","Song of Solomon","Isaiah","Jeremiah","Lamentations","Ezekiel","Daniel","Hosea","Joel","Amos","Obadiah","Jonah","Micah","Nahum","Habakkuk","Zephaniah","Haggai","Zechariah","Malachi","Matthew","Mark","Luke","John","Acts","Romans","1 Corinthians","2 Corinthians","Galatians","Ephesians","Philippians","Colossians","1 Thessalonians","2 Thessalonians","1 Timothy","2 Timothy","Titus","Philemon","Hebrews","James","1 Peter","2 Peter","1 John","2 John","3 John","Jude","Revelation"];
-const SHORT = {
-  "Genesis": "Gen",
-  "Exodus": "Exod",
-  "Leviticus": "Lev",
-  "Numbers": "Num",
-  "Deuteronomy": "Deut",
-  "Joshua": "Josh",
-  "Judges": "Judg",
-  "Ruth": "Ruth",
-  "1 Samuel": "1 Sam",
-  "2 Samuel": "2 Sam",
-  "1 Kings": "1 Kgs",
-  "2 Kings": "2 Kgs",
-  "1 Chronicles": "1 Chr",
-  "2 Chronicles": "2 Chr",
-  "Ezra": "Ezra",
-  "Nehemiah": "Neh",
-  "Esther": "Esth",
-  "Job": "Job",
-  "Psalms": "Ps",
-  "Proverbs": "Prov",
-  "Ecclesiastes": "Eccl",
-  "Song of Solomon": "Song",
-  "Isaiah": "Isa",
-  "Jeremiah": "Jer",
-  "Lamentations": "Lam",
-  "Ezekiel": "Ezek",
-  "Daniel": "Dan",
-  "Hosea": "Hos",
-  "Joel": "Joel",
-  "Amos": "Amos",
-  "Obadiah": "Obad",
-  "Jonah": "Jonah",
-  "Micah": "Mic",
-  "Nahum": "Nah",
-  "Habakkuk": "Hab",
-  "Zephaniah": "Zeph",
-  "Haggai": "Hag",
-  "Zechariah": "Zech",
-  "Malachi": "Mal",
-  "Matthew": "Matt",
-  "Mark": "Mark",
-  "Luke": "Luke",
-  "John": "John",
-  "Acts": "Acts",
-  "Romans": "Rom",
-  "1 Corinthians": "1 Cor",
-  "2 Corinthians": "2 Cor",
-  "Galatians": "Gal",
-  "Ephesians": "Eph",
-  "Philippians": "Phil",
-  "Colossians": "Col",
-  "1 Thessalonians": "1 Th",
-  "2 Thessalonians": "2 Th",
-  "1 Timothy": "1 Tim",
-  "2 Timothy": "2 Tim",
-  "Titus": "Titus",
-  "Philemon": "Phlm",
-  "Hebrews": "Heb",
-  "James": "Jas",
-  "1 Peter": "1 Pet",
-  "2 Peter": "2 Pet",
-  "1 John": "1 Jn",
-  "2 John": "2 Jn",
-  "3 John": "3 Jn",
-  "Jude": "Jude",
-  "Revelation": "Rev",
-};
+const SHORT = {"Genesis":"Gen","Exodus":"Exod","Leviticus":"Lev","Numbers":"Num","Deuteronomy":"Deut","Joshua":"Josh","Judges":"Judg","Ruth":"Ruth","1 Samuel":"1 Sam","2 Samuel":"2 Sam","1 Kings":"1 Kgs","2 Kings":"2 Kgs","1 Chronicles":"1 Chr","2 Chronicles":"2 Chr","Ezra":"Ezra","Nehemiah":"Neh","Esther":"Esth","Job":"Job","Psalms":"Ps","Proverbs":"Prov","Ecclesiastes":"Eccl","Song of Solomon":"Song","Isaiah":"Isa","Jeremiah":"Jer","Lamentations":"Lam","Ezekiel":"Ezek","Daniel":"Dan","Hosea":"Hos","Joel":"Joel","Amos":"Amos","Obadiah":"Obad","Jonah":"Jonah","Micah":"Mic","Nahum":"Nah","Habakkuk":"Hab","Zephaniah":"Zeph","Haggai":"Hag","Zechariah":"Zech","Malachi":"Mal","Matthew":"Matt","Mark":"Mark","Luke":"Luke","John":"John","Acts":"Acts","Romans":"Rom","1 Corinthians":"1 Cor","2 Corinthians":"2 Cor","Galatians":"Gal","Ephesians":"Eph","Philippians":"Phil","Colossians":"Col","1 Thessalonians":"1 Th","2 Thessalonians":"2 Th","1 Timothy":"1 Tim","2 Timothy":"2 Tim","Titus":"Titus","Philemon":"Phlm","Hebrews":"Heb","James":"Jas","1 Peter":"1 Pet","2 Peter":"2 Pet","1 John":"1 Jn","2 John":"2 Jn","3 John":"3 Jn","Jude":"Jude","Revelation":"Rev"};
 const CAMPS = [
   {id:"Law", label:"The Law", books:["Genesis","Exodus","Leviticus","Numbers","Deuteronomy"]},
   {id:"History", label:"The Histories", books:["Joshua","Judges","Ruth","1 Samuel","2 Samuel","1 Kings","2 Kings","1 Chronicles","2 Chronicles","Ezra","Nehemiah","Esther"]},
-  {id:"Wisdom", label:"The Wisdom books", books:["Job","Psalms","Proverbs","Ecclesiastes","Song of Solomon"]},
+  {id:"Wisdom", label:"Wisdom", books:["Job","Psalms","Proverbs","Ecclesiastes","Song of Solomon"]},
   {id:"Prophets", label:"The Prophets", books:["Isaiah","Jeremiah","Lamentations","Ezekiel","Daniel","Hosea","Joel","Amos","Obadiah","Jonah","Micah","Nahum","Habakkuk","Zephaniah","Haggai","Zechariah","Malachi"]},
   {id:"Gospels", label:"Gospels and Acts", books:["Matthew","Mark","Luke","John","Acts"]},
   {id:"Letters", label:"The Letters", books:["Romans","1 Corinthians","2 Corinthians","Galatians","Ephesians","Philippians","Colossians","1 Thessalonians","2 Thessalonians","1 Timothy","2 Timothy","Titus","Philemon","Hebrews","James","1 Peter","2 Peter","1 John","2 John","3 John","Jude"]},
@@ -553,309 +455,297 @@ const REST = {
   "Acts|Letters":"The story of the journeys pauses. The letters start, to churches and to persons.",
   "Letters|Revelation":"The short letters are done. John is on an island. He is told to write what he sees."
 };
-const KEY = "biblePlainlyRoad";
-
-const $=id=>document.getElementById(id);
+const KEY = "biblePlainlyRoadV2";
+const $ = id => document.getElementById(id);
 let save = load();
 let walk = null;
-
-function load(){
-  try { return Object.assign({known:[], opened:[], walks:0, used:[]}, JSON.parse(localStorage.getItem(KEY)||"{}")); }
-  catch(e){ return {known:[], opened:[], walks:0, used:[]}; }
-}
-function persist(){ localStorage.setItem(KEY, JSON.stringify(save)); }
-
-function sectionOf(book){
-  const q = BANK.find(x=>x.book===book);
-  return q ? q.section : "";
-}
-function campLabel(section){
-  if(section==="Gospels"||section==="Acts") return "Gospels and Acts";
-  const c = CAMPS.find(x=>x.id===section);
-  return c ? c.label : section;
-}
-
-function renderAtlas(el, current){
-  el.innerHTML = "";
-  ORDER.forEach(b=>{
-    const s = document.createElement("span");
-    s.className = "bk" + (save.known.includes(b)?" known":"") + (save.opened.includes(b)&&!save.known.includes(b)?" opened":"") + (b===current?" this":"");
-    s.textContent = SHORT[b];
-    s.title = b;
-    el.appendChild(s);
-  });
-}
-function atlasLine(){
-  const k = save.known.length, o = save.opened.filter(b=>!save.known.includes(b)).length;
-  $("atlasLine").textContent = k||o
-    ? k+" book"+(k===1?"":"s")+" answered from the page. "+o+" opened after a miss."
-    : "A dark stone is a book you have answered from the page. A warm stone is a book you opened after a miss.";
-}
-
 let mode = "mile";
 let camp = "Law";
-function chips(el, items, current, on){
-  el.innerHTML = "";
-  items.forEach(it=>{
-    const b = document.createElement("button");
-    b.className = "chip";
-    b.type = "button";
-    b.textContent = it.label;
-    b.setAttribute("aria-pressed", it.id===current ? "true" : "false");
-    b.onclick = ()=>{ on(it.id); chips(el, items, it.id, on); };
-    el.appendChild(b);
-  });
+let soundOn = false;
+let audioCtx = null;
+
+function load(){
+  try { return Object.assign({known:[], opened:[], notes:{}, used:[]}, JSON.parse(localStorage.getItem(KEY)||"{}")); }
+  catch(e){ return {known:[], opened:[], notes:{}, used:[]}; }
 }
+function persist(){ try { localStorage.setItem(KEY, JSON.stringify(save)); } catch(e){} }
+function esc(s){ return String(s).replace(/[&<>]/g, c => ({"&":"&","<":"<",">":">"}[c])); }
+function sectionOf(book){ const q = BANK.find(x => x.book===book); return q ? q.section : ""; }
+function campLabel(section){
+  if(section==="Gospels"||section==="Acts") return "Gospels and Acts";
+  const c = CAMPS.find(x => x.id===section);
+  return c ? c.label : section;
+}
+function show(id){ ["home","play","bench","done"].forEach(s => $(s).classList.toggle("hidden", s!==id)); }
+function tone(ok){
+  if(!soundOn) return;
+  try {
+    audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = "sine";
+    o.frequency.value = ok ? 392 : 196;
+    g.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.04, audioCtx.currentTime+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime+0.28);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(); o.stop(audioCtx.currentTime+0.3);
+  } catch(e){}
+}
+
+function renderAtlas(){
+  const el = $("atlas");
+  el.innerHTML = "";
+  ORDER.forEach(b => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = SHORT[b];
+    btn.title = b;
+    btn.className = (save.known.includes(b)?"known":"") + (save.opened.includes(b)&&!save.known.includes(b)?" opened":"");
+    btn.onclick = () => openSlip(b);
+    el.appendChild(btn);
+  });
+  const k = save.known.length, o = save.opened.filter(b => !save.known.includes(b)).length;
+  $("atlasLine").textContent = (k||o)
+    ? k+" answered from the page. "+o+" opened after a miss. Tap a spine."
+    : "A dark spine with a gold edge is a book you answered from the page. Tap one you have opened.";
+}
+function openSlip(book){
+  const note = save.notes[book];
+  const slip = $("slip");
+  slip.classList.add("show");
+  slip.innerHTML = note
+    ? "<b>"+esc(book)+" · "+esc(note.ref)+"</b><p>"+esc(note.plain)+"</p>"
+    : "<b>"+esc(book)+"</b><p>Not opened on this road yet.</p>";
+}
+
 function setupHome(){
-  chips($("modes"), [
-    {id:"mile", label:"A mile · 12 stones"},
-    {id:"day", label:"A day’s walk · one camp"},
-    {id:"road", label:"The whole road · 66"}
-  ], mode, id=>{ mode=id; $("campBlock").classList.toggle("hidden", id!=="day"); });
-  chips($("camps"), CAMPS.map(c=>({id:c.id, label:c.label})), camp, id=>{ camp=id; });
-  renderAtlas($("atlas"));
-  atlasLine();
+  const walks = [
+    {id:"mile", name:"A mile", text:"Twelve stones, spread from the first page to the last.", w:"34%"},
+    {id:"day", name:"A day’s walk", text:"One camp. Every book in it, in order.", w:"62%"},
+    {id:"road", name:"The whole road", text:"All sixty-six. A rest where a camp ends.", w:"100%"}
+  ];
+  $("walks").innerHTML = walks.map(w =>
+    '<button class="walk" type="button" data-id="'+w.id+'" aria-pressed="'+(w.id===mode)+'"><b>'+w.name+'</b><span>'+w.text+'</span><i style="width:'+w.w+'"></i></button>'
+  ).join("");
+  $("walks").querySelectorAll("button").forEach(b => b.onclick = () => {
+    mode = b.dataset.id;
+    setupHome();
+  });
+  $("campPanel").classList.toggle("hidden", mode!=="day");
+  $("camps").innerHTML = CAMPS.map(c =>
+    '<button type="button" data-id="'+c.id+'" aria-pressed="'+(c.id===camp)+'">'+c.label+'</button>'
+  ).join("");
+  $("camps").querySelectorAll("button").forEach(b => b.onclick = () => { camp = b.dataset.id; setupHome(); });
+  renderAtlas();
 }
 
 function pick(book){
-  const qs = BANK.filter(q=>q.book===book);
-  const fresh = qs.filter(q=>!save.used.includes(q.book+"|"+q.ref+"|"+q.prompt));
+  const qs = BANK.filter(q => q.book===book);
+  const fresh = qs.filter(q => !save.used.includes(q.book+"|"+q.ref+"|"+q.prompt));
   const pool = fresh.length ? fresh : qs;
   return pool[Math.floor(Math.random()*pool.length)];
 }
 function build(books){
   const queue = [];
   let last = null;
-  books.forEach(b=>{
-    const q = Object.assign({}, pick(b));
-    q.kind = "q";
-    if(last && sectionOf(b)!==last && mode!=="mile"){
-      queue.push({kind:"rest", from:last, to:sectionOf(b)});
-    }
+  books.forEach(b => {
+    const q = Object.assign({kind:"q"}, pick(b));
+    if(last && sectionOf(b)!==last && mode!=="mile") queue.push({kind:"rest", from:last, to:sectionOf(b)});
     queue.push(q);
     last = sectionOf(b);
   });
   return queue;
 }
-
 function start(){
-  const books = mode==="mile" ? MILE.slice() : mode==="day" ? CAMPS.find(c=>c.id===camp).books.slice() : ORDER.slice();
-  walk = {
-    mode, books, queue: build(books), i: 0,
-    lamp: 3, max: 4, streak: 0,
-    knownNow: [], missedNow: [], looked: false, locked: false
-  };
-  save.walks += 1; persist();
+  const books = mode==="mile" ? MILE.slice() : mode==="day" ? CAMPS.find(c => c.id===camp).books.slice() : ORDER.slice();
+  walk = { mode, books, queue: build(books), i:0, lamp:3, max:4, streak:0, knownNow:[], missedNow:[], looked:false, locked:false };
   show("play");
   renderStep();
 }
-
-function show(id){
-  ["home","play","bench","done"].forEach(s=>$(s).classList.toggle("hidden", s!==id));
-}
-
-function steps(){ return walk.queue.filter(x=>x.kind==="q"); }
-function stepIndex(){ return walk.queue.slice(0, walk.i).filter(x=>x.kind==="q").length; }
+function steps(){ return walk.queue.filter(x => x.kind==="q"); }
+function stepIndex(){ return walk.queue.slice(0, walk.i).filter(x => x.kind==="q").length; }
 
 function renderLamp(){
   const el = $("lamp");
   el.innerHTML = "";
   for(let n=0;n<walk.max;n++){
-    const d = document.createElement("i");
-    d.className = "drop" + (n<walk.lamp?" on":"");
-    el.appendChild(d);
+    const f = document.createElement("i");
+    f.className = "flame"+(n<walk.lamp?" on":"");
+    el.appendChild(f);
   }
 }
 function renderRoad(){
   const el = $("road");
   el.innerHTML = "";
   const cur = walk.queue[walk.i];
-  walk.books.forEach(b=>{
-    const i = document.createElement("i");
+  walk.books.forEach(b => {
+    const s = document.createElement("div");
     const known = walk.knownNow.includes(b) || save.known.includes(b);
-    const opened = walk.missedNow.some(m=>m.book===b) || save.opened.includes(b);
-    i.className = (known?"known":opened?"opened":"") + (cur && cur.book===b ? " now":"");
-    i.title = b;
-    el.appendChild(i);
+    const opened = walk.missedNow.some(m => m.book===b) || save.opened.includes(b);
+    s.className = "stone"+(known?" known":opened?" opened":"")+(cur && cur.book===b?" now":"");
+    s.innerHTML = '<div class="dot"></div><small>'+SHORT[b]+'</small>';
+    s.title = b;
+    el.appendChild(s);
   });
+  const now = el.querySelector(".now");
+  if(now) now.scrollIntoView({inline:"center", block:"nearest", behavior:"smooth"});
 }
-
 function renderStep(){
   const item = walk.queue[walk.i];
   if(!item){ finish(); return; }
   walk.looked = false;
   walk.locked = false;
-  $("note").classList.add("hidden");
+  $("page").classList.remove("show");
   $("looked").classList.add("hidden");
   $("tools").classList.remove("hidden");
   renderLamp();
   renderRoad();
   const total = steps().length;
-  const at = stepIndex()+ (item.kind==="q"?1:0);
   $("bar").style.width = Math.round((stepIndex()/total)*100)+"%";
+  const sheet = $("sheet");
+  sheet.style.animation = "none";
+  void sheet.offsetWidth;
+  sheet.style.animation = "";
   if(item.kind==="rest"){
-    $("progressLabel").textContent = "A rest";
+    $("progressLabel").textContent = "A rest on the road";
     $("qbook").textContent = campLabel(item.to);
     $("prompt").textContent = REST[item.from+"|"+item.to] || "The road changes here.";
-    $("prompt").classList.add("restline");
     $("answers").innerHTML = "";
     $("tools").classList.add("hidden");
-    $("note").classList.remove("hidden");
+    $("page").classList.add("show");
     $("ref").textContent = "Between the books";
     $("plain").textContent = "Nothing to answer. Walk on when you are ready.";
     $("next").textContent = "Walk on";
     return;
   }
-  $("prompt").classList.remove("restline");
-  $("progressLabel").textContent = at+" of "+total+" · "+item.book;
+  $("progressLabel").textContent = (stepIndex()+1)+" of "+total+" · "+item.book;
   $("qbook").textContent = item.book+" · "+campLabel(item.section);
   $("prompt").textContent = item.prompt;
   $("next").textContent = walk.i===walk.queue.length-1 ? "End this walk" : "Next stone";
-  const opts = item.choices.map((t,n)=>({t, ok:n===0}));
+  const opts = item.choices.map((t,n) => ({t, ok:n===0}));
   for(let n=opts.length-1;n>0;n--){
     const j = Math.floor(Math.random()*(n+1));
     [opts[n], opts[j]] = [opts[j], opts[n]];
   }
   walk.opts = opts;
-  const box = $("answers");
-  box.innerHTML = "";
-  opts.forEach((o,n)=>{
-    const b = document.createElement("button");
-    b.className = "choice";
-    b.type = "button";
-    b.innerHTML = '<span class="key">'+(n+1)+'</span> '+escapeHtml(o.t);
-    b.onclick = ()=>answer(n);
-    box.appendChild(b);
-  });
+  $("answers").innerHTML = opts.map((o,n) =>
+    '<button class="choice" type="button"><span class="key">'+(n+1)+'</span><span>'+esc(o.t)+'</span></button>'
+  ).join("");
+  $("answers").querySelectorAll("button").forEach((b,n) => b.onclick = () => answer(n));
 }
-
-function escapeHtml(s){ return s.replace(/[&<>]/g, c=>({"&":"&","<":"<",">":">"}[c])); }
-
 function answer(n){
   if(walk.locked) return;
   const item = walk.queue[walk.i];
   if(!item || item.kind!=="q") return;
   walk.locked = true;
   const ok = walk.opts[n].ok;
-  const buttons = $("answers").querySelectorAll("button");
-  buttons.forEach((b,i)=>{
+  $("answers").querySelectorAll("button").forEach((b,i) => {
     b.disabled = true;
     if(walk.opts[i].ok) b.classList.add("right");
     else if(i===n) b.classList.add("wrong");
   });
   const id = item.book+"|"+item.ref+"|"+item.prompt;
   if(!save.used.includes(id)) save.used.push(id);
+  save.notes[item.book] = {ref:item.ref, plain:item.plain};
   if(ok){
     walk.streak += 1;
     if(!walk.knownNow.includes(item.book)) walk.knownNow.push(item.book);
     if(!save.known.includes(item.book)) save.known.push(item.book);
-    save.opened = save.opened.filter(b=>b!==item.book);
+    save.opened = save.opened.filter(b => b!==item.book);
     if(walk.streak===3 && walk.lamp<walk.max){ walk.lamp += 1; walk.streak = 0; }
+    tone(true);
   } else {
     walk.streak = 0;
     walk.lamp -= 1;
     walk.missedNow.push(item);
     if(!save.known.includes(item.book) && !save.opened.includes(item.book)) save.opened.push(item.book);
-    const drops = $("lamp").querySelectorAll(".drop.on");
-    if(drops.length) drops[drops.length-1].classList.add("out");
+    tone(false);
+    $("lamp").querySelectorAll(".on").forEach(f => f.classList.add("dim"));
   }
   persist();
   $("ref").textContent = item.ref;
   $("plain").textContent = item.plain;
   $("looked").classList.toggle("hidden", !walk.looked);
-  $("note").classList.remove("hidden");
+  $("page").classList.add("show");
   $("tools").classList.add("hidden");
   renderLamp();
   renderRoad();
-  if(!ok && walk.lamp<=0){
-    $("next").textContent = "Sit down";
-  }
+  if(!ok && walk.lamp<=0) $("next").textContent = "Sit down";
 }
-
 function next(){
   const item = walk.queue[walk.i];
-  if(item && item.kind==="q" && walk.lamp<=0 && walk.locked){
-    bench();
-    return;
-  }
+  if(item && item.kind==="q" && walk.lamp<=0 && walk.locked){ bench(); return; }
   walk.i += 1;
   if(walk.i>=walk.queue.length){ finish(); return; }
   renderStep();
 }
-
 function bench(){
   show("bench");
-  const miss = walk.missedNow;
-  $("benchPlain").textContent = miss.length
-    ? "The oil is gone. These are the pages from this walk. Light the lamp again and the road continues, or leave it here."
-    : "The oil is gone. Light it again, or leave the road.";
-  $("benchList").innerHTML = miss.map(m=>'<div class="missitem"><strong>'+escapeHtml(m.book)+'</strong> · '+escapeHtml(m.ref)+'<br>'+escapeHtml(m.plain)+'</div>').join("");
+  $("benchPlain").textContent = "The oil is gone. These are the pages from this walk. Light the lamp again and the road continues.";
+  $("benchList").innerHTML = walk.missedNow.map(m =>
+    '<div class="slip show"><b>'+esc(m.book)+" · "+esc(m.ref)+'</b><p>'+esc(m.plain)+'</p></div>'
+  ).join("");
 }
 function relight(){
-  walk.lamp = 2;
-  walk.streak = 0;
-  walk.i += 1;
+  walk.lamp = 2; walk.streak = 0; walk.i += 1;
   show("play");
   if(walk.i>=walk.queue.length){ finish(); return; }
   renderStep();
 }
-
 function finish(){
   show("done");
   const total = steps().length;
-  const known = walk.knownNow.length;
-  $("finalScore").textContent = known+" of "+total+" from the page.";
+  $("finalScore").textContent = walk.knownNow.length+" of "+total+" from the page.";
   $("finalPlain").textContent = walk.mode==="road"
     ? "You have walked the sixty-six. Open the book where the lamp went out."
     : "A short walk. The rest of the road is still there.";
-  $("finalBooks").innerHTML = "";
-  walk.books.forEach(b=>{
-    const s = document.createElement("span");
-    s.className = "bk"+(walk.knownNow.includes(b)?" known":" opened");
-    s.textContent = SHORT[b];
-    s.title = b;
-    $("finalBooks").appendChild(s);
-  });
+  $("finalBooks").innerHTML = walk.books.map(b =>
+    '<button type="button" class="'+(walk.knownNow.includes(b)?"known":"opened")+'">'+SHORT[b]+'</button>'
+  ).join("");
   $("reviewList").innerHTML = "";
-  $("bar") && ($("bar").style.width = "100%");
+  $("bar").style.width = "100%";
 }
-
 function review(){
   const box = $("reviewList");
-  if(box.innerHTML){ box.innerHTML=""; return; }
+  if(box.innerHTML){ box.innerHTML = ""; return; }
   box.innerHTML = walk.missedNow.length
-    ? walk.missedNow.map(m=>'<div class="missitem"><strong>'+escapeHtml(m.book)+'</strong> · '+escapeHtml(m.ref)+'<p>'+escapeHtml(m.plain)+'</p></div>').join("")
-    : '<p class="hintline">No misses on this walk.</p>';
+    ? walk.missedNow.map(m => '<div class="slip show"><b>'+esc(m.book)+" · "+esc(m.ref)+'</b><p>'+esc(m.plain)+'</p></div>').join("")
+    : '<p class="hint">No misses on this walk.</p>';
 }
 
 $("begin").onclick = start;
 $("next").onclick = next;
-$("hint").onclick = ()=>{
+$("hint").onclick = () => {
   const item = walk.queue[walk.i];
   if(!item || item.kind!=="q" || walk.locked) return;
   walk.looked = true;
   $("ref").textContent = item.ref;
   $("plain").textContent = "The reference is open. Answer from the page.";
   $("looked").classList.remove("hidden");
-  $("note").classList.remove("hidden");
+  $("page").classList.add("show");
 };
-$("quit").onclick = ()=>{ show("home"); setupHome(); };
+$("quit").onclick = () => { show("home"); setupHome(); };
 $("relight").onclick = relight;
-$("benchLeave").onclick = ()=>{ show("home"); setupHome(); };
-$("again").onclick = ()=>{ show("home"); setupHome(); };
+$("benchLeave").onclick = () => { show("home"); setupHome(); };
+$("again").onclick = () => { show("home"); setupHome(); };
 $("review").onclick = review;
-
-document.addEventListener("keydown", e=>{
-  if($("play").classList.contains("hidden")) return;
-  const item = walk && walk.queue[walk.i];
+$("sound").onclick = () => {
+  soundOn = !soundOn;
+  $("sound").setAttribute("aria-pressed", soundOn);
+  $("sound").textContent = soundOn ? "Sound on" : "Sound off";
+  if(soundOn) tone(true);
+};
+document.addEventListener("keydown", e => {
+  if($("play").classList.contains("hidden") || !walk) return;
+  const item = walk.queue[walk.i];
   if(!item) return;
-  if(e.key==="Enter" && !$("note").classList.contains("hidden")){ next(); return; }
+  if(e.key==="Enter" && $("page").classList.contains("show")){ next(); return; }
   if(item.kind!=="q" || walk.locked) return;
-  if(e.key==="h" || e.key==="H"){ $("hint").click(); }
+  if(e.key==="h" || e.key==="H") $("hint").click();
   const n = parseInt(e.key,10);
   if(n>=1 && n<=4) answer(n-1);
 });
-
 setupHome();
 </script>
 </body>
