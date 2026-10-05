@@ -313,6 +313,8 @@
     border-radius:8px; padding:6px 10px; line-height:1.1;
   }
   .choice.right { outline:3px solid #1f7a4d; }
+
+  #nextRow .go, #nextRow .ghost { min-height: 48px; flex: 1; }
 </style>
 </head>
 <body>
@@ -400,6 +402,7 @@
           </div>
           <div class="row" id="nextRow">
             <button class="go" id="next" type="button">Next</button>
+            <button class="ghost" id="quitNext" type="button">Main page</button>
           </div>
         </div>
       </div>
@@ -918,6 +921,7 @@ $("hint").onclick = () => {
 };
 $("quit").onclick = () => { clearClock(); show("home"); setupHome(); };
 $("back").onclick = () => { clearClock(); show("home"); setupHome(); };
+$("quitNext").onclick = () => { clearClock(); show("home"); setupHome(); };
 $("again").onclick = () => { show("home"); setupHome(); };
 $("review").onclick = review;
 $("sound").onclick = () => { soundOn = !soundOn; $("sound").textContent = soundOn ? "Sound on" : "Sound off"; if(soundOn) tone(true); };
