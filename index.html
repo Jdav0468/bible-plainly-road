@@ -2257,7 +2257,7 @@ function timeUp(){
   tone(false);
   const right = walk.opts.find(o => o.ok);
   $("verdict").className = "verdict show wrong";
-  $("verdict").innerHTML = "Time. The answer is "+esc(right?right.t:"")+". Found in "+esc(item.ref)+".<span>"+esc(item.plain)+whyOthers(item)+"</span>";
+  $("verdict").innerHTML = "Time. The answer is "+esc(right?right.t:"")+". Found in "+esc(item.ref)+".<span>"+esc(item.plain)+whyOthers()+"</span>";
   $("tools").classList.add("hidden");
   $("nextRow").classList.add("show");
   renderRoad();
@@ -2535,11 +2535,7 @@ function questionForDay(stamp){
   for(let i=0;i<stamp.length;i++) n = (n*33 + stamp.charCodeAt(i)) % BANK.length;
   return BANK[n];
 }
-function whyOthers(item){
-  const wrong = (item.choices || []).slice(1);
-  if(!wrong.length) return "";
-  return " Not these: "+wrong.join(", ")+".";
-}
+function whyOthers(){ return " Not the others."; }
 function dayKey(stamp){ return "bibleplainly-"+stamp; }
 async function dayCount(stamp, hit){
   const key = dayKey(stamp);
@@ -2678,7 +2674,7 @@ function answer(n){
   const campBooks = CAMPS.find(c => c.books.includes(item.book));
   const placed = campBooks ? campBooks.books.filter(b => save.known.includes(b)).length : 0;
   const campBit = campBooks ? " "+campBooks.label+": "+placed+" of "+campBooks.books.length+"." : "";
-  $("verdict").innerHTML = "Found in "+esc(item.ref)+". "+(ok?"You can place "+esc(item.book)+".":"Opened, not placed yet.")+"<span>"+esc(item.plain)+whyOthers(item)+campBit+" You can place "+save.known.length+" of 66.</span>";
+  $("verdict").innerHTML = "Found in "+esc(item.ref)+". "+(ok?"You can place "+esc(item.book)+".":"Opened, not placed yet.")+"<span>"+esc(item.plain)+whyOthers()+campBit+" You can place "+save.known.length+" of 66.</span>";
   renderKnow();
   $("page").classList.remove("show");
   $("ref").textContent = "";
