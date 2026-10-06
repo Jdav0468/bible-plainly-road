@@ -421,6 +421,7 @@
 </style>
 </head>
 <body>
+  <audio id="hymn" src="art/hymn.wav" loop preload="auto"></audio>
   <div class="wrap">
     <div class="top">
       <div>
@@ -4128,25 +4129,17 @@ function pad(freq, at, dur, vol){
   o.start(at); o.stop(at+dur+0.02);
 }
 function startMusic(){
-  if(!soundOn || musicTimer) return;
-  audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
-  if(audioCtx.state==="suspended") audioCtx.resume();
-  const line = [523, 659, 784, 659, 784, 698, 659, 587, 523, 523, 659, 784, 659, 784, 698, 784, 880, 784, 698, 659];
-  const chords = [[262, 330, 392],[262, 330, 392],[294, 370, 440],[262, 330, 392]];
-  let step = 0;
-  const play = () => {
-    if(!soundOn || !audioCtx){ stopMusic(); return; }
-    const now = audioCtx.currentTime;
-    const chord = chords[Math.floor(step/4) % chords.length];
-    chord.forEach(f => pad(f, now, 3.2, 0.25));
-    pad(line[step % line.length], now, 1.5, 0.55);
-    step += 1;
-  };
-  play();
-  musicTimer = setInterval(play, 1500);
+  if(!soundOn) return;
+  const hymn = $("hymn");
+  if(!hymn) return;
+  hymn.volume = 0.9;
+  const play = hymn.play();
+  if(play && play.catch) play.catch(()=>{});
 }
 function stopMusic(){
-  if(musicTimer){ clearInterval(musicTimer); musicTimer = null; }
+  const hymn = $("hymn");
+  if(!hymn) return;
+  hymn.pause();
 }
 function spineClass(book){
   const sec = sectionOf(book).toLowerCase();
