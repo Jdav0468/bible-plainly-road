@@ -421,7 +421,7 @@
 </style>
 </head>
 <body>
-  <audio id="hymn" src="art/hymn.wav" loop preload="auto"></audio>
+  <audio id="hymn" src="art/hymn.mp3" loop preload="none"></audio>
   <div class="wrap">
     <div class="top">
       <div>
@@ -4134,7 +4134,7 @@ function startMusic(){
   if(!hymn) return;
   hymn.volume = 0.9;
   const play = hymn.play();
-  if(play && play.catch) play.catch(()=>{});
+  if(play && play.catch) play.catch(() => {});
 }
 function stopMusic(){
   const hymn = $("hymn");
