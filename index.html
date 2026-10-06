@@ -4138,8 +4138,8 @@ function startMusic(){
       if(!soundOn){ stopMusic(); return; }
       const now = audioCtx.currentTime;
       const chord = chords[Math.floor(step/4) % chords.length];
-      chord.forEach(f => pad(f, now, 3.2, 0.012));
-      pad(line[step % line.length], now, 1.6, 0.028);
+      chord.forEach(f => pad(f, now, 3.2, 0.04));
+      pad(line[step % line.length], now, 1.6, 0.09);
       step += 1;
     };
     play();
