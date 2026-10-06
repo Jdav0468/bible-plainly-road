@@ -384,6 +384,16 @@
     .leaf.right { order: -1; }
     .leaf.left { order: 1; }
   }
+
+  body { padding-bottom: 84px; }
+  .lede { display:none; }
+  .foot { display:none; }
+  .dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding: 8px 8px calc(8px + env(safe-area-inset-bottom)); background: #1c1714; }
+  .dock button { min-height: 48px; border: 0; border-radius: 10px; background: transparent; color: #e7e1d8; font-size: 14px; }
+  .dock button.on { background: #f7f4ee; color: #1c1916; }
+  .screen-off { display: none !important; }
+  .wrap { max-width: 520px; margin: 0 auto; }
+  h1 { font-size: 34px; }
 </style>
 </head>
 <body>
@@ -525,6 +535,7 @@
       <p class="knowline" id="tallyLine">0 of 66 books you know.</p>
       <div class="tally" id="tally"></div>
     </section>
+    <nav class="dock" id="dock"><button type="button" data-tab="play" class="on">Play</button><button type="button" data-tab="learn">Learn</button><button type="button" data-tab="books">Books</button><button type="button" data-tab="progress">Progress</button></nav>
     <p class="foot">The count is how many books you know.</p>
   </div>
 <script>
@@ -4049,7 +4060,7 @@ function persist(){ try { localStorage.setItem(KEY, JSON.stringify(save)); } cat
 function esc(s){ return String(s).replace(/[&<>]/g, c => ({"&":"&","<":"<",">":">"}[c])); }
 function sectionOf(book){ const q = BANK.find(x => x.book===book); return q ? q.section : ""; }
 function campLabel(section){ if(section==="Gospels"||section==="Acts") return "Gospels and Acts"; const c = CAMPS.find(x => x.id===section); return c ? c.label : section; }
-function show(id){ ["home","play","done","guide"].forEach(s => $(s).classList.toggle("hidden", s!==id)); if(id==="play" && soundOn) startMusic(); if(id!=="play") stopMusic(); if(id==="play"){ const q=$("prompt"); if(q) q.scrollIntoView({block:"start"}); } }
+function show(id){ ["home","play","done","guide"].forEach(s => $(s).classList.toggle("hidden", s!==id)); if(id==="play" && soundOn) startMusic(); if(id!=="play") stopMusic(); const dock=$("dock"); if(dock) dock.classList.toggle("screen-off", id==="play"); if(id==="home") showTab("play"); if(id==="play"){ const q=$("prompt"); if(q) q.scrollIntoView({block:"start"}); } }
 async function ensureCtx(){
   audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
   if(audioCtx.state==="suspended") await audioCtx.resume();
@@ -4283,7 +4294,26 @@ function setupLearn(){
   }).join("");
   $("learn").querySelectorAll("button").forEach(b => b.onclick = () => openGuide(b.dataset.key));
 }
+
+function showTab(name){
+  const map = {
+    play: ["todayRow","dayCount","walks","startPanel"],
+    learn: ["learn"],
+    books: ["gallery","campPanel","atlas"],
+    progress: ["know","tally"]
+  };
+  document.querySelectorAll("#dock button").forEach(b => b.classList.toggle("on", b.dataset.tab===name));
+  const show = new Set(map[name]||[]);
+  ["todayRow","dayCount","walks","startPanel","learn","gallery","campPanel","atlas","know","tally"].forEach(id => {
+    const el = $(id) || document.getElementById(id);
+    const node = id==="learn" ? document.querySelector("#learn") && document.querySelector("#learn").closest(".panel") : (id==="know" ? document.querySelector("#know") && document.querySelector("#know").closest(".panel") : (id==="atlas" ? document.querySelector("#atlas") && document.querySelector("#atlas").closest(".panel") : $(id)));
+    if(node) node.classList.toggle("screen-off", !show.has(id));
+  });
+  const dock = $("dock");
+  if(dock) dock.classList.toggle("screen-off", name==="play" && !$("play").classList.contains("hidden") && $("home").classList.contains("hidden"));
+}
 function setupHome(){
+  showTab('play');
   setupLearn();
   const walks = [
     {id:"mile", name:"A short walk", text:"Tap to open. Twelve questions.", w:"34%"},
@@ -4569,6 +4599,7 @@ function review(){
 $("gallery").querySelectorAll("button").forEach(b => b.onclick = () => { camp = b.dataset.camp; mode = "day"; start(); });
 $("begin").onclick = start;
 $("today").onclick = () => startDay();
+$("dock").querySelectorAll("button").forEach(b => b.onclick = () => showTab(b.dataset.tab));
 $("guideHome").onclick = () => { show("home"); setupHome(); };
 $("guidePlay").onclick = () => { const g = GUIDE[guideKey]; if(!g.play){ show("home"); return; } camp = g.play; mode = "day"; start(); };
 $("invite").onclick = () => invite("inviteNote");
