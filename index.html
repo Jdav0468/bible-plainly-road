@@ -394,6 +394,10 @@
   .screen-off { display: none !important; }
   .wrap { max-width: 520px; margin: 0 auto; }
   h1 { font-size: 34px; }
+
+  #startPanel .go { width: 100%; min-height: 56px; font-size: 20px; }
+  #play, #guide, #done, #home { padding-bottom: 88px; }
+  .dock { display: grid !important; }
 </style>
 </head>
 <body>
@@ -406,13 +410,14 @@
       <button class="sound" id="sound" type="button" aria-pressed="true">Sound on</button>
     </div>
     <p class="lede">Sixty-six books. It is worth studying because the truth is in the Bible. A church can help, and a preacher can explain, but you still need to open it yourself. A hint can point you to the part. The line is still yours to place.</p>
-    <div class="row" id="todayRow"><button class="go" id="today" type="button">Today's question</button><button class="ghost" id="sendResult" type="button">Share my results</button></div>
-    <p class="hint" id="dayCount"></p>
-
+    <div class="panel" id="startPanel">
+        <button class="go" id="begin" type="button">Start</button>
+      </div>
+      <div class="row" id="todayRow"><button class="go" id="today" type="button">Today's question</button><button class="ghost" id="sendResult" type="button">Share my results</button></div>
+      <p class="hint" id="dayCount"></p>
       <div class="walks" id="walks"></div>
-      <div class="panel" id="startPanel">
+      <div class="panel" id="morePanel">
         <div class="row" style="margin-top:0">
-          <button class="go" id="begin" type="button">Start</button>
           <button class="ghost" id="invite" type="button">Invite someone</button>
           <button class="ghost" id="missedBtn" type="button">Open what you missed</button>
           <button class="ghost" id="clearHistory" type="button">Start over</button>
@@ -4060,7 +4065,7 @@ function persist(){ try { localStorage.setItem(KEY, JSON.stringify(save)); } cat
 function esc(s){ return String(s).replace(/[&<>]/g, c => ({"&":"&","<":"<",">":">"}[c])); }
 function sectionOf(book){ const q = BANK.find(x => x.book===book); return q ? q.section : ""; }
 function campLabel(section){ if(section==="Gospels"||section==="Acts") return "Gospels and Acts"; const c = CAMPS.find(x => x.id===section); return c ? c.label : section; }
-function show(id){ ["home","play","done","guide"].forEach(s => $(s).classList.toggle("hidden", s!==id)); if(id==="play" && soundOn) startMusic(); if(id!=="play") stopMusic(); const dock=$("dock"); if(dock) dock.classList.toggle("screen-off", id==="play"); if(id==="home") showTab("play"); if(id==="play"){ const q=$("prompt"); if(q) q.scrollIntoView({block:"start"}); } }
+function show(id){ ["home","play","done","guide"].forEach(s => $(s).classList.toggle("hidden", s!==id)); if(id==="play" && soundOn) startMusic(); if(id!=="play") stopMusic(); if(id==="home") showTab("play"); if(id==="play"){ const q=$("prompt"); if(q) q.scrollIntoView({block:"start"}); } }
 async function ensureCtx(){
   audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
   if(audioCtx.state==="suspended") await audioCtx.resume();
@@ -4297,20 +4302,20 @@ function setupLearn(){
 
 function showTab(name){
   const map = {
-    play: ["todayRow","dayCount","walks","startPanel"],
+    play: ["startPanel","todayRow","dayCount","walks","morePanel"],
     learn: ["learn"],
     books: ["gallery","campPanel","atlas"],
     progress: ["know","tally"]
   };
   document.querySelectorAll("#dock button").forEach(b => b.classList.toggle("on", b.dataset.tab===name));
   const show = new Set(map[name]||[]);
-  ["todayRow","dayCount","walks","startPanel","learn","gallery","campPanel","atlas","know","tally"].forEach(id => {
+  ["startPanel","todayRow","dayCount","walks","morePanel","learn","gallery","campPanel","atlas","know","tally"].forEach(id => {
     const el = $(id) || document.getElementById(id);
     const node = id==="learn" ? document.querySelector("#learn") && document.querySelector("#learn").closest(".panel") : (id==="know" ? document.querySelector("#know") && document.querySelector("#know").closest(".panel") : (id==="atlas" ? document.querySelector("#atlas") && document.querySelector("#atlas").closest(".panel") : $(id)));
     if(node) node.classList.toggle("screen-off", !show.has(id));
   });
   const dock = $("dock");
-  if(dock) dock.classList.toggle("screen-off", name==="play" && !$("play").classList.contains("hidden") && $("home").classList.contains("hidden"));
+  
 }
 function setupHome(){
   showTab('play');
