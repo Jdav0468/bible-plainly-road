@@ -358,6 +358,26 @@
   .choice.right { background:#d7eadc !important; border:2px solid #1f7a4d !important; color:#1c1916 !important; box-shadow:0 0 0 3px #1f7a4d; }
   .choice.wrong { background:#f6d9d2 !important; border:2px solid #8a4036 !important; color:#1c1916 !important; }
   .choice em { margin-left:8px; font-style:normal; font-size:13px; letter-spacing:.04em; text-transform:uppercase; }
+
+@media (max-width:720px){
+  body { background-attachment: scroll !important; }
+  .wrap { margin: 0 !important; padding: 16px 14px 28px !important; border-radius: 0 !important; width: 100% !important; max-width: 100% !important; }
+  h1 { font-size: 32px !important; line-height: 1.1 !important; }
+  .lede, #guideBody p, .prompt { font-size: 18px !important; }
+  .top { flex-wrap: wrap; gap: 8px; }
+  .row, #todayRow, #nextRow, #tools { flex-direction: column; }
+  .go, .ghost, #today, #next, #back, .walk { width: 100%; min-height: 48px; }
+  .book { display: block !important; }
+  .leaf { width: 100% !important; }
+  .scene img { height: 140px !important; }
+  .gallery { grid-template-columns: 1fr 1fr !important; }
+  .qhead { align-items: flex-start; }
+  #clock { font-size: 20px !important; min-width: 68px; }
+  .choice { min-height: 52px; font-size: 17px !important; }
+  .trow { grid-template-columns: 72px 1fr 52px; }
+  .spines button, .stone { min-height: 44px; }
+  .playtop { flex-wrap: wrap; }
+}
 </style>
 </head>
 <body>
