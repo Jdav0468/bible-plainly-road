@@ -4101,7 +4101,7 @@ function persist(){ try { localStorage.setItem(KEY, JSON.stringify(save)); } cat
 function esc(s){ return String(s).replace(/[&<>]/g, c => ({"&":"&","<":"<",">":">"}[c])); }
 function sectionOf(book){ const q = BANK.find(x => x.book===book); return q ? q.section : ""; }
 function campLabel(section){ if(section==="Gospels"||section==="Acts") return "Gospels and Acts"; const c = CAMPS.find(x => x.id===section); return c ? c.label : section; }
-function show(id){ ["home","play","done","guide"].forEach(s => $(s).classList.toggle("hidden", s!==id)); if(id==="play" && soundOn){ audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)(); if(audioCtx.state==="suspended") audioCtx.resume(); startMusic(); } if(id!=="play") stopMusic(); if(id==="home") showTab("play"); if(id==="play"){  const top=$("play"); if(top) top.scrollIntoView({block:"start"}); } }
+function show(id){ ["home","play","done","guide"].forEach(s => $(s).classList.toggle("hidden", s!==id)); if(id==="home" && soundOn) startMusic(); else stopMusic(); if(id==="home") showTab("play"); if(id==="play"){  const top=$("play"); if(top) top.scrollIntoView({block:"start"}); } }
 async function ensureCtx(){
   audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
   if(audioCtx.state==="suspended") await audioCtx.resume();
@@ -4131,7 +4131,7 @@ function pageSound(){
     const now = audioCtx.currentTime;
     blip(262, now, 0.12, "triangle", 0.1);
     blip(392, now+0.07, 0.16, "sine", 0.1);
-    startMusic();
+    stopMusic();
   }).catch(()=>{});
 }
 let musicTimer = null;
@@ -4149,7 +4149,7 @@ function startMusic(){
   if(!soundOn) return;
   const hymn = $("hymn");
   if(!hymn) return;
-  hymn.volume = 0.9;
+  hymn.volume = 0.28;
   const play = hymn.play();
   if(play && play.catch) play.catch(() => {});
 }
@@ -4658,6 +4658,7 @@ function review(){
 
 $("gallery").querySelectorAll("button").forEach(b => b.onclick = () => { camp = b.dataset.camp; mode = "day"; start(); });
 $("begin").onclick = start;
+document.body.addEventListener("pointerdown", () => { if(!$("home").classList.contains("hidden")) startMusic(); }, {once:true});
 $("today").onclick = () => startDay();
 $("dock").querySelectorAll("button").forEach(b => b.onclick = () => showTab(b.dataset.tab));
 $("guideHome").onclick = () => { show("home"); setupHome(); };
@@ -4693,7 +4694,7 @@ $("quitNext").onclick = () => { clearClock(); show("home"); setupHome(); };
 $("again").onclick = () => { show("home"); setupHome(); };
 $("review").onclick = startMissed;
 $("readIt").onclick = readIt;
-$("sound").onclick = () => { soundOn = !soundOn; $("sound").textContent = soundOn ? "Sound on" : "Sound off"; if(soundOn){ tone(true); if(!$("play").classList.contains("hidden")) startMusic(); } else stopMusic(); };
+$("sound").onclick = () => { soundOn = !soundOn; $("sound").textContent = soundOn ? "Sound on" : "Sound off"; if(soundOn){ tone(true); if(!$("home").classList.contains("hidden")) startMusic(); } else stopMusic(); };
 document.addEventListener("keydown", e => {
   if($("play").classList.contains("hidden") || !walk) return;
   const item = walk.queue[walk.i];
