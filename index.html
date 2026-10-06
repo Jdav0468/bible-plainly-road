@@ -1,1 +1,36 @@
-PLACEHOLDER
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Bible, Plainly — The Road</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<style>body{margin:0;background:#171310;color:#e7dccb;font-family:Georgia,serif}p{padding:28px 22px;font-size:18px}</style>
+</head>
+<body>
+<p id="wait">Opening the page…</p>
+<script>
+(function(){
+  var sources=[
+    "https://raw.githubusercontent.com/Jdav0468/bible-plainly-road/208312696c8b4b4702fc9c000791aaf74927f83d/index.html",
+    "https://cdn.jsdelivr.net/gh/Jdav0468/bible-plainly-road@208312696c8b4b4702fc9c000791aaf74927f83d/index.html"
+  ];
+  var quiet="<script>(function(){function stopMusic(){if(window._musicTimer){clearInterval(window._musicTimer);window._musicTimer=null;}if(window._studyMaster){try{window._studyMaster.disconnect();}catch(e){}window._studyMaster=null;}var nodes=document.querySelectorAll('audio');for(var i=0;i<nodes.length;i++){nodes[i].pause();nodes[i].volume=0;nodes[i].removeAttribute('src');}}function startMusic(){var home=document.getElementById('home');if(window._soundOff||window._musicTimer)return;if(home&&home.classList.contains('hidden'))return;var Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;var ctx=window._studyCtx||new Ctx();window._studyCtx=ctx;if(ctx.state==='suspended')ctx.resume();var filter=ctx.createBiquadFilter();filter.type='lowpass';filter.frequency.value=560;var master=ctx.createGain();master.gain.setValueAtTime(0.0001,ctx.currentTime);master.gain.linearRampToValueAtTime(0.008,ctx.currentTime+5);filter.connect(master);master.connect(ctx.destination);window._studyMaster=master;var line=[196,196,293.66,246.94,196,246.94,220,196,0,0,0,0,164.81,196,220,196,164.81,146.83,0,0,0,0,0,0];var step=0;function play(){var home=document.getElementById('home');if(window._soundOff||!home||home.classList.contains('hidden')){stopMusic();return;}var f=line[step%line.length];step+=1;if(!f)return;var now=ctx.currentTime;var o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.setValueAtTime(f,now);g.gain.setValueAtTime(0.0001,now);g.gain.linearRampToValueAtTime(0.12,now+0.6);g.gain.linearRampToValueAtTime(0.0001,now+2.8);o.connect(g);g.connect(filter);o.start(now);o.stop(now+2.9);}play();window._musicTimer=setInterval(play,3200);}window.startMusic=startMusic;window.stopMusic=stopMusic;stopMusic();var sound=document.getElementById('sound');if(sound){sound.addEventListener('click',function(){window._soundOff=sound.textContent.toLowerCase().indexOf('off')!==-1;if(window._soundOff)stopMusic();else startMusic();});}document.body.addEventListener('pointerdown',function(){if(!window._soundOff)startMusic();});})();<\/script>";
+  function openGame(html){
+    html=html.replace(/<audio\b[^>]*id=["']hymn["'][\s\S]*?<\/audio>/i,'<audio id="hymn" data-off="1" preload="none"></audio>');
+    html=html.replace("</body>",quiet+"</body>");
+    document.open();document.write(html);document.close();
+  }
+  function fail(){var el=document.getElementById("wait");if(el)el.textContent="The page did not open. Refresh once.";}
+  function tryAt(i){
+    if(i>=sources.length){fail();return;}
+    fetch(sources[i],{cache:"no-store"}).then(function(r){if(!r.ok)throw new Error("bad");return r.text();}).then(function(html){
+      if(html.indexOf("Sixty-six books")===-1&&html.indexOf("BANK")===-1)throw new Error("short");
+      openGame(html);
+    }).catch(function(){tryAt(i+1);});
+  }
+  tryAt(0);
+})();
+</script>
+</body>
+</html>
