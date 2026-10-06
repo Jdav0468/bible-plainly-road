@@ -410,6 +410,14 @@
 
   .choice { font-size: 18px; min-height: 52px; }
   #next, #readIt, #quitNext, #back { font-size: 17px; }
+
+  .choice { transition: transform .08s ease; }
+  .choice:active { transform: scale(.98); }
+  .choice.shake { animation: miss .35s ease; }
+  @keyframes miss { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+  #clock.hot { background:#f3e2b3 !important; border-color:#8a6a1f !important; }
+  .gallery button.done span::after { content:" · done"; }
+  #streakLine { margin:4px 0 0; text-align:center; font-size:13px; }
 </style>
 </head>
 <body>
@@ -505,7 +513,7 @@
               <p class="qbook" id="qbook"></p>
               <p class="hint" id="stepLine">1 of 5. You know 0 of 66.</p>
             </div>
-            <div id="clock">0:30</div>
+            <div><div id="clock">0:30</div><p class="hint" id="streakLine"></p></div>
           </div>
           <h2 class="prompt" id="prompt"></h2>
           <div class="verdict" id="verdict"></div>
@@ -4188,7 +4196,7 @@ function renderAtlas(){
 function openBook(book){
   pageSound();
   mode = "book";
-  walk = {mode, books:[book], queue:build([book]), i:0, knownNow:[], missedNow:[], looked:false, locked:false};
+  walk = {mode, books:[book], queue:build([book]), i:0, knownNow:[], missedNow:[], looked:false, locked:false, streak:0};
   show("play");
   renderStep();
 }
@@ -4328,6 +4336,7 @@ function showTab(name){
   
 }
 function setupHome(){
+  markParts();
   showTab('play');
   setupLearn();
   const walks = [
@@ -4421,7 +4430,7 @@ function startDay(stamp){
   const q = questionForDay(stamp);
   mode = "today";
   pageSound();
-  walk = {mode, books:[q.book], queue:[Object.assign({kind:"q", place:false, day:stamp}, q)], i:0, knownNow:[], missedNow:[], looked:false, locked:false};
+  walk = {mode, books:[q.book], queue:[Object.assign({kind:"q", place:false, day:stamp}, q)], i:0, knownNow:[], missedNow:[], looked:false, locked:false, streak:0};
   history.replaceState(null, "", location.pathname+"?day="+stamp);
   show("play");
   renderStep();
@@ -4431,7 +4440,7 @@ function startDay(stamp){
 function start(){
   pageSound();
   const books = mode==="mile" ? MILE.slice() : mode==="day" ? CAMPS.find(c => c.id===camp).books.slice() : ORDER.slice();
-  walk = {mode, books, queue:build(books), i:0, knownNow:[], missedNow:[], looked:false, locked:false};
+  walk = {mode, books, queue:build(books), i:0, knownNow:[], missedNow:[], looked:false, locked:false, streak:0};
   show("play");
   renderStep();
 }
@@ -4516,6 +4525,29 @@ function refreshBook(book){
     if(got>0 && !save.opened.includes(book)) save.opened.push(book);
   }
 }
+
+function paintStreak(){
+  const n = walk && walk.streak || 0;
+  const el = $("streakLine");
+  if(el) el.textContent = n>=2 ? n+" in a row" : "";
+  const clock = $("clock");
+  if(clock) clock.classList.toggle("hot", n>=3);
+}
+function rise(){
+  if(!soundOn) return;
+  ensureCtx().then(() => {
+    const now = audioCtx.currentTime;
+    [392, 494, 587].forEach((f,i) => blip(f, now+i*0.08, 0.18, "sine", 0.1));
+  }).catch(()=>{});
+}
+function markParts(){
+  document.querySelectorAll("#gallery button").forEach(b => {
+    const camp = CAMPS.find(c => c.id===b.dataset.camp);
+    if(!camp) return;
+    const done = camp.books.every(book => save.known.includes(book));
+    b.classList.toggle("done", done);
+  });
+}
 function answer(n){
   if(walk.locked) return;
   const item = walk.queue[walk.i];
@@ -4535,16 +4567,21 @@ function answer(n){
   save.notes[item.book] = {ref:item.ref, plain:item.plain};
   if(!save.missed) save.missed = [];
   if(ok){
-    walk.streak += 1;
+    walk.streak = (walk.streak||0)+1;
     if(!save.right.includes(id)) save.right.push(id);
     save.missed = save.missed.filter(x => x!==id);
     tone(true);
+    if(walk.streak>=3) rise();
   } else {
+    walk.streak = 0;
     walk.missedNow.push(item);
     save.right = save.right.filter(x => x!==id);
     if(!save.missed.includes(id)) save.missed.push(id);
     tone(false);
+    const picked = $("answers").querySelectorAll("button")[n];
+    if(picked) picked.classList.add("shake");
   }
+  paintStreak();
   refreshBook(item.book);
   if(ok && save.known.includes(item.book) && !walk.knownNow.includes(item.book)) walk.knownNow.push(item.book);
   persist();
@@ -4583,7 +4620,7 @@ function startMissed(){
   if(!items.length){ alert("Nothing missed is waiting."); return; }
   mode = "missed";
   pageSound();
-  walk = {mode, books:[...new Set(items.map(q => q.book))], queue:items.map(q => Object.assign({kind:"q", place:false}, q)), i:0, knownNow:[], missedNow:[], looked:false, locked:false};
+  walk = {mode, books:[...new Set(items.map(q => q.book))], queue:items.map(q => Object.assign({kind:"q", place:false}, q)), i:0, knownNow:[], missedNow:[], looked:false, locked:false, streak:0};
   show("play");
   renderStep();
 }
@@ -4591,7 +4628,9 @@ function finish(){
   clearClock();
   show("done");
   $("finalScore").textContent = save.known.length+" of 66 books you know.";
-  $("finalPlain").textContent = "This part, in the books you opened.";
+  const knownHere = walk.books.filter(b => save.known.includes(b)).length;
+  $("finalPlain").textContent = "You know "+knownHere+" of "+walk.books.length+" in this part.";
+  markParts();
   $("finalBooks").innerHTML = walk.books.map(b => {
     const note = save.notes[b];
     const open = bookQuestions(b).length - bookRight(b);
