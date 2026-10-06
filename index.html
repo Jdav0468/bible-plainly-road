@@ -385,7 +385,6 @@
     .leaf.left { order: 1; }
   }
 </style>
-<!-- published 2026-10-06-0433 -->
 </head>
 <body>
   <div class="wrap">
@@ -405,6 +404,7 @@
         <div class="row" style="margin-top:0">
           <button class="go" id="begin" type="button">Start</button>
           <button class="ghost" id="invite" type="button">Invite someone</button>
+          <button class="ghost" id="missedBtn" type="button">Open what you missed</button>
           <button class="ghost" id="clearHistory" type="button">Start over</button>
         </div>
         <p class="hint" id="inviteNote"></p>
@@ -493,6 +493,7 @@
           </div>
           <div class="row" id="nextRow">
             <button class="go" id="next" type="button">Next</button>
+            <button class="ghost" id="readIt" type="button">Read it</button>
             <button class="ghost" id="quitNext" type="button">Main page</button>
           </div>
         </div>
@@ -513,7 +514,7 @@
           <button class="go" id="again" type="button">Another walk</button>
           <button class="ghost" id="sendDone" type="button">Share my results</button>
           <button class="ghost" id="inviteDone" type="button">Invite someone</button>
-          <button class="ghost" id="review" type="button">Pages you missed</button>
+          <button class="ghost" id="review" type="button">Open what you missed</button>
         </div>
         <p class="hint" id="inviteDoneNote"></p>
         <div id="reviewList"></div>
@@ -4020,6 +4021,9 @@ function timeUp(){
   if(!save.used.includes(id)) save.used.push(id);
   save.notes[item.book] = {ref:item.ref, plain:item.plain};
   walk.missedNow.push(item);
+  if(!save.missed) save.missed = [];
+  const missId = qid(item);
+  if(!save.missed.includes(missId)) save.missed.push(missId);
   if(!save.known.includes(item.book) && !save.opened.includes(item.book)) save.opened.push(item.book);
   persist();
   tone(false);
@@ -4034,11 +4038,12 @@ function timeUp(){
 
 function load(){
   try {
-    const s = Object.assign({known:[], opened:[], notes:{}, used:[], right:[]}, JSON.parse(localStorage.getItem(KEY)||"{}"));
+    const s = Object.assign({known:[], opened:[], notes:{}, used:[], right:[], missed:[]}, JSON.parse(localStorage.getItem(KEY)||"{}"));
     if(!s.right) s.right = [];
+    if(!s.missed) s.missed = [];
     s.known = s.known.filter(b => bookQuestions(b).length && bookQuestions(b).every(q => s.right.includes(q.book+"|"+q.ref+"|"+q.prompt)));
     return s;
-  } catch(e){ return {known:[], opened:[], notes:{}, used:[], right:[]}; }
+  } catch(e){ return {known:[], opened:[], notes:{}, used:[], right:[], missed:[]}; }
 }
 function persist(){ try { localStorage.setItem(KEY, JSON.stringify(save)); } catch(e){} }
 function esc(s){ return String(s).replace(/[&<>]/g, c => ({"&":"&","<":"<",">":">"}[c])); }
@@ -4200,7 +4205,7 @@ async function invite(noteId, text){
 
 function clearHistory(){
   if(!confirm("Clear this game and start over? The books you know will be forgotten on this device.")) return;
-  save = {known:[], opened:[], notes:{}, used:[], right:[]};
+  save = {known:[], opened:[], notes:{}, used:[], right:[], missed:[]};
   persist();
   walk = null;
   show("home");
@@ -4488,13 +4493,16 @@ function answer(n){
   if(!save.used.includes(id)) save.used.push(id);
   if(!save.right) save.right = [];
   save.notes[item.book] = {ref:item.ref, plain:item.plain};
+  if(!save.missed) save.missed = [];
   if(ok){
     walk.streak += 1;
     if(!save.right.includes(id)) save.right.push(id);
+    save.missed = save.missed.filter(x => x!==id);
     tone(true);
   } else {
     walk.missedNow.push(item);
     save.right = save.right.filter(x => x!==id);
+    if(!save.missed.includes(id)) save.missed.push(id);
     tone(false);
   }
   refreshBook(item.book);
@@ -4523,12 +4531,32 @@ function next(){
   if(walk.i>=walk.queue.length){ finish(); return; }
   renderStep();
 }
+
+function readIt(){
+  const item = walk && walk.queue[walk.i];
+  if(!item || !item.ref) return;
+  const q = encodeURIComponent(item.ref);
+  window.open("https://www.biblegateway.com/passage/?search="+q+"&version=KJV", "_blank", "noopener");
+}
+function startMissed(){
+  const items = BANK.filter(q => (save.missed||[]).includes(q.book+"|"+q.ref+"|"+q.prompt));
+  if(!items.length){ alert("Nothing missed is waiting."); return; }
+  mode = "missed";
+  pageSound();
+  walk = {mode, books:[...new Set(items.map(q => q.book))], queue:items.map(q => Object.assign({kind:"q", place:false}, q)), i:0, knownNow:[], missedNow:[], looked:false, locked:false};
+  show("play");
+  renderStep();
+}
 function finish(){
   clearClock();
   show("done");
   $("finalScore").textContent = save.known.length+" of 66 books you know.";
-  $("finalPlain").textContent = "This walk: "+walk.knownNow.length+" of "+steps().length+" from the page. The bars show the whole book.";
-  $("finalBooks").innerHTML = walk.books.map(b => '<button type="button" class="'+spineClass(b)+'">'+SHORT[b]+'</button>').join("");
+  $("finalPlain").textContent = "This part, in the books you opened.";
+  $("finalBooks").innerHTML = walk.books.map(b => {
+    const note = save.notes[b];
+    const open = bookQuestions(b).length - bookRight(b);
+    return '<div class="slip show"><b>'+esc(b)+'</b><p>'+(note?esc(note.plain):"No line kept yet.")+'</p><p>'+(open?open+" of "+bookQuestions(b).length+" still open.":"All four are right. You know this book.")+'</p></div>';
+  }).join("");
   $("reviewList").innerHTML = "";
   $("bar").style.width = "100%";
 }
@@ -4545,6 +4573,7 @@ $("guideHome").onclick = () => { show("home"); setupHome(); };
 $("guidePlay").onclick = () => { const g = GUIDE[guideKey]; if(!g.play){ show("home"); return; } camp = g.play; mode = "day"; start(); };
 $("invite").onclick = () => invite("inviteNote");
 $("clearHistory").onclick = clearHistory;
+$("missedBtn").onclick = startMissed;
 $("inviteDone").onclick = () => invite("inviteDoneNote");
 $("sendResult").onclick = () => invite("dayCount", resultText());
 $("sendDone").onclick = () => invite("inviteDoneNote", resultText());
@@ -4571,7 +4600,8 @@ $("quit").onclick = () => { clearClock(); show("home"); setupHome(); };
 $("back").onclick = () => { clearClock(); show("home"); setupHome(); };
 $("quitNext").onclick = () => { clearClock(); show("home"); setupHome(); };
 $("again").onclick = () => { show("home"); setupHome(); };
-$("review").onclick = review;
+$("review").onclick = startMissed;
+$("readIt").onclick = readIt;
 $("sound").onclick = () => { soundOn = !soundOn; $("sound").textContent = soundOn ? "Sound on" : "Sound off"; if(soundOn){ tone(true); if(!$("play").classList.contains("hidden")) startMusic(); } else stopMusic(); };
 document.addEventListener("keydown", e => {
   if($("play").classList.contains("hidden") || !walk) return;
