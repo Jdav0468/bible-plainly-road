@@ -378,6 +378,12 @@
   .spines button, .stone { min-height: 44px; }
   .playtop { flex-wrap: wrap; }
 }
+
+  @media (max-width:720px){
+    .book { display:flex !important; flex-direction:column; }
+    .leaf.right { order: -1; }
+    .leaf.left { order: 1; }
+  }
 </style>
 </head>
 <body>
@@ -458,7 +464,6 @@
         <div class="meta" id="progressLabel">1 of 12</div>
         </div>
       <div class="bar"><span id="bar"></span></div>
-      <div class="roadwrap"><div class="road" id="road"></div></div><p class="hint">Or open any book.</p><div class="spines" id="anybook"></div>
       <div class="book" id="book">
         <div class="leaf left">
                     <figure class="scene"><img id="scene" src="art/hero.jpg?v=6" alt="" /></figure>
@@ -491,6 +496,10 @@
           </div>
         </div>
       </div>
+      <div class="roadwrap"><div class="road" id="road"></div></div>
+      <p class="hint">Or open any book.</p>
+      <div class="spines" id="anybook"></div>
+
     </section>
 
     <section id="done" class="hidden">
@@ -4034,7 +4043,7 @@ function persist(){ try { localStorage.setItem(KEY, JSON.stringify(save)); } cat
 function esc(s){ return String(s).replace(/[&<>]/g, c => ({"&":"&","<":"<",">":">"}[c])); }
 function sectionOf(book){ const q = BANK.find(x => x.book===book); return q ? q.section : ""; }
 function campLabel(section){ if(section==="Gospels"||section==="Acts") return "Gospels and Acts"; const c = CAMPS.find(x => x.id===section); return c ? c.label : section; }
-function show(id){ ["home","play","done","guide"].forEach(s => $(s).classList.toggle("hidden", s!==id)); if(id==="play" && soundOn) startMusic(); if(id!=="play") stopMusic(); }
+function show(id){ ["home","play","done","guide"].forEach(s => $(s).classList.toggle("hidden", s!==id)); if(id==="play" && soundOn) startMusic(); if(id!=="play") stopMusic(); if(id==="play"){ const q=$("prompt"); if(q) q.scrollIntoView({block:"start"}); } }
 async function ensureCtx(){
   audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
   if(audioCtx.state==="suspended") await audioCtx.resume();
