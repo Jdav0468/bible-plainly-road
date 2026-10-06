@@ -418,6 +418,23 @@
   #clock.hot { background:#f3e2b3 !important; border-color:#8a6a1f !important; }
   .gallery button.done span::after { content:" · done"; }
   #streakLine { margin:4px 0 0; text-align:center; font-size:13px; }
+
+@media (max-width:720px){
+  html, body { overflow-x: hidden; }
+  body { padding-bottom: 76px !important; }
+  .wrap { width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 12px 12px 96px !important; border-radius: 0 !important; }
+  h1 { font-size: 28px !important; line-height: 1.15 !important; }
+  .go, .ghost, .walk, .choice, .dock button { min-height: 48px !important; font-size: 17px !important; }
+  .row, #todayRow, #nextRow, #tools, #morePanel .row { display: flex !important; flex-direction: column !important; }
+  .go, .ghost { width: 100% !important; }
+  #startPanel .go { min-height: 56px !important; font-size: 20px !important; }
+  .prompt { font-size: 22px !important; }
+  #clock { font-size: 22px !important; }
+  .gallery { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+  .leaf.left, .roadwrap, #anybook { display: none !important; }
+  .dock { position: fixed !important; left: 0; right: 0; bottom: 0; z-index: 30; }
+  #play, #guide, #done { padding-bottom: 8px !important; }
+}
 </style>
 </head>
 <body>
