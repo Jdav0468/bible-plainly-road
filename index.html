@@ -398,6 +398,15 @@
   #startPanel .go { width: 100%; min-height: 56px; font-size: 20px; }
   #play, #guide, #done, #home { padding-bottom: 88px; }
   .dock { display: grid !important; }
+
+  #play { scroll-margin-top: 0; }
+  @media (max-width:720px){
+    .leaf.left { display: none !important; }
+    .playtop { position: sticky; top: 0; z-index: 5; background: #f7f4ee; }
+    .prompt { font-size: 22px !important; margin: 8px 0 !important; }
+    .choice { min-height: 46px; padding: 10px 12px !important; }
+    .scene, .roadwrap, #anybook, #road { display: none !important; }
+  }
 </style>
 </head>
 <body>
@@ -4065,7 +4074,7 @@ function persist(){ try { localStorage.setItem(KEY, JSON.stringify(save)); } cat
 function esc(s){ return String(s).replace(/[&<>]/g, c => ({"&":"&","<":"<",">":">"}[c])); }
 function sectionOf(book){ const q = BANK.find(x => x.book===book); return q ? q.section : ""; }
 function campLabel(section){ if(section==="Gospels"||section==="Acts") return "Gospels and Acts"; const c = CAMPS.find(x => x.id===section); return c ? c.label : section; }
-function show(id){ ["home","play","done","guide"].forEach(s => $(s).classList.toggle("hidden", s!==id)); if(id==="play" && soundOn) startMusic(); if(id!=="play") stopMusic(); if(id==="home") showTab("play"); if(id==="play"){ const q=$("prompt"); if(q) q.scrollIntoView({block:"start"}); } }
+function show(id){ ["home","play","done","guide"].forEach(s => $(s).classList.toggle("hidden", s!==id)); if(id==="play" && soundOn) startMusic(); if(id!=="play") stopMusic(); if(id==="home") showTab("play"); if(id==="play"){ window.scrollTo(0,0); const top=$("play"); if(top) top.scrollIntoView({block:"start"}); } }
 async function ensureCtx(){
   audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
   if(audioCtx.state==="suspended") await audioCtx.resume();
@@ -4557,7 +4566,7 @@ function answer(n){
   $("nextRow").classList.add("show");
   afterAnswer(item, ok);
   renderRoad();
-  $("verdict").scrollIntoView({block:"nearest"});
+  window.scrollTo(0,0);
 }
 function next(){
   clearClock();
