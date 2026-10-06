@@ -407,6 +407,9 @@
     .choice { min-height: 46px; padding: 10px 12px !important; }
     .scene, .roadwrap, #anybook, #road { display: none !important; }
   }
+
+  .choice { font-size: 18px; min-height: 52px; }
+  #next, #readIt, #quitNext, #back { font-size: 17px; }
 </style>
 </head>
 <body>
@@ -523,8 +526,6 @@
         </div>
       </div>
       <div class="roadwrap"><div class="road" id="road"></div></div>
-      <p class="hint">Or open any book.</p>
-      <div class="spines" id="anybook"></div>
 
     </section>
 
@@ -4455,11 +4456,7 @@ function renderRoad(){
     return '<button type="button" class="stone'+(known?" known":opened?" opened":"")+(now?" now":"")+'" data-book="'+b+'"><b>'+SHORT[b]+'</b><small>'+(known?"known":opened?"opened":now?"now":"ahead")+'</small></button>';
   }).join("");
   $("road").querySelectorAll("button").forEach(el => el.onclick = () => jumpTo(el.dataset.book));
-  const any = $("anybook");
-  if(any){
-    any.innerHTML = ORDER.map(b => '<button type="button" class="'+spineClass(b)+'" data-book="'+b+'">'+SHORT[b]+'</button>').join("");
-    any.querySelectorAll("button").forEach(el => el.onclick = () => openBook(el.dataset.book));
-  }
+
 
 }
 function renderStep(){
