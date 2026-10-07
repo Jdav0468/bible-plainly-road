@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>The Bible, Plainly — The Road</title>
-<!-- v17 play hook, music off -->
+<!-- v18 answer on the page, music off -->
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <style>body{margin:0;background:#12100e;color:#e7dccb;font-family:Georgia,serif}p{padding:28px 22px;font-size:18px}</style>
 </head>
@@ -24,29 +24,33 @@
     + 'h1 em{color:#8a6430 !important;}'
     + '.lede{color:#3c342c !important;font-size:17px !important;}'
     + '#inviteCard{background:#f4efe4 !important;color:#1c1814 !important;border:1px solid rgba(154,120,58,.45) !important;border-radius:22px !important;padding:18px !important;margin:14px 0 !important;}'
-    + '#invitePrompt{font-size:clamp(26px,4vw,34px) !important;line-height:1.25 !important;margin:8px 0 10px !important;}'
-    + '#inviteWhy{color:#4a4036 !important;margin:0 0 14px !important;}'
-    + '#invitePlay,#begin{width:100% !important;min-height:56px !important;border-radius:999px !important;background:#1c1814 !important;color:#f4efe4 !important;font-size:18px !important;}'
+    + '#invitePrompt{font-size:clamp(24px,4vw,32px) !important;line-height:1.25 !important;margin:8px 0 10px !important;}'
+    + '#inviteWhy{color:#4a4036 !important;margin:8px 0 12px !important;}'
+    + '#inviteChoices{display:grid;gap:8px;}'
+    + '#inviteChoices .choice{width:100%;text-align:left;min-height:52px;border-radius:16px;background:#fbf7f0;border:1px solid rgba(154,120,58,.35);color:#1c1814;font:17px/1.35 Georgia,serif;padding:10px 12px;}'
+    + '#inviteChoices .choice.right{background:#e5efe6;border-color:#2c5a42;}'
+    + '#inviteChoices .choice.wrong{background:#f6e6e1;border-color:#8a4036;}'
+    + '#inviteNext{width:100%;min-height:52px;margin-top:12px;border-radius:999px;background:#1c1814;color:#f4efe4;font-size:17px;}'
+    + '#inviteNext.hidden{display:none;}'
     + '.walk,.panel,.book{background:#f4efe4 !important;color:#1c1814 !important;border-radius:22px !important;border:1px solid rgba(154,120,58,.4) !important;}'
+    + '.go{border-radius:999px !important;min-height:52px;}'
     + '.dock{background:rgba(14,12,11,.94) !important;border-top:1px solid rgba(198,163,106,.32) !important;}'
     + '.dock button.on{color:#f0dfb4 !important;box-shadow:inset 0 -2px 0 #c6a36a !important;}'
     + '</style>';
-  var card = '<div class="panel" id="inviteCard"><p class="qbook">Today’s question</p><h2 id="invitePrompt">One question is on the page.</h2><p class="hint" id="inviteWhy">Answer it. Then see how many of the sixty-six you can place.</p><button class="go" id="invitePlay" type="button">Answer it</button></div>';
+  var card = '<div class="panel" id="inviteCard"><p class="qbook">Today\u2019s question</p><h2 id="invitePrompt">One question is on the page.</h2><p class="hint" id="inviteWhy">Tap the line you can place.</p><div id="inviteChoices"></div><button class="go hidden" id="inviteNext" type="button">Keep going</button></div>';
   var hook = '<script>(function(){'
     + 'function killHymn(){var nodes=document.querySelectorAll("audio");for(var i=0;i<nodes.length;i++){nodes[i].pause();nodes[i].volume=0;nodes[i].removeAttribute("src");}}'
-    + 'function startMusic(){killHymn();}'
-    + 'function stopMusic(){killHymn();}'
-    + 'window.startMusic=startMusic;window.stopMusic=stopMusic;killHymn();'
+    + 'function startMusic(){killHymn();}function stopMusic(){killHymn();}window.startMusic=startMusic;window.stopMusic=stopMusic;killHymn();'
     + 'if(window.HTMLMediaElement){var orig=HTMLMediaElement.prototype.play;HTMLMediaElement.prototype.play=function(){var src=(this.currentSrc||this.src||"")+"";if(this.id==="hymn"||src.indexOf("hymn")!==-1){this.pause();this.volume=0;return Promise.resolve();}return orig.apply(this,arguments);};}'
-    + 'function paint(){try{if(typeof questionForDay!=="function"||typeof dayStamp!=="function")return;var q=questionForDay(dayStamp());var p=document.getElementById("invitePrompt");if(p)p.textContent=q.prompt;var w=document.getElementById("inviteWhy");if(w)w.textContent=q.book+". One tap. The line is still yours to place.";}catch(e){}}'
-    + 'var play=document.getElementById("invitePlay");if(play)play.onclick=function(){if(typeof startDay==="function")startDay();};'
-    + 'var begin=document.getElementById("begin");if(begin)begin.textContent="Or take a short walk";'
+    + 'function esc(s){return String(s).replace(/&/g,"&").replace(/</g,"<");}'
+    + 'function paint(){try{if(typeof questionForDay!=="function")return;var q=questionForDay(dayStamp());var p=document.getElementById("invitePrompt");if(p)p.textContent=q.prompt;var box=document.getElementById("inviteChoices");if(!box)return;var opts=q.choices.map(function(t,n){return {t:t,ok:n===0};});for(var n=opts.length-1;n>0;n--){var j=Math.floor(Math.random()*(n+1));var tmp=opts[n];opts[n]=opts[j];opts[j]=tmp;}box.innerHTML=opts.map(function(o,i){return "<button class=\\"choice\\" type=\\"button\\"><span class=\\"key\\">"+(i+1)+"</span> <span>"+esc(o.t)+"</span></button>";}).join("");box.querySelectorAll("button").forEach(function(b,i){b.onclick=function(){mark(i,opts,q);};});}catch(e){}}'
+    + 'function mark(i,opts,q){var ok=opts[i].ok;var buttons=document.querySelectorAll("#inviteChoices button");buttons.forEach(function(b,n){b.disabled=true;if(opts[n].ok)b.classList.add("right");else if(n===i)b.classList.add("wrong");});var note=document.getElementById("inviteWhy");if(note)note.textContent=(ok?"Right. ":"Not that one. ")+q.ref+". "+q.plain;try{if(typeof qid==="function"&&window.save){var id=qid(q);if(save.used.indexOf(id)<0)save.used.push(id);save.notes[q.book]={ref:q.ref,plain:q.plain};if(!save.right)save.right=[];if(!save.missed)save.missed=[];if(ok){if(save.right.indexOf(id)<0)save.right.push(id);save.missed=save.missed.filter(function(x){return x!==id;});}else if(save.missed.indexOf(id)<0)save.missed.push(id);if(typeof persist==="function")persist();if(typeof tone==="function")tone(ok);}}catch(e){}var next=document.getElementById("inviteNext");if(next){next.classList.remove("hidden");next.onclick=function(){var mile=document.querySelector(".walk[data-id=\\"mile\\"]");if(mile)mile.click();else if(typeof startDay==="function")startDay();};}}'
     + 'paint();'
     + '})();<\/script>';
   function openGame(html){
     html=html.replace(/<audio\b[^>]*>[\s\S]*?<\/audio>/gi,"");
     html=html.replace("const BANK","var BANK");
-    html=html.replace("Sixty-six books. It is worth studying because the truth is in the Bible. A church can help, and a preacher can explain, but you still need to open it yourself. A hint can point you to the part. The line is still yours to place.","One question is on the page. Answer it, then see how many of the sixty-six you can place.");
+    html=html.replace("Sixty-six books. It is worth studying because the truth is in the Bible. A church can help, and a preacher can explain, but you still need to open it yourself. A hint can point you to the part. The line is still yours to place.","Answer the line on the page. Then see how many of the sixty-six you can place.");
     html=html.replace('<div class="panel" id="startPanel">', card+'<div class="panel" id="startPanel">');
     if(html.indexOf("</head>")!==-1) html=html.replace("</head>", look+"</head>");
     html=html.replace("</body>", hook+"</body>");
