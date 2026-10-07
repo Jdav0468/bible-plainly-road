@@ -4,6 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>The Bible, Plainly — The Road</title>
+<!-- v8 whisper manuscript -->
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <style>body{margin:0;background:#12100e;color:#e7dccb;font-family:Georgia,serif}p{padding:28px 22px;font-size:18px}</style>
 </head>
@@ -19,12 +20,12 @@
     + ':root{--paper:#f4efe4;--ink:#1c1814;--gold:#c6a36a;--stone:#12100e;}'
     + 'body{background:radial-gradient(800px 360px at 50% -8%, rgba(198,163,106,.18), transparent 62%), linear-gradient(180deg,#1c1814 0%, #12100e 46%, #0c0b0a 100%) !important;color:#f3eadc !important;}'
     + '.wrap{max-width:560px !important;padding-bottom:96px !important;}'
-    + '.kicker{letter-spacing:.32em !important;font-size:11px !important;color:#c6a36a !important;}'
-    + 'h1{font-family:Palatino,Georgia,serif !important;font-weight:500 !important;letter-spacing:-.03em !important;color:#f7f1e6 !important;}'
-    + 'h1 em{color:#e4c98a !important;font-style:italic !important;}'
+    + '.kicker{letter-spacing:.32em !important;font-size:11px !important;color:#8a6430 !important;}'
+    + 'h1{font-family:Palatino,Georgia,serif !important;font-weight:500 !important;letter-spacing:-.03em !important;color:#1c1814 !important;}'
+    + 'h1 em{color:#8a6430 !important;font-style:italic !important;}'
     + 'h1:after{content:"";display:block;width:84px;height:1px;margin-top:16px;background:linear-gradient(90deg,transparent,#c6a36a 20%,#c6a36a 80%,transparent);}'
-    + '.lede{color:#e6d8c4 !important;font-size:17px !important;line-height:1.55 !important;max-width:36em !important;}'
-    + '.sound{border:1px solid rgba(198,163,106,.55) !important;color:#e4c98a !important;border-radius:999px !important;background:rgba(255,255,255,.03) !important;}'
+    + '.lede{color:#3c342c !important;font-size:17px !important;line-height:1.55 !important;max-width:36em !important;}'
+    + '.sound{border:1px solid rgba(138,100,48,.55) !important;color:#8a6430 !important;border-radius:999px !important;background:rgba(255,255,255,.03) !important;}'
     + '.hero,.scene{border-radius:22px !important;border:1px solid rgba(198,163,106,.4) !important;box-shadow:0 18px 40px rgba(0,0,0,.35) !important;overflow:hidden !important;}'
     + '.hero img,.scene img,.camps button img{filter:saturate(.86) contrast(1.04);}'
     + '.walk,.panel,.book{background:#f4efe4 !important;color:#1c1814 !important;border:1px solid rgba(154,120,58,.4) !important;border-radius:22px !important;box-shadow:0 14px 34px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.75) !important;}'
@@ -40,13 +41,13 @@
     + '.dock button{color:#d9cbb6 !important;border-radius:12px !important;}'
     + '.dock button.on{background:transparent !important;color:#f0dfb4 !important;box-shadow:inset 0 -2px 0 #c6a36a !important;}'
     + '.bar{background:rgba(198,163,106,.2) !important;height:2px !important;}'
-    + '.bar>span{background:#c6a36a !important;}'
+    + '.bar>span{background:#c6a36a !important;}.wrap h1,.panel h2,.book h2,.prompt{color:#1c1814 !important;}.wrap h1 em{color:#8a6430 !important;}.spines button{border-radius:10px !important;border:1px solid rgba(154,120,58,.28) !important;}'
     + '</style>';
   var quiet = '<script>(function(){'
     + 'function killHymn(){var nodes=document.querySelectorAll("audio");for(var i=0;i<nodes.length;i++){nodes[i].pause();nodes[i].volume=0;nodes[i].removeAttribute("src");nodes[i].src="";}}'
     + 'if(window.HTMLMediaElement&&!HTMLMediaElement.prototype._study){var orig=HTMLMediaElement.prototype.play;HTMLMediaElement.prototype.play=function(){var src=(this.currentSrc||this.src||"")+"";(this.id==="hymn"||src.indexOf("hymn")!==-1)&&(this.pause(),this.volume=0);if(this.id==="hymn"||src.indexOf("hymn")!==-1)return Promise.resolve();return orig.apply(this,arguments);};HTMLMediaElement.prototype._study=1;}'
     + 'function stopMusic(){if(window._musicTimer){clearInterval(window._musicTimer);window._musicTimer=null;}if(window._studyMaster){try{window._studyMaster.disconnect();}catch(e){}window._studyMaster=null;}killHymn();}'
-    + 'function startMusic(){var home=document.getElementById("home");if(window._soundOff||window._musicTimer)return;if(home&&home.classList.contains("hidden"))return;killHymn();var Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;var ctx=window._studyCtx||new Ctx();window._studyCtx=ctx;if(ctx.state==="suspended")ctx.resume();var filter=ctx.createBiquadFilter();filter.type="lowpass";filter.frequency.value=420;var master=ctx.createGain();master.gain.setValueAtTime(0.0001,ctx.currentTime);master.gain.linearRampToValueAtTime(0.0014,ctx.currentTime+6);filter.connect(master);master.connect(ctx.destination);window._studyMaster=master;var line=[98,0,0,146.83,0,123.47,0,98,0,0,0,0,82.41,0,98,0,87.31,0,73.42,0,0,0,0,0];var step=0;function play(){var home=document.getElementById("home");if(window._soundOff||!home||home.classList.contains("hidden")){stopMusic();return;}var f=line[step%line.length];step+=1;if(!f)return;var now=ctx.currentTime;var o=ctx.createOscillator(),g=ctx.createGain();o.type="sine";o.frequency.setValueAtTime(f,now);g.gain.setValueAtTime(0.0001,now);g.gain.linearRampToValueAtTime(0.035,now+0.9);g.gain.linearRampToValueAtTime(0.0001,now+3.2);o.connect(g);g.connect(filter);o.start(now);o.stop(now+3.3);}play();window._musicTimer=setInterval(play,4200);}'
+    + 'function startMusic(){var home=document.getElementById("home");if(window._soundOff||window._musicTimer)return;if(home&&home.classList.contains("hidden"))return;killHymn();var Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;var ctx=window._studyCtx||new Ctx();window._studyCtx=ctx;if(ctx.state==="suspended")ctx.resume();var filter=ctx.createBiquadFilter();filter.type="lowpass";filter.frequency.value=420;var master=ctx.createGain();master.gain.setValueAtTime(0.0001,ctx.currentTime);master.gain.linearRampToValueAtTime(0.00045,ctx.currentTime+8);filter.connect(master);master.connect(ctx.destination);window._studyMaster=master;var line=[98,0,0,146.83,0,123.47,0,98,0,0,0,0,82.41,0,98,0,87.31,0,73.42,0,0,0,0,0];var step=0;function play(){var home=document.getElementById("home");if(window._soundOff||!home||home.classList.contains("hidden")){stopMusic();return;}var f=line[step%line.length];step+=1;if(!f)return;var now=ctx.currentTime;var o=ctx.createOscillator(),g=ctx.createGain();o.type="sine";o.frequency.setValueAtTime(f,now);g.gain.setValueAtTime(0.0001,now);g.gain.linearRampToValueAtTime(0.018,now+1.2);g.gain.linearRampToValueAtTime(0.0001,now+3.2);o.connect(g);g.connect(filter);o.start(now);o.stop(now+3.3);}play();window._musicTimer=setInterval(play,7000);}'
     + 'window.startMusic=startMusic;window.stopMusic=stopMusic;killHymn();stopMusic();'
     + 'var sound=document.getElementById("sound");if(sound){sound.addEventListener("click",function(){window._soundOff=sound.textContent.toLowerCase().indexOf("off")!==-1;if(window._soundOff)stopMusic();else startMusic();});}'
     + 'document.body.addEventListener("pointerdown",function(){if(!window._soundOff)startMusic();},{once:true});'
