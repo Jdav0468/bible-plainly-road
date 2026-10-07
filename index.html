@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>The Bible, Plainly — The Road</title>
-<!-- v21 fluid card, music off -->
+<!-- v23 a walk worth finishing, music off -->
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <style>body{margin:0;background:#12100e;color:#e7dccb;font-family:Georgia,serif}p{padding:28px 22px;font-size:18px}</style>
 </head>
@@ -19,37 +19,40 @@
   var look = '<style id="look">'
     + 'body{background:radial-gradient(800px 360px at 50% -8%, rgba(198,163,106,.18), transparent 62%), linear-gradient(180deg,#1c1814 0%, #12100e 46%, #0c0b0a 100%) !important;color:#f3eadc !important;}'
     + '.wrap{max-width:560px !important;padding-bottom:96px !important;}'
-    + 'h1,.panel h2,.book h2,.prompt,#invitePrompt{font-family:Palatino,Georgia,serif !important;color:#1c1814 !important;}'
+    + 'h1,.panel h2,#invitePrompt{font-family:Palatino,Georgia,serif !important;color:#1c1814 !important;}'
     + 'h1 em{color:#8a6430 !important;}'
-    + '.lede{display:none !important;}'
-    + '#inviteCard{background:#f4efe4 !important;color:#1c1814 !important;border:1px solid rgba(154,120,58,.45) !important;border-radius:22px !important;padding:18px !important;margin:8px 0 14px !important;}'
-    + '#invitePrompt{font-size:28px;line-height:1.25;margin:8px 0;}'
+    + '.lede,#startPanel,#todayRow,#sound,.sound,#walks,#gallery,#home,#morePanel{display:none !important;}'
+    + '#inviteCard{background:#f4efe4 !important;color:#1c1814 !important;border:1px solid rgba(154,120,58,.45) !important;border-radius:22px !important;padding:18px !important;margin:8px 0 14px !important;transition:box-shadow .25s ease;}'
+    + '#inviteCard.hit{box-shadow:0 0 0 2px #c6a36a, 0 16px 36px rgba(198,163,106,.25);}'
+    + '#invitePrompt{font-size:clamp(26px,5vw,34px);line-height:1.22;margin:8px 0;}'
     + '#inviteWhy,#invitePage{color:#4a4036 !important;}'
+    + '#inviteStreak{display:flex;justify-content:space-between;gap:8px;font-size:14px;letter-spacing:.04em;color:#8a6430;margin:0 0 8px;}'
     + '#inviteTrack{height:4px;border-radius:99px;background:rgba(154,120,58,.25);margin:0 0 12px;overflow:hidden;}'
     + '#inviteBar{height:100%;width:0;background:#8a6430;transition:width .25s ease;}'
-    + '#inviteChoices .choice{display:flex;gap:10px;align-items:center;width:100%;text-align:left;margin:8px 0;min-height:54px;border-radius:16px;border:1px solid rgba(154,120,58,.45);background:#fffaf2;color:#1c1814;font:18px Georgia,serif;padding:12px 14px;}'
+    + '#inviteChoices .choice{display:flex;gap:10px;align-items:center;width:100%;text-align:left;margin:8px 0;min-height:54px;border-radius:16px;border:1px solid rgba(154,120,58,.45);background:#fffaf2;color:#1c1814;font:18px Georgia,serif;padding:12px 14px;transition:transform .12s ease;}'
     + '#inviteChoices .choice:active{transform:scale(.98);}'
     + '#inviteChoices .choice.right{background:#e5efe6;border-color:#2c5a42;}'
-    + '#inviteChoices .choice.wrong{background:#f6e6e1;border-color:#8a4036;}'
+    + '#inviteChoices .choice.wrong{background:#f6e6e1;border-color:#8a4036;animation:miss .28s ease;}'
+    + '@keyframes miss{0%,100%{transform:translateX(0)}30%{transform:translateX(-6px)}60%{transform:translateX(6px)}}'
     + '#inviteNext{width:100%;min-height:54px;margin-top:8px;border:0;border-radius:999px;background:#1c1814;color:#f4efe4;font:18px Georgia,serif;}'
     + '#inviteNext.hidden{display:none;}'
     + '.key{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#1c1814;color:#f4efe4;font-size:13px;flex:none;}'
-    + '#startPanel,#todayRow,#sound,.sound{display:none !important;}'
-    + '.walk,.panel,.book{background:#f4efe4 !important;color:#1c1814 !important;border-radius:22px !important;border:1px solid rgba(154,120,58,.4) !important;}'
     + '.dock{background:rgba(14,12,11,.94) !important;border-top:1px solid rgba(198,163,106,.32) !important;}'
     + '.dock button.on{color:#f0dfb4 !important;box-shadow:inset 0 -2px 0 #c6a36a !important;}'
     + '</style>';
-  var card = '<div class="panel" id="inviteCard"><p class="qbook" id="inviteLabel">Today\u2019s question</p><div id="inviteTrack"><div id="inviteBar"></div></div><h2 id="invitePrompt">One question is on the page.</h2><p class="hint" id="inviteWhy">Tap an answer.</p><div id="inviteChoices"></div><p class="hint" id="invitePage"></p><button class="hidden" id="inviteNext" type="button">Next</button></div>';
+  var card = '<div class="panel" id="inviteCard"><p class="qbook" id="inviteLabel">Today\u2019s question</p><div id="inviteStreak"><span id="inviteRun">Place 5</span><span id="inviteBest"></span></div><div id="inviteTrack"><div id="inviteBar"></div></div><h2 id="invitePrompt">One question is on the page.</h2><p class="hint" id="inviteWhy">Tap an answer.</p><div id="inviteChoices"></div><p class="hint" id="invitePage"></p><button class="hidden" id="inviteNext" type="button">Next</button></div>';
   var hook = '<script>(function(){'
     + 'function killHymn(){var nodes=document.querySelectorAll("audio");for(var i=0;i<nodes.length;i++){nodes[i].pause();nodes[i].volume=0;nodes[i].removeAttribute("src");}}'
     + 'window.startMusic=function(){killHymn();};window.stopMusic=window.startMusic;killHymn();'
-    + 'var queue=[], qi=0, locked=false, streak=0, opts=[];'
+    + 'var queue=[], qi=0, locked=false, streak=0, right=0, opts=[];'
     + 'function shuffle(a){for(var n=a.length-1;n>0;n--){var j=Math.floor(Math.random()*(n+1));var t=a[n];a[n]=a[j];a[j]=t;}return a;}'
+    + 'function lastWalk(){try{return JSON.parse(localStorage.getItem("bibleplainly-lastwalk")||"null");}catch(e){return null;}}'
     + 'function build(){if(typeof questionForDay!=="function"||typeof BANK==="undefined")return;var today=questionForDay(dayStamp());var seen={};seen[today.book+"|"+today.prompt]=1;queue=[today];var bag=shuffle(BANK.slice());for(var i=0;i<bag.length&&queue.length<8;i++){var q=bag[i];var id=q.book+"|"+q.prompt;if(!seen[id]){seen[id]=1;queue.push(q);}}}'
     + 'function knownCount(){try{return (load().known||[]).length;}catch(e){return 0;}}'
-    + 'function paint(){var q=queue[qi];if(!q)return;locked=false;var label=document.getElementById("inviteLabel");if(label)label.textContent=qi===0?"Today\'s question":"Keep going";var p=document.getElementById("invitePrompt");if(p)p.textContent=q.prompt;var w=document.getElementById("inviteWhy");if(w)w.textContent=q.book+" \u00b7 "+(qi+1)+" of "+queue.length+" \u00b7 "+knownCount()+" of 66 placed";var bar=document.getElementById("inviteBar");if(bar)bar.style.width=Math.round((qi/queue.length)*100)+"%";opts=shuffle(q.choices.map(function(t,n){return {t:t,ok:n===0};}));var box=document.getElementById("inviteChoices");if(!box)return;box.innerHTML="";opts.forEach(function(o,i){var b=document.createElement("button");b.className="choice";b.type="button";var k=document.createElement("span");k.className="key";k.textContent=String(i+1);var s=document.createElement("span");s.textContent=o.t;b.appendChild(k);b.appendChild(s);b.onclick=function(){mark(i);};box.appendChild(b);});var page=document.getElementById("invitePage");if(page)page.textContent="";var next=document.getElementById("inviteNext");if(next)next.classList.add("hidden");}'
+    + 'function paint(){var q=queue[qi];if(!q)return;locked=false;var label=document.getElementById("inviteLabel");if(label)label.textContent=qi===0?"Today\'s question":"Line "+(qi+1);var p=document.getElementById("invitePrompt");if(p)p.textContent=q.prompt;var w=document.getElementById("inviteWhy");if(w)w.textContent=q.book+". "+(qi+1)+" of "+queue.length;var run=document.getElementById("inviteRun");if(run)run.textContent=right+" placed"+(streak>=2?" \u00b7 "+streak+" in a row":"")+(right<5?" \u00b7 place 5":" \u00b7 five placed");var best=document.getElementById("inviteBest");var prev=lastWalk();if(best)best.textContent=prev?"Last walk "+prev.right+" of "+prev.n:"";var bar=document.getElementById("inviteBar");if(bar)bar.style.width=Math.round((qi/queue.length)*100)+"%";opts=shuffle(q.choices.map(function(t,n){return {t:t,ok:n===0};}));var box=document.getElementById("inviteChoices");if(!box)return;box.innerHTML="";opts.forEach(function(o,i){var b=document.createElement("button");b.className="choice";b.type="button";var k=document.createElement("span");k.className="key";k.textContent=String(i+1);var s=document.createElement("span");s.textContent=o.t;b.appendChild(k);b.appendChild(s);b.onclick=function(){mark(i);};box.appendChild(b);});var page=document.getElementById("invitePage");if(page)page.textContent="";var next=document.getElementById("inviteNext");if(next)next.classList.add("hidden");var card=document.getElementById("inviteCard");if(card)card.classList.remove("hit");}'
     + 'function remember(q,ok){try{if(typeof qid!=="function"||typeof save==="undefined")return;var id=qid(q);if(save.used.indexOf(id)<0)save.used.push(id);save.notes[q.book]={ref:q.ref,plain:q.plain};if(!save.right)save.right=[];if(!save.missed)save.missed=[];if(ok){if(save.right.indexOf(id)<0)save.right.push(id);save.missed=save.missed.filter(function(x){return x!==id;});}else{save.right=save.right.filter(function(x){return x!==id;});if(save.missed.indexOf(id)<0)save.missed.push(id);}if(typeof refreshBook==="function")refreshBook(q.book);if(typeof persist==="function")persist();if(typeof tone==="function")tone(ok);}catch(e){}}'
-    + 'function mark(i){if(locked)return;locked=true;var q=queue[qi];var ok=opts[i].ok;var buttons=document.querySelectorAll("#inviteChoices button");buttons.forEach(function(b,n){b.disabled=true;if(opts[n].ok)b.classList.add("right");else if(n===i)b.classList.add("wrong");});if(ok)streak++;else streak=0;remember(q,ok);var page=document.getElementById("invitePage");if(page)page.textContent=(ok?"Right. ":"Not that one. ")+q.ref+". "+q.plain+(streak>=2?"  "+streak+" in a row.":"");var next=document.getElementById("inviteNext");if(next){next.classList.remove("hidden");next.textContent=qi<queue.length-1?"Next":"That is the walk";next.onclick=function(){if(qi<queue.length-1){qi++;paint();}else{var w=document.getElementById("inviteWhy");if(w)w.textContent="You can place "+knownCount()+" of 66. Open any book when you want the rest.";next.classList.add("hidden");}};}}'
+    + 'function finish(){var prev=lastWalk();try{localStorage.setItem("bibleplainly-lastwalk", JSON.stringify({right:right,n:queue.length}));}catch(e){}var page=document.getElementById("invitePage");var beat=prev&&right>prev.right?" Better than the last walk.":"";if(page)page.textContent="You placed "+right+" of "+queue.length+"."+beat+" You can place "+knownCount()+" of 66.";var next=document.getElementById("inviteNext");if(next){next.classList.remove("hidden");next.textContent="Another eight";next.onclick=function(){qi=0;streak=0;right=0;build();paint();};}var bar=document.getElementById("inviteBar");if(bar)bar.style.width="100%";}'
+    + 'function mark(i){if(locked)return;locked=true;var q=queue[qi];var ok=opts[i].ok;var buttons=document.querySelectorAll("#inviteChoices button");buttons.forEach(function(b,n){b.disabled=true;if(opts[n].ok)b.classList.add("right");else if(n===i)b.classList.add("wrong");});if(ok){streak++;right++;var card=document.getElementById("inviteCard");if(card){card.classList.add("hit");}}else streak=0;remember(q,ok);var run=document.getElementById("inviteRun");if(run)run.textContent=right+" placed"+(streak>=2?" \u00b7 "+streak+" in a row":"");var page=document.getElementById("invitePage");if(page)page.textContent=(ok?"Placed. ":"Not that one. ")+q.ref+". "+q.plain;var next=document.getElementById("inviteNext");if(next){next.classList.remove("hidden");next.textContent=qi<queue.length-1?"Next line":"See the walk";next.onclick=function(){if(qi<queue.length-1){qi++;paint();}else finish();};}}'
     + 'build();paint();'
     + '})();<\/script>';
   function openGame(html){
