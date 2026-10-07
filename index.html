@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>The Bible, Plainly — The Road</title>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-<style>body{margin:0;background:#14110e;color:#f3eadc;font-family:Georgia,serif}p{padding:28px 22px;font-size:18px}</style>
+<style>body{margin:0;background:#12100e;color:#e7dccb;font-family:Georgia,serif}p{padding:28px 22px;font-size:18px}</style>
 </head>
 <body>
 <p id="wait">Opening the page…</p>
@@ -16,45 +16,56 @@
     "https://raw.githubusercontent.com/Jdav0468/bible-plainly-road/208312696c8b4b4702fc9c000791aaf74927f83d/index.html"
   ];
   var look = '<style id="look">'
-    + 'body{background:radial-gradient(880px 380px at 50% -10%, rgba(212,175,110,.16), transparent 58%), linear-gradient(180deg,#241c16 0%, #0d0b0a 72%) !important;color:#f6f1e8 !important;}'
-    + '.wrap{max-width:560px !important;}'
-    + 'h1,.panel h2,.book h2,.walk b{font-family:Palatino,"Palatino Linotype",Georgia,serif !important;letter-spacing:-.02em;}'
-    + 'h1{border-bottom:1px solid rgba(212,175,110,.4);padding-bottom:10px;}'
-    + '.kicker{letter-spacing:.36em !important;color:#d4af6e !important;font-size:11px !important;}'
-    + '.lede,.about{color:#e7dcc8 !important;}'
-    + '.panel,.walk,.book,.slip,.choice{background:linear-gradient(180deg,#faf6ef,#efe3d0) !important;color:#1c1712 !important;border:1px solid rgba(168,132,74,.5) !important;border-radius:18px !important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.5), 0 14px 34px rgba(0,0,0,.28) !important;}'
-    + '.go,#begin{background:#1b1612 !important;color:#f6f1e8 !important;border-radius:999px !important;letter-spacing:.08em;text-transform:uppercase;}'
-    + '.ghost{border-radius:999px !important;border-color:#cbb89a !important;}'
-    + '.hero,.scene{border-radius:22px !important;border:1px solid rgba(212,175,110,.45) !important;overflow:hidden;}'
-    + '.dock{background:rgba(16,13,11,.94) !important;border-top:1px solid rgba(212,175,110,.42) !important;backdrop-filter:blur(14px);}'
-    + '.dock button{letter-spacing:.04em;text-transform:uppercase;font-size:12px !important;}'
-    + '.dock button.on{background:#f4efe6 !important;color:#1b1612 !important;border-radius:12px !important;}'
-    + '.sound{border-color:rgba(212,175,110,.55) !important;color:#d4af6e !important;}'
-    + '.spines button{border-radius:3px 10px 10px 3px !important;}'
+    + ':root{--paper:#f4efe4;--ink:#1c1814;--gold:#c6a36a;--stone:#12100e;}'
+    + 'body{background:radial-gradient(800px 360px at 50% -8%, rgba(198,163,106,.18), transparent 62%), linear-gradient(180deg,#1c1814 0%, #12100e 46%, #0c0b0a 100%) !important;color:#f3eadc !important;}'
+    + '.wrap{max-width:560px !important;padding-bottom:96px !important;}'
+    + '.kicker{letter-spacing:.32em !important;font-size:11px !important;color:#c6a36a !important;}'
+    + 'h1{font-family:Palatino,Georgia,serif !important;font-weight:500 !important;letter-spacing:-.03em !important;color:#f7f1e6 !important;}'
+    + 'h1 em{color:#e4c98a !important;font-style:italic !important;}'
+    + 'h1:after{content:"";display:block;width:84px;height:1px;margin-top:16px;background:linear-gradient(90deg,transparent,#c6a36a 20%,#c6a36a 80%,transparent);}'
+    + '.lede{color:#e6d8c4 !important;font-size:17px !important;line-height:1.55 !important;max-width:36em !important;}'
+    + '.sound{border:1px solid rgba(198,163,106,.55) !important;color:#e4c98a !important;border-radius:999px !important;background:rgba(255,255,255,.03) !important;}'
+    + '.hero,.scene{border-radius:22px !important;border:1px solid rgba(198,163,106,.4) !important;box-shadow:0 18px 40px rgba(0,0,0,.35) !important;overflow:hidden !important;}'
+    + '.hero img,.scene img,.camps button img{filter:saturate(.86) contrast(1.04);}'
+    + '.walk,.panel,.book{background:#f4efe4 !important;color:#1c1814 !important;border:1px solid rgba(154,120,58,.4) !important;border-radius:22px !important;box-shadow:0 14px 34px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.75) !important;}'
+    + '.walk b,.panel h2,.book h2,.prompt{font-family:Palatino,Georgia,serif !important;letter-spacing:-.02em;}'
+    + '.walk span,.hint,.aside{color:#4a4036 !important;}'
+    + '.go{background:#1c1814 !important;color:#f4efe4 !important;border-radius:999px !important;min-height:52px;letter-spacing:.03em;}'
+    + '.ghost{border-radius:999px !important;border:1px solid rgba(198,163,106,.45) !important;}'
+    + '.choice{background:#fbf7f0 !important;border:1px solid rgba(154,120,58,.35) !important;border-radius:16px !important;min-height:52px;box-shadow:inset 0 1px 0 rgba(255,255,255,.8);}'
+    + '.choice.right{background:#e5efe6 !important;border-color:#2c5a42 !important;}'
+    + '.choice.wrong{background:#f6e6e1 !important;border-color:#8a4036 !important;}'
+    + '.camps button{border-radius:18px !important;overflow:hidden !important;border:1px solid rgba(154,120,58,.35) !important;background:#f7f1e6 !important;}'
+    + '.dock{background:rgba(14,12,11,.94) !important;border-top:1px solid rgba(198,163,106,.32) !important;backdrop-filter:blur(12px);}'
+    + '.dock button{color:#d9cbb6 !important;border-radius:12px !important;}'
+    + '.dock button.on{background:transparent !important;color:#f0dfb4 !important;box-shadow:inset 0 -2px 0 #c6a36a !important;}'
+    + '.bar{background:rgba(198,163,106,.2) !important;height:2px !important;}'
+    + '.bar>span{background:#c6a36a !important;}'
     + '</style>';
   var quiet = '<script>(function(){'
-    + 'function stopMusic(){if(window._musicTimer){clearInterval(window._musicTimer);window._musicTimer=null;}if(window._studyMaster){try{window._studyMaster.disconnect();}catch(e){}window._studyMaster=null;}var nodes=document.querySelectorAll("audio");for(var i=0;i<nodes.length;i++){try{nodes[i].pause();nodes[i].muted=true;nodes[i].volume=0;nodes[i].removeAttribute("src");}catch(e){}}}'
-    + 'function startMusic(){var home=document.getElementById("home");if(window._soundOff||window._musicTimer)return;if(home&&home.classList.contains("hidden"))return;var Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;var ctx=window._studyCtx||new Ctx();window._studyCtx=ctx;if(ctx.state==="suspended")ctx.resume();var filter=ctx.createBiquadFilter();filter.type="lowpass";filter.frequency.value=320;var master=ctx.createGain();master.gain.setValueAtTime(0.0001,ctx.currentTime);master.gain.linearRampToValueAtTime(0.0018,ctx.currentTime+6);filter.connect(master);master.connect(ctx.destination);window._studyMaster=master;var line=[146.83,0,0,196,0,0,164.81,0,0,0,220,0,0,0,146.83,0,0,0,0];var step=0;function play(){var home=document.getElementById("home");if(window._soundOff||!home||home.classList.contains("hidden")){stopMusic();return;}var f=line[step%line.length];step+=1;if(!f)return;var now=ctx.currentTime;var o=ctx.createOscillator(),g=ctx.createGain();o.type="sine";o.frequency.setValueAtTime(f,now);g.gain.setValueAtTime(0.0001,now);g.gain.linearRampToValueAtTime(0.04,now+0.8);g.gain.linearRampToValueAtTime(0.0001,now+3.2);o.connect(g);g.connect(filter);o.start(now);o.stop(now+3.3);}play();window._musicTimer=setInterval(play,5200);}'
-    + 'window.startMusic=startMusic;window.stopMusic=stopMusic;stopMusic();'
+    + 'function killHymn(){var nodes=document.querySelectorAll("audio");for(var i=0;i<nodes.length;i++){nodes[i].pause();nodes[i].volume=0;nodes[i].removeAttribute("src");nodes[i].src="";}}'
+    + 'if(window.HTMLMediaElement&&!HTMLMediaElement.prototype._study){var orig=HTMLMediaElement.prototype.play;HTMLMediaElement.prototype.play=function(){var src=(this.currentSrc||this.src||"")+"";(this.id==="hymn"||src.indexOf("hymn")!==-1)&&(this.pause(),this.volume=0);if(this.id==="hymn"||src.indexOf("hymn")!==-1)return Promise.resolve();return orig.apply(this,arguments);};HTMLMediaElement.prototype._study=1;}'
+    + 'function stopMusic(){if(window._musicTimer){clearInterval(window._musicTimer);window._musicTimer=null;}if(window._studyMaster){try{window._studyMaster.disconnect();}catch(e){}window._studyMaster=null;}killHymn();}'
+    + 'function startMusic(){var home=document.getElementById("home");if(window._soundOff||window._musicTimer)return;if(home&&home.classList.contains("hidden"))return;killHymn();var Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;var ctx=window._studyCtx||new Ctx();window._studyCtx=ctx;if(ctx.state==="suspended")ctx.resume();var filter=ctx.createBiquadFilter();filter.type="lowpass";filter.frequency.value=420;var master=ctx.createGain();master.gain.setValueAtTime(0.0001,ctx.currentTime);master.gain.linearRampToValueAtTime(0.0014,ctx.currentTime+6);filter.connect(master);master.connect(ctx.destination);window._studyMaster=master;var line=[98,0,0,146.83,0,123.47,0,98,0,0,0,0,82.41,0,98,0,87.31,0,73.42,0,0,0,0,0];var step=0;function play(){var home=document.getElementById("home");if(window._soundOff||!home||home.classList.contains("hidden")){stopMusic();return;}var f=line[step%line.length];step+=1;if(!f)return;var now=ctx.currentTime;var o=ctx.createOscillator(),g=ctx.createGain();o.type="sine";o.frequency.setValueAtTime(f,now);g.gain.setValueAtTime(0.0001,now);g.gain.linearRampToValueAtTime(0.035,now+0.9);g.gain.linearRampToValueAtTime(0.0001,now+3.2);o.connect(g);g.connect(filter);o.start(now);o.stop(now+3.3);}play();window._musicTimer=setInterval(play,4200);}'
+    + 'window.startMusic=startMusic;window.stopMusic=stopMusic;killHymn();stopMusic();'
     + 'var sound=document.getElementById("sound");if(sound){sound.addEventListener("click",function(){window._soundOff=sound.textContent.toLowerCase().indexOf("off")!==-1;if(window._soundOff)stopMusic();else startMusic();});}'
-    + 'document.body.addEventListener("pointerdown",function(){if(!window._soundOff)startMusic();});'
+    + 'document.body.addEventListener("pointerdown",function(){if(!window._soundOff)startMusic();},{once:true});'
     + '})();<\/script>';
   function openGame(html){
-    html = html.replace(/<audio\b[\s\S]*?<\/audio>/gi, '<audio id="hymn" preload="none"></audio>');
-    html = html.replace(/hymn\.play\s*\(/g, '(function(){})(');
-    html = html.replace(/\.volume\s*=\s*0\.\d+/g, '.volume=0');
-    html = html.replace('</body>', look + quiet + '</body>');
-    document.open();
-    document.write(html);
-    document.close();
+    html=html.replace(/<audio\b[^>]*>[\s\S]*?<\/audio>/gi,"");
+    html=html.replace(/<audio\b[^>]*\/?>/gi,"");
+    if(html.indexOf("</head>")!==-1) html=html.replace("</head>", look+"</head>");
+    else html=look+html;
+    html=html.replace("</body>", quiet+"</body>");
+    document.open();document.write(html);document.close();
   }
-  function fail(){ var el=document.getElementById('wait'); if(el) el.textContent='The page did not open. Refresh once.'; }
+  function fail(){var el=document.getElementById("wait");if(el)el.textContent="The page did not open. Refresh once.";}
   function tryAt(i){
-    if(i>=sources.length){ fail(); return; }
-    fetch(sources[i], {cache:'no-store'}).then(function(r){ if(!r.ok) throw new Error('bad'); return r.text(); }).then(function(html){
-      if(html.indexOf('Sixty-six books')===-1 && html.indexOf('BANK')===-1) throw new Error('short');
+    if(i>=sources.length){fail();return;}
+    fetch(sources[i],{cache:"no-store"}).then(function(r){if(!r.ok)throw new Error("bad");return r.text();}).then(function(html){
+      if(html.indexOf("Sixty-six books")===-1) throw new Error("short");
       openGame(html);
-    }).catch(function(){ tryAt(i+1); });
+    }).catch(function(){tryAt(i+1);});
   }
   tryAt(0);
 })();
