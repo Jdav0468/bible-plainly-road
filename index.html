@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>The Bible, Plainly — The Road</title>
-<!-- v9 music off -->
+<!-- v17 play hook, music off -->
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <style>body{margin:0;background:#12100e;color:#e7dccb;font-family:Georgia,serif}p{padding:28px 22px;font-size:18px}</style>
 </head>
@@ -17,45 +17,39 @@
     "https://raw.githubusercontent.com/Jdav0468/bible-plainly-road/208312696c8b4b4702fc9c000791aaf74927f83d/index.html"
   ];
   var look = '<style id="look">'
-    + ':root{--paper:#f4efe4;--ink:#1c1814;--gold:#c6a36a;--stone:#12100e;}'
     + 'body{background:radial-gradient(800px 360px at 50% -8%, rgba(198,163,106,.18), transparent 62%), linear-gradient(180deg,#1c1814 0%, #12100e 46%, #0c0b0a 100%) !important;color:#f3eadc !important;}'
     + '.wrap{max-width:560px !important;padding-bottom:96px !important;}'
-    + '.kicker{letter-spacing:.32em !important;font-size:11px !important;color:#8a6430 !important;}'
-    + 'h1{font-family:Palatino,Georgia,serif !important;font-weight:500 !important;letter-spacing:-.03em !important;color:#1c1814 !important;}'
-    + 'h1 em{color:#8a6430 !important;font-style:italic !important;}'
-    + 'h1:after{content:"";display:block;width:84px;height:1px;margin-top:16px;background:linear-gradient(90deg,transparent,#c6a36a 20%,#c6a36a 80%,transparent);}'
-    + '.lede{color:#3c342c !important;font-size:17px !important;line-height:1.55 !important;max-width:36em !important;}'
-    + '.sound{border:1px solid rgba(138,100,48,.55) !important;color:#8a6430 !important;border-radius:999px !important;background:rgba(255,255,255,.03) !important;}'
-    + '.hero,.scene{border-radius:22px !important;border:1px solid rgba(198,163,106,.4) !important;box-shadow:0 18px 40px rgba(0,0,0,.35) !important;overflow:hidden !important;}'
-    + '.hero img,.scene img,.camps button img{filter:saturate(.86) contrast(1.04);}'
-    + '.walk,.panel,.book{background:#f4efe4 !important;color:#1c1814 !important;border:1px solid rgba(154,120,58,.4) !important;border-radius:22px !important;box-shadow:0 14px 34px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.75) !important;}'
-    + '.walk b,.panel h2,.book h2,.prompt{font-family:Palatino,Georgia,serif !important;letter-spacing:-.02em;}'
-    + '.walk span,.hint,.aside{color:#4a4036 !important;}'
-    + '.go{background:#1c1814 !important;color:#f4efe4 !important;border-radius:999px !important;min-height:52px;letter-spacing:.03em;}'
-    + '.ghost{border-radius:999px !important;border:1px solid rgba(198,163,106,.45) !important;}'
-    + '.choice{background:#fbf7f0 !important;border:1px solid rgba(154,120,58,.35) !important;border-radius:16px !important;min-height:52px;box-shadow:inset 0 1px 0 rgba(255,255,255,.8);}'
-    + '.choice.right{background:#e5efe6 !important;border-color:#2c5a42 !important;}'
-    + '.choice.wrong{background:#f6e6e1 !important;border-color:#8a4036 !important;}'
-    + '.camps button{border-radius:18px !important;overflow:hidden !important;border:1px solid rgba(154,120,58,.35) !important;background:#f7f1e6 !important;}'
-    + '.dock{background:rgba(14,12,11,.94) !important;border-top:1px solid rgba(198,163,106,.32) !important;backdrop-filter:blur(12px);}'
-    + '.dock button{color:#d9cbb6 !important;border-radius:12px !important;}'
-    + '.dock button.on{background:transparent !important;color:#f0dfb4 !important;box-shadow:inset 0 -2px 0 #c6a36a !important;}'
-    + '.bar{background:rgba(198,163,106,.2) !important;height:2px !important;}'
-    + '.bar>span{background:#c6a36a !important;}.wrap h1,.panel h2,.book h2,.prompt{color:#1c1814 !important;}.wrap h1 em{color:#8a6430 !important;}.spines button{border-radius:10px !important;border:1px solid rgba(154,120,58,.28) !important;}'
+    + 'h1,.wrap h1,.panel h2,.book h2,.prompt,#invitePrompt{font-family:Palatino,Georgia,serif !important;color:#1c1814 !important;}'
+    + 'h1{font-weight:500 !important;letter-spacing:-.03em !important;font-size:clamp(32px,6vw,44px) !important;}'
+    + 'h1 em{color:#8a6430 !important;}'
+    + '.lede{color:#3c342c !important;font-size:17px !important;}'
+    + '#inviteCard{background:#f4efe4 !important;color:#1c1814 !important;border:1px solid rgba(154,120,58,.45) !important;border-radius:22px !important;padding:18px !important;margin:14px 0 !important;}'
+    + '#invitePrompt{font-size:clamp(26px,4vw,34px) !important;line-height:1.25 !important;margin:8px 0 10px !important;}'
+    + '#inviteWhy{color:#4a4036 !important;margin:0 0 14px !important;}'
+    + '#invitePlay,#begin{width:100% !important;min-height:56px !important;border-radius:999px !important;background:#1c1814 !important;color:#f4efe4 !important;font-size:18px !important;}'
+    + '.walk,.panel,.book{background:#f4efe4 !important;color:#1c1814 !important;border-radius:22px !important;border:1px solid rgba(154,120,58,.4) !important;}'
+    + '.dock{background:rgba(14,12,11,.94) !important;border-top:1px solid rgba(198,163,106,.32) !important;}'
+    + '.dock button.on{color:#f0dfb4 !important;box-shadow:inset 0 -2px 0 #c6a36a !important;}'
     + '</style>';
-  var quiet = '<script>(function(){'
-    + 'function killHymn(){var nodes=document.querySelectorAll("audio");for(var i=0;i<nodes.length;i++){nodes[i].pause();nodes[i].volume=0;nodes[i].removeAttribute("src");nodes[i].src="";}}'
-    + 'if(window.HTMLMediaElement&&!HTMLMediaElement.prototype._study){var orig=HTMLMediaElement.prototype.play;HTMLMediaElement.prototype.play=function(){var src=(this.currentSrc||this.src||"")+"";(this.id==="hymn"||src.indexOf("hymn")!==-1)&&(this.pause(),this.volume=0);if(this.id==="hymn"||src.indexOf("hymn")!==-1)return Promise.resolve();return orig.apply(this,arguments);};HTMLMediaElement.prototype._study=1;}'
-    + 'function stopMusic(){if(window._musicTimer){clearInterval(window._musicTimer);window._musicTimer=null;}if(window._studyMaster){try{window._studyMaster.disconnect();}catch(e){}window._studyMaster=null;}killHymn();}'
+  var card = '<div class="panel" id="inviteCard"><p class="qbook">Today’s question</p><h2 id="invitePrompt">One question is on the page.</h2><p class="hint" id="inviteWhy">Answer it. Then see how many of the sixty-six you can place.</p><button class="go" id="invitePlay" type="button">Answer it</button></div>';
+  var hook = '<script>(function(){'
+    + 'function killHymn(){var nodes=document.querySelectorAll("audio");for(var i=0;i<nodes.length;i++){nodes[i].pause();nodes[i].volume=0;nodes[i].removeAttribute("src");}}'
     + 'function startMusic(){killHymn();}'
-    + 'window.startMusic=startMusic;window.stopMusic=stopMusic;killHymn();stopMusic();'
+    + 'function stopMusic(){killHymn();}'
+    + 'window.startMusic=startMusic;window.stopMusic=stopMusic;killHymn();'
+    + 'if(window.HTMLMediaElement){var orig=HTMLMediaElement.prototype.play;HTMLMediaElement.prototype.play=function(){var src=(this.currentSrc||this.src||"")+"";if(this.id==="hymn"||src.indexOf("hymn")!==-1){this.pause();this.volume=0;return Promise.resolve();}return orig.apply(this,arguments);};}'
+    + 'function paint(){try{if(typeof questionForDay!=="function"||typeof dayStamp!=="function")return;var q=questionForDay(dayStamp());var p=document.getElementById("invitePrompt");if(p)p.textContent=q.prompt;var w=document.getElementById("inviteWhy");if(w)w.textContent=q.book+". One tap. The line is still yours to place.";}catch(e){}}'
+    + 'var play=document.getElementById("invitePlay");if(play)play.onclick=function(){if(typeof startDay==="function")startDay();};'
+    + 'var begin=document.getElementById("begin");if(begin)begin.textContent="Or take a short walk";'
+    + 'paint();'
     + '})();<\/script>';
   function openGame(html){
     html=html.replace(/<audio\b[^>]*>[\s\S]*?<\/audio>/gi,"");
-    html=html.replace(/<audio\b[^>]*\/?>/gi,"");
+    html=html.replace("const BANK","var BANK");
+    html=html.replace("Sixty-six books. It is worth studying because the truth is in the Bible. A church can help, and a preacher can explain, but you still need to open it yourself. A hint can point you to the part. The line is still yours to place.","One question is on the page. Answer it, then see how many of the sixty-six you can place.");
+    html=html.replace('<div class="panel" id="startPanel">', card+'<div class="panel" id="startPanel">');
     if(html.indexOf("</head>")!==-1) html=html.replace("</head>", look+"</head>");
-    else html=look+html;
-    html=html.replace("</body>", quiet+"</body>");
+    html=html.replace("</body>", hook+"</body>");
     document.open();document.write(html);document.close();
   }
   function fail(){var el=document.getElementById("wait");if(el)el.textContent="The page did not open. Refresh once.";}
