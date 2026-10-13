@@ -3,6 +3,10 @@
   var dock = document.getElementById("dock");
   if (!dock || document.getElementById("filmsPanel")) return;
 
+  var style = document.createElement("style");
+  style.textContent = "body.tab-films .wrap > *:not(#filmsPanel):not(#dock){display:none !important}body.tab-films #filmsPanel{display:block !important}";
+  document.head.appendChild(style);
+
   var btn = document.createElement("button");
   btn.type = "button";
   btn.setAttribute("data-tab", "films");
