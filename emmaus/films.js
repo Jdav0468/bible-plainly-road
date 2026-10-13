@@ -64,12 +64,6 @@
       });
   }
 
-  function escapeHtml(value) {
-    return String(value).replace(/[&<>"]/g, function (char) {
-      return { "&": "&", "<": "<", ">": ">", '"': """ }[char];
-    });
-  }
-
   function renderList() {
     audio.pause();
     playing = false;
@@ -90,7 +84,12 @@
       var card = document.createElement("button");
       card.type = "button";
       card.className = "films-card";
-      card.innerHTML = "<b>" + escapeHtml(item.number + "  " + item.title) + "</b><span>" + escapeHtml(item.summary) + "</span>";
+      var title = document.createElement("b");
+      title.textContent = item.number + "  " + item.title;
+      var summary = document.createElement("span");
+      summary.textContent = item.summary;
+      card.appendChild(title);
+      card.appendChild(summary);
       card.onclick = function () { openFilm(item); };
       list.appendChild(card);
     });
